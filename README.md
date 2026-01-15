@@ -38,6 +38,27 @@ JarWise is a comprehensive personal finance management system based on the **6 J
 
 ---
 
+## 🎨 Design System & Tokens
+
+We use a **Unified Design Token System** to ensure consistency across Web and Mobile.
+
+*   **Source of Truth**: `tokens/colors.json`
+*   **Sync Script**: `scripts/sync_tokens.js`
+
+**How to update colors:**
+1.  Edit `tokens/colors.json`.
+2.  Run `node scripts/sync_tokens.js` in the root directory.
+3.  This will automatically generate:
+    *   `Web/tailwind.theme.js` for Tailwind CSS.
+    *   `Android/app/src/main/java/com/oatrice/jarwise/ui/theme/Color.kt` for Jetpack Compose.
+
+## 🛠 Development Strategy
+
+1.  **Web First**: We develop and refine UI/UX on the Web platform first.
+2.  **Native One-to-One**: Once finalized, the design is ported to Android/iOS, ensuring a 1:1 match using our shared tokens and consistent component structure.
+
+---
+
 ## 📚 Project Documentation
 
 *   **Architecture**: See [Architecture Overview](.agent/rules/SYSTEM_PROMPT.md)

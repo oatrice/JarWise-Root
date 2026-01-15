@@ -27,6 +27,8 @@ JarWise คือระบบบริหารจัดการการเง
 ### 🛠 Backend & Shared
 - `/shared-logic`: KMP Shared Logic (Proposed)
 - `/backend-go`: Go Backend Services
+- `/tokens`: Shared Design Tokens (JSON)
+- `/scripts`: Utility scripts (Token Sync, Version Bump)
 
 ## Getting Started
 1.  **Clone**: `git clone ...`
