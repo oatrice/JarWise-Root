@@ -63,6 +63,7 @@ We use a **Unified Design Token System** to ensure consistency across Web and Mo
 
 *   **Architecture**: See [Architecture Overview](.agent/rules/SYSTEM_PROMPT.md)
 *   **Changelog**: [Global Changelog](CHANGELOG.md)
+*   **Implementation Specs**: [Notes for Mobile/iOS Squads](IMPLEMENTATION_NOTES.md)
 
 ## 🤝 Contributing
 Each squad manages its own repository. Please refer to the `README.md` within each specific platform's repository for setup and contribution guidelines.
