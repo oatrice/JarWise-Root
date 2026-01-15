@@ -1,0 +1,14 @@
+# Ignore Squad Repos
+Web/
+Mobile/
+Flutter/
+Android/
+iOS/
+
+# System Files
+.DS_Store
+.idea/
+.vscode/
+*.log
+
+*.code-workspace
