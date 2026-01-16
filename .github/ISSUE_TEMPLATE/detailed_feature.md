@@ -7,6 +7,9 @@ assignees: ''
 
 ---
 
+## 🚀 Getting Started
+- [ ] Moved issue to **In Progress** in Project Board (or use `scripts/move_issue_to_inprogress.sh <issue_url>`)
+
 ## 🎯 Objective
 
 [Briefly describe the goal of this feature/issue.]

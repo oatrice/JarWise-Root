@@ -6,6 +6,9 @@ labels: 'status: todo'
 assignees: ''
 ---
 
+## 🚀 Getting Started
+- [ ] Moved issue to **In Progress** in Project Board
+
 <!-- 
   Title Format: [Platform] Short Description
   Examples:
