@@ -4,7 +4,7 @@ Brief description of changes affecting the project structure or multiple
 platforms 
 -->
 
-# 🎯 Type
+## 🎯 Type
 
 - [ ] 📦 Monorepo Structure
 - [ ] 📄 Documentation (Root)
@@ -12,18 +12,18 @@ platforms
 - [ ] 🚀 Release Management
 - [ ] 💥 Breaking change
 
-# 🔗 Affected Platforms
+## 🔗 Affected Platforms
 
 - [ ] Web
 - [ ] Android
 - [ ] iOS
 - [ ] Mobile (Flutter)
 
-# 📝 Detailed Changes
+## 📝 Detailed Changes
 
 <!-- Describe the high-level purpose of this PR -->
 
-# 🚀 Migration/Deployment
+## 🚀 Migration/Deployment
 
 - [ ] Environment variables updated
 - [ ] Global Dependencies installed
@@ -32,7 +32,7 @@ platforms
 # Migration commands if applicable
 ```
 
-# 🔗 Related Issues
+## 🔗 Related Issues
 
 <!-- Link to related issues or PRs -->
 - Closes #<!-- issue number -->
