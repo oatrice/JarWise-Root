@@ -36,20 +36,28 @@ Before opening a Pull Request (PR), please ensure:
 *   Store screenshots in `screenshots/` folder and commit before updating PR.
 *   Show "Before" and "After" if applicable.
 
-### Linking PRs to Issues
-*   Use **`Resolves`** keyword with **full repo reference** to auto-link PR to Issue:
-    ```markdown
-    # 🔗 Related Issues
-    - Resolves oatrice/JarWise-Root#16
-    ```
-*   Supported keywords: `Closes`, `Fixes`, `Resolves`
-*   This makes PRs appear in the Issue's **Development** sidebar.
-*   **Also update Issue body** with Related PRs section:
-    ```markdown
-    ### Related PRs:
-    - **Web:** oatrice/JarWise-Web#6
-    - **Android:** oatrice/JarWise-Android#7
-    ```
+### Linking PRs to Issues (Development Sidebar)
+
+**Goal:** Make PRs appear in the Issue's **"Development"** section on GitHub sidebar:
+```
+Development
+├── oatrice/JarWise-Web#6
+└── oatrice/JarWise-Android#7
+```
+
+**Step 1:** In PR Body, use **`Resolves`** keyword with **full repo reference**:
+```markdown
+# 🔗 Related Issues
+- Resolves oatrice/JarWise-Root#16
+```
+*Supported keywords: `Closes`, `Fixes`, `Resolves` (all auto-close Issue when PR is merged)*
+
+**Step 2:** Update Issue body with Related PRs section:
+```markdown
+### Related PRs:
+- **Web:** oatrice/JarWise-Web#6
+- **Android:** oatrice/JarWise-Android#7
+```
 
 ## 🧪 Testing
 

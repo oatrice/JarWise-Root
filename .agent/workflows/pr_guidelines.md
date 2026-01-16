@@ -28,9 +28,18 @@ When adding screenshots to Pull Requests, follow these rules:
 
 ## Linking PRs to Issues (Development Sidebar)
 
-To make PRs appear in the Issue's "Development" section on GitHub:
+**Goal:** Make PRs appear in the Issue's **"Development"** section on GitHub sidebar.
 
-### Use Keywords with Full Reference
+When done correctly, the Issue page will show:
+```
+Development
+├── oatrice/JarWise-Web#6
+└── oatrice/JarWise-Android#7
+```
+
+### How to Link
+
+#### Step 1: In PR Body - Use Keywords with Full Reference
 Since Issues are in `JarWise-Root` and PRs are in platform repos, use **full repo reference**:
 
 ```markdown
@@ -38,20 +47,21 @@ Since Issues are in `JarWise-Root` and PRs are in platform repos, use **full rep
 - Resolves oatrice/JarWise-Root#16
 ```
 
-### Supported Keywords
-- `Closes oatrice/JarWise-Root#<issue>`
-- `Fixes oatrice/JarWise-Root#<issue>`
-- `Resolves oatrice/JarWise-Root#<issue>`
+#### Supported Keywords
+- `Closes oatrice/JarWise-Root#<issue>` - Closes issue when PR is merged
+- `Fixes oatrice/JarWise-Root#<issue>` - Same as Closes
+- `Resolves oatrice/JarWise-Root#<issue>` - Same as Closes
 
-### Also Update Issue Body
-Add PRs to the Issue's References section:
+#### Step 2: In Issue Body - Add Related PRs
+Also update the Issue body with PR references for easy navigation:
 
 ```markdown
 ## 🔗 References
 ### Related PRs:
-- **Web:** oatrice/JarWise-Web#<pr>
-- **Android:** oatrice/JarWise-Android#<pr>
+- **Web:** oatrice/JarWise-Web#6
+- **Android:** oatrice/JarWise-Android#7
 ```
+
 
 ## PR Template Checklist
 
