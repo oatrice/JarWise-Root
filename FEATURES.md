@@ -3,6 +3,7 @@
 This document serves as the **Single Source of Truth** for the implementation status of features across all JarWise platforms.
 
 **Legend:**
+
 - ✅ **Live**: Fully implemented, tested, and production-ready.
 - 🚧 **In Progress**: Currently being developed or refactored.
 - 🖌️ **Mock/UI Only**: UI is implemented but logic/data is mocked.
@@ -15,19 +16,19 @@ This document serves as the **Single Source of Truth** for the implementation st
 
 | ID | Feature Name | 🌐 Web | 📱 Mobile (Flutter) | 🤖 Android (Native) | 🍎 iOS | Notes |
 | :--- | :--- | :---: | :---: | :---: | :---: | :--- |
-| `CORE-01` | **6 Jars Summary** | ✅ Live | 🚧 Dev | ✅ Live (Mock) | ⏳ Pending | Web is the reference implementation. |
-| `CORE-02` | **Transaction Feed** | ✅ Live | 🚧 Dev | ✅ Live (Mock) | ⏳ Pending | Android uses synced MockData. |
+| `CORE-01` | **6 Jars Summary** | ✅ Live | ⏳ Pending | 🖌️ Mock/UI | ⏳ Pending | Web is reference. Flutter repo is placeholder. |
+| `CORE-02` | **Transaction Feed** | ✅ Live | ⏳ Pending | 🖌️ Mock/UI | ⏳ Pending | Android uses GeneratedMockData. |
 | `CORE-03` | **Add Transaction** | ⏳ Pending | ⏳ Pending | ⏳ Pending | ⏳ Pending | |
 | `CORE-04` | **Manage Jars** | ⏳ Pending | ⏳ Pending | ⏳ Pending | ⏳ Pending | Edit percentages, rename jars. |
 
 ## 🎨 Design System
 
 | ID | Feature Name | 🌐 Web | 📱 Mobile (Flutter) | 🤖 Android (Native) | 🍎 iOS | Notes |
-| :--- | :--- | :---: | :---: | :---: | :---: | :---: | :--- |
-| `DS-01` | **Color Tokens** | ✅ Live | ⏳ Pending | ✅ Live | ⏳ Pending | Synced via `tokens/colors.json`. |
+| :--- | :--- | :---: | :---: | :---: | :---: | :--- |
+| `DS-01` | **Color Tokens** | ✅ Live | ⏳ Pending | ✅ Live | ⏳ Pending | Synced via `shared-spec/`. |
 | `DS-02` | **Typography** | ✅ Live | ⏳ Pending | ✅ Live | ⏳ Pending | Custom fonts (Inter/Kanit). |
-| `DS-03` | **Iconography** | ✅ Live | ⏳ Pending | ✅ Live | ⏳ Pending | Lucide Icons. |
-| `DS-04` | **Dark/Light Mode** | ✅ Live | ⏳ Pending | 🚧 Dev | ⏳ Pending | |
+| `DS-03` | **Iconography** | ✅ Live | ⏳ Pending | ✅ Live | ⏳ Pending | Material Icons on Android. |
+| `DS-04` | **Dark Mode** | ✅ Live | ⏳ Pending | ✅ Live | ⏳ Pending | Dark theme only. |
 
 ## 🤖 Native Integrations
 
@@ -35,7 +36,26 @@ This document serves as the **Single Source of Truth** for the implementation st
 | :--- | :--- | :---: | :---: | :---: | :---: | :--- |
 | `NAT-01` | **SMS Reader** | 🚫 N/A | 🚫 N/A | ⏳ Pending | 🚫 N/A | Android specific automation. |
 | `NAT-02` | **Home Widget** | 🚫 N/A | ⏳ Pending | ⏳ Pending | ⏳ Pending | |
-| `NAT-03` | **Push Notifications**| ⏳ Pending | ⏳ Pending | ⏳ Pending | ⏳ Pending | |
+| `NAT-03` | **Push Notifications** | ⏳ Pending | ⏳ Pending | ⏳ Pending | ⏳ Pending | |
+
+## 🧪 Testing & CI
+
+| ID | Feature Name | 🌐 Web | 📱 Mobile (Flutter) | 🤖 Android (Native) | 🍎 iOS | Notes |
+| :--- | :--- | :---: | :---: | :---: | :---: | :--- |
+| `CI-01` | **Unit Tests** | ✅ Live | ⏳ Pending | ✅ Live | ⏳ Pending | Vitest (Web), JUnit (Android). |
+| `CI-02` | **CI Workflow** | ✅ Live | ⏳ Pending | ✅ Live | ⏳ Pending | Lint → Test → Build. |
+| `CI-03` | **Auto-Tag** | ✅ Live | ⏳ Pending | ✅ Live | ⏳ Pending | Version-based tagging. |
+
+---
+
+## 📈 Platform Summary
+
+| Platform | Status | Codebase | Notes |
+| :--- | :---: | :--- | :--- |
+| 🌐 **Web** | ✅ Active | React + Vite + TypeScript | Reference implementation |
+| 🤖 **Android** | ✅ Active | Jetpack Compose + Kotlin | Mock data, CI ready |
+| 📱 **Mobile (Flutter)** | ⏳ Placeholder | Dart + Flutter | Only README exists |
+| 🍎 **iOS** | ⏳ Placeholder | SwiftUI | Only README exists |
 
 ---
 
@@ -43,5 +63,10 @@ This document serves as the **Single Source of Truth** for the implementation st
 
 **Current Target Milestone:** `v0.2.0 (Design System Alignment)`
 
-*   **Goal**: Ensure Web and Android Native (Jetpack Compose) look identical using shared tokens.
-*   **Status**: Achieved for Dashboard & Transaction Card UI.
+- **Goal**: Ensure Web and Android Native look identical using shared tokens.
+- **Status**: ✅ Achieved for Dashboard & Transaction Card UI.
+
+**Next Milestone:** `v0.3.0 (Add Transaction Feature)`
+
+- **Goal**: Implement transaction creation across Web and Android.
+- **Status**: ⏳ Planning
