@@ -33,6 +33,6 @@ gh project item-edit \
   --id "$ITEM_ID" \
   --project-id "$PROJECT_ID" \
   --field-id "$STATUS_FIELD_ID" \
-  --single-select-option-id "$IN_PROGRESS_OPTION_ID" --format text
+  --single-select-option-id "$IN_PROGRESS_OPTION_ID"
 
 echo "✅ Success! Issue moved to 'In Progress'."
