@@ -1,10 +1,19 @@
 ---
 name: 📋 Project Task
 about: Create a task for the JarWise project
-title: '[TASK] '
+title: '[Platform] Task Name'
 labels: 'status: todo'
 assignees: ''
 ---
+
+<!-- 
+  Title Format: [Platform] Short Description
+  Examples:
+    - [Web] Add dark mode toggle
+    - [Android] Implement biometric login
+    - [Web | Android] Sync transaction history API
+    - [All] Update shared design tokens
+-->
 
 # 🎯 Objective
 <!-- Describe the goal of this task -->
