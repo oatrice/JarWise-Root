@@ -15,3 +15,6 @@ iOS/
 
 # Temporary PR Body templates
 .pr_body*.md
+
+# Temporary data files
+project_items.json
