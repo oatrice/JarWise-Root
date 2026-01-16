@@ -63,6 +63,7 @@ We use a **Unified Design Token System** to ensure consistency across Web and Mo
 
 *   **Architecture**: See [Architecture Overview](.agent/rules/SYSTEM_PROMPT.md)
 *   **Changelog**: [Global Changelog](CHANGELOG.md)
+*   **Project Board**: [JarWise Kanban](https://github.com/users/oatrice/projects/7)
 *   **Implementation Specs**: [Notes for Mobile/iOS Squads](IMPLEMENTATION_NOTES.md)
 
 ## 🤝 Contributing
