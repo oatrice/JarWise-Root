@@ -26,17 +26,30 @@ Thank you for contributing to JarWise! Please follow these guidelines to ensure 
 
 Before opening a Pull Request (PR), please ensure:
 
-1.  **Screenshots / Screen Recording:**
-    *   For **UI changes**, you **MUST** include screenshots or a screen recording (GIF/Video) showing the change.
-    *   Show "Before" and "After" if applicable.
-    *   Ensure screenshots verify responsiveness (Mobile vs Desktop) for Web.
+### Screenshots
+*   For **UI changes**, you **MUST** include screenshots or a screen recording (GIF/Video).
+*   **Always use `width="400"`** for screenshots in PR body.
+*   Use HTML `<img>` tag for width control:
+    ```html
+    <img src="https://raw.githubusercontent.com/oatrice/JarWise-Web/branch/screenshots/example.png" width="400" />
+    ```
+*   Store screenshots in `screenshots/` folder and commit before updating PR.
+*   Show "Before" and "After" if applicable.
 
-2.  **Full Issue URLs:**
-    *   In the PR Body, under "Related Issues", use the **Full URL** of the issue, not just the number.
-    *   ✅ Correct: `Related to https://github.com/oatrice/JarWise-Web/issues/5`
-    *   ✅ Correct: `Related to https://github.com/oatrice/JarWise-Android/issues/5`
-    *   ❌ Incorrect: `Related to #5`
-    *   This is critical for cross-repository linking (Web/Android linking to Root issues).
+### Linking PRs to Issues
+*   Use **`Resolves`** keyword with **full repo reference** to auto-link PR to Issue:
+    ```markdown
+    # 🔗 Related Issues
+    - Resolves oatrice/JarWise-Root#16
+    ```
+*   Supported keywords: `Closes`, `Fixes`, `Resolves`
+*   This makes PRs appear in the Issue's **Development** sidebar.
+*   **Also update Issue body** with Related PRs section:
+    ```markdown
+    ### Related PRs:
+    - **Web:** oatrice/JarWise-Web#6
+    - **Android:** oatrice/JarWise-Android#7
+    ```
 
 ## 🧪 Testing
 
