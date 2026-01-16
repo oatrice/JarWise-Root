@@ -1,0 +1,50 @@
+[
+    {
+        "id": "necessities",
+        "name": "Necessities",
+        "icon": "🏠",
+        "color_hex": "0xFF3B82F6",
+        "color_tailwind": "bg-blue-500",
+        "description": "Essential expenses like rent, food, bills (55%)"
+    },
+    {
+        "id": "education",
+        "name": "Education",
+        "icon": "📚",
+        "color_hex": "0xFF22C55E",
+        "color_tailwind": "bg-green-500",
+        "description": "Self-improvement, books, courses (10%)"
+    },
+    {
+        "id": "savings",
+        "name": "Savings",
+        "icon": "🐷",
+        "color_hex": "0xFFEAB308",
+        "color_tailwind": "bg-yellow-500",
+        "description": "Long-term saving for spending (10%)"
+    },
+    {
+        "id": "play",
+        "name": "Play",
+        "icon": "🎮",
+        "color_hex": "0xFFEC4899",
+        "color_tailwind": "bg-pink-500",
+        "description": "Guilt-free spending on fun (10%)"
+    },
+    {
+        "id": "investment",
+        "name": "Investment",
+        "icon": "📈",
+        "color_hex": "0xFFA855F7",
+        "color_tailwind": "bg-purple-500",
+        "description": "Financial Freedom Account (10%)"
+    },
+    {
+        "id": "give",
+        "name": "Give",
+        "icon": "🎁",
+        "color_hex": "0xFFEF4444",
+        "color_tailwind": "bg-red-500",
+        "description": "Charity and donations (5%)"
+    }
+]
