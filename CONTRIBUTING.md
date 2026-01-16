@@ -14,22 +14,50 @@ Thank you for contributing to JarWise! Please follow these guidelines to ensure 
     *   When starting a task, the AI Agent **MUST** run the automation script to update the Kanban board status:
     *   Command: `./scripts/move_issue_to_inprogress.sh <issue_full_url>`
 
+## 📱 Android Development Guidelines
+
+### Jetpack Compose Preview
+*   Every new UI component (`@Composable`) **MUST** have a corresponding `@Preview` function.
+*   Previews should use `showBackground = true` and appropriate background colors (e.g., `0xFF0A0A0A` for Dark Mode).
+*   Use `MockData` or `GeneratedMockData` for preview content.
+
 
 ## 📸 Pull Request Requirements
 
 Before opening a Pull Request (PR), please ensure:
 
-1.  **Screenshots / Screen Recording:**
-    *   For **UI changes**, you **MUST** include screenshots or a screen recording (GIF/Video) showing the change.
-    *   Show "Before" and "After" if applicable.
-    *   Ensure screenshots verify responsiveness (Mobile vs Desktop) for Web.
+### Screenshots
+*   For **UI changes**, you **MUST** include screenshots or a screen recording (GIF/Video).
+*   **Always use `width="400"`** for screenshots in PR body.
+*   Use HTML `<img>` tag for width control:
+    ```html
+    <img src="https://raw.githubusercontent.com/oatrice/JarWise-Web/branch/screenshots/example.png" width="400" />
+    ```
+*   Store screenshots in `screenshots/` folder and commit before updating PR.
+*   Show "Before" and "After" if applicable.
 
-2.  **Full Issue URLs:**
-    *   In the PR Body, under "Related Issues", use the **Full URL** of the issue, not just the number.
-    *   ✅ Correct: `Related to https://github.com/oatrice/JarWise-Web/issues/5`
-    *   ✅ Correct: `Related to https://github.com/oatrice/JarWise-Android/issues/5`
-    *   ❌ Incorrect: `Related to #5`
-    *   This is critical for cross-repository linking (Web/Android linking to Root issues).
+### Linking PRs to Issues (Development Sidebar)
+
+**Goal:** Make PRs appear in the Issue's **"Development"** section on GitHub sidebar:
+```
+Development
+├── oatrice/JarWise-Web#6
+└── oatrice/JarWise-Android#7
+```
+
+**Step 1:** In PR Body, use **`Resolves`** keyword with **full repo reference**:
+```markdown
+# 🔗 Related Issues
+- Resolves oatrice/JarWise-Root#16
+```
+*Supported keywords: `Closes`, `Fixes`, `Resolves` (all auto-close Issue when PR is merged)*
+
+**Step 2:** Update Issue body with Related PRs section:
+```markdown
+### Related PRs:
+- **Web:** oatrice/JarWise-Web#6
+- **Android:** oatrice/JarWise-Android#7
+```
 
 ## 🧪 Testing
 

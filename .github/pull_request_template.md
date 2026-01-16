@@ -4,6 +4,9 @@ Brief description of changes affecting the project structure or multiple
 platforms 
 -->
 
+## ✅ Checklist
+- [ ] 🏗️ I have moved the related issue to "In Progress" on the Kanban board
+
 ## 🎯 Type
 
 - [ ] 📦 Monorepo Structure
@@ -23,6 +26,18 @@ platforms
 
 <!-- Describe the high-level purpose of this PR -->
 
+## 📸 Screenshots (if applicable)
+<!-- 
+IMPORTANT: Always use width="400" for screenshots
+Use HTML <img> tag for width control:
+
+<img src="https://raw.githubusercontent.com/oatrice/JarWise-Root/branch-name/path/to/image.png" width="400" />
+-->
+
+## 🧪 Testing
+- [ ] Changes verified locally
+- [ ] Documentation reviewed for accuracy
+
 ## 🚀 Migration/Deployment
 
 - [ ] Environment variables updated
@@ -34,13 +49,17 @@ platforms
 
 ## 🔗 Related Issues
 
-<!-- Link to related issues or PRs using FULL URL e.g. https://github.com/oatrice/JarWise-Root/issues/1 -->
-- Closes #
-- Related to #
-- Fixes #
+<!-- 
+Use 'Resolves' keyword with FULL repo reference for auto-linking.
+This makes the PR appear in the Issue's "Development" sidebar:
 
-## ✅ Checklist
-- [ ] 🏗️ I have moved the related issue to "In Progress" on the Kanban board
+Development
+├── oatrice/JarWise-Web#6
+└── oatrice/JarWise-Android#7
+
+Example: Resolves oatrice/JarWise-Root#16
+-->
+- Resolves oatrice/JarWise-Root#
 
 **Breaking Changes**: <!-- Yes/No -->
 **Migration Required**: <!-- Yes/No -->

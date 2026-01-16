@@ -73,6 +73,7 @@ Mobile.
 ## 📚 Project Documentation
 
 * **Architecture**: See [Architecture Overview](.agent/rules/SYSTEM_PROMPT.md)
+* **Features & Roadmap**: [Feature Matrix](FEATURES.md)
 * **Changelog**: [Global Changelog](CHANGELOG.md)
 * **Project Board**: [JarWise Kanban](https://github.com/users/oatrice/projects/7)
 * **Implementation Specs**: [Notes for Mobile/iOS Squads](IMPLEMENTATION_NOTES.md)
