@@ -12,3 +12,6 @@ iOS/
 *.log
 
 *.code-workspace
+
+# Temporary PR Body templates
+.pr_body*.md
