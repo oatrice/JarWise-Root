@@ -14,6 +14,13 @@ Thank you for contributing to JarWise! Please follow these guidelines to ensure 
     *   When starting a task, the AI Agent **MUST** run the automation script to update the Kanban board status:
     *   Command: `./scripts/move_issue_to_inprogress.sh <issue_full_url>`
 
+## 📱 Android Development Guidelines
+
+### Jetpack Compose Preview
+*   Every new UI component (`@Composable`) **MUST** have a corresponding `@Preview` function.
+*   Previews should use `showBackground = true` and appropriate background colors (e.g., `0xFF0A0A0A` for Dark Mode).
+*   Use `MockData` or `GeneratedMockData` for preview content.
+
 
 ## 📸 Pull Request Requirements
 
