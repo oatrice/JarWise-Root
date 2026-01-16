@@ -20,6 +20,7 @@ This document serves as the **Single Source of Truth** for the implementation st
 | `CORE-02` | **Transaction Feed** | ✅ Live | ⏳ Pending | 🖌️ Mock/UI | ⏳ Pending | Android uses GeneratedMockData. |
 | `CORE-03` | **Add Transaction** | ⏳ Pending | ⏳ Pending | ⏳ Pending | ⏳ Pending | |
 | `CORE-04` | **Manage Jars** | ⏳ Pending | ⏳ Pending | ⏳ Pending | ⏳ Pending | Edit percentages, rename jars. |
+| `CORE-05` | **Transaction History** | ✅ Live | ⏳ Pending | 🖌️ Mock/UI | ⏳ Pending | Dedicated history page with grouping. |
 
 ## 🎨 Design System
 

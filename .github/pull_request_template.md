@@ -34,10 +34,13 @@ platforms
 
 ## 🔗 Related Issues
 
-<!-- Link to related issues or PRs -->
-- Closes #<!-- issue number -->
-- Related to #<!-- issue number -->
-- Fixes #<!-- issue number -->
+<!-- Link to related issues or PRs using FULL URL e.g. https://github.com/oatrice/JarWise-Root/issues/1 -->
+- Closes #
+- Related to #
+- Fixes #
+
+## ✅ Checklist
+- [ ] 🏗️ I have moved the related issue to "In Progress" on the Kanban board
 
 **Breaking Changes**: <!-- Yes/No -->
 **Migration Required**: <!-- Yes/No -->
