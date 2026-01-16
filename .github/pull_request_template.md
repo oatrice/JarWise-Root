@@ -1,7 +1,11 @@
 # 📋 Monorepo Update Summary
-<!-- Brief description of changes affecting the project structure or multiple platforms -->
+<!-- 
+Brief description of changes affecting the project structure or multiple 
+platforms 
+-->
 
 # 🎯 Type
+
 - [ ] 📦 Monorepo Structure
 - [ ] 📄 Documentation (Root)
 - [ ] 🔄 Workflow/CI Update
@@ -9,15 +13,18 @@
 - [ ] 💥 Breaking change
 
 # 🔗 Affected Platforms
+
 - [ ] Web
 - [ ] Android
 - [ ] iOS
 - [ ] Mobile (Flutter)
 
 # 📝 Detailed Changes
+
 <!-- Describe the high-level purpose of this PR -->
 
 # 🚀 Migration/Deployment
+
 - [ ] Environment variables updated
 - [ ] Global Dependencies installed
 
@@ -26,6 +33,7 @@
 ```
 
 # 🔗 Related Issues
+
 <!-- Link to related issues or PRs -->
 - Closes #<!-- issue number -->
 - Related to #<!-- issue number -->
