@@ -14,11 +14,9 @@ solution with distinct specialized squads.
 * **Role**: UI/UX Playground, Design System Owner, Web Dashboard.
 * **Tech Stack**: 
   <br>
-  ![React](https://img.shields.io/badge/react-%2320232a.svg?style=for-the-badge&logo=react&logoColor=%2361DAFB)
-  ![Vite](https://img.shields.io/badge/vite-%23646CFF.svg?style=for-the-badge&logo=vite&logoColor=white)
-  ![TailwindCSS](https://img.shields.io/badge/tailwindcss-%2338B2AC.svg?style=for-the-badge&logo=tailwind-css&logoColor=white)
-  <br>
-  **React** `19.2.0` • **Vite** `7.2.4` • **Tailwind** `4.1.18`
+  ![React](https://img.shields.io/badge/React-19.2.0-20232a?style=for-the-badge&logo=react&logoColor=%2361DAFB)
+  ![Vite](https://img.shields.io/badge/Vite-7.2.4-646CFF?style=for-the-badge&logo=vite&logoColor=white)
+  ![TailwindCSS](https://img.shields.io/badge/Tailwind_CSS-4.1.18-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)
 * **Key Responsibilities**:
   * Developing the Core Design System (Neon Theme).
   * Prototyping new features and logic.
@@ -39,10 +37,8 @@ solution with distinct specialized squads.
 * **Role**: Deep System Integrations.
 * **Tech Stack**:
   <br>
-  ![Kotlin](https://img.shields.io/badge/kotlin-%237F52FF.svg?style=for-the-badge&logo=kotlin&logoColor=white)
-  ![Jetpack Compose](https://img.shields.io/badge/Jetpack%20Compose-4285F4?style=for-the-badge&logo=android&logoColor=white)
-  <br>
-  **Kotlin** `1.9.24` • **Compose BOM** `2024.02.01`
+  ![Kotlin](https://img.shields.io/badge/Kotlin-1.9.24-7F52FF?style=for-the-badge&logo=kotlin&logoColor=white)
+  ![Jetpack Compose](https://img.shields.io/badge/Compose_BOM-2024.02.01-4285F4?style=for-the-badge&logo=android&logoColor=white)
 * **Key Responsibilities**:
   * SMS reading automation.
   * Native OS widgets and background services.
