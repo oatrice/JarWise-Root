@@ -23,6 +23,6 @@
 
 ## Verification Plan - Phase 3
 ### Manual Verification
-1.  **Zoom**: Open a slip, try pinching. Image should zoom and pan.
-2.  **Jar**: Click Dropdown, select "Play". Confirm transaction is saved with "Play" jar (check logs or DB).
-3.  **Date**: Click Date. Change date in picker. Confirm transaction saved with new date.
+- [x] **Zoom**: Open a slip, try pinching. Image should zoom and pan.
+- [x] **Jar**: Click Dropdown, select "Play". Confirm transaction is saved with "Play" jar (check logs or DB).
+- [x] **Date**: Click Date. Change date in picker. Confirm transaction saved with new date.
