@@ -64,3 +64,16 @@ Development
 *   **Android:** Run `./gradlew test` and ensure the build passes.
 *   **Web:** Run `npm test` and `npm run build`.
 *   TDD (Test Driven Development) is encouraged: Red -> Green -> Refactor.
+
+## 🧩 Task Breakdown Strategy
+
+**Rule:** For any task, feature, or complex bug fix, you **MUST** break the work down into smaller, manageable **Sub-tasks** or **Parts**.
+
+*   **Why?** To ensure easier tracking, granular testing (Testability), and clearer review capability.
+*   **How?**
+    1.  Define the main goal.
+    2.  Split into phases or logical parts (e.g., Part 1: UI, Part 2: Logic, Part 3: Integration).
+    3.  Document these sub-tasks in your Issue Description or Implementation Plan.
+    4.  Verify/Test each sub-task independently where possible.
+
+*Note: Even if a task seems simple, breaking it down clarifies the thought process and reduces errors.*
