@@ -17,6 +17,8 @@ solution with distinct specialized squads.
   ![React](https://img.shields.io/badge/react-%2320232a.svg?style=for-the-badge&logo=react&logoColor=%2361DAFB)
   ![Vite](https://img.shields.io/badge/vite-%23646CFF.svg?style=for-the-badge&logo=vite&logoColor=white)
   ![TailwindCSS](https://img.shields.io/badge/tailwindcss-%2338B2AC.svg?style=for-the-badge&logo=tailwind-css&logoColor=white)
+  <br>
+  **React** `19.2.0` • **Vite** `7.2.4` • **Tailwind** `4.1.18`
 * **Key Responsibilities**:
   * Developing the Core Design System (Neon Theme).
   * Prototyping new features and logic.
@@ -39,6 +41,8 @@ solution with distinct specialized squads.
   <br>
   ![Kotlin](https://img.shields.io/badge/kotlin-%237F52FF.svg?style=for-the-badge&logo=kotlin&logoColor=white)
   ![Jetpack Compose](https://img.shields.io/badge/Jetpack%20Compose-4285F4?style=for-the-badge&logo=android&logoColor=white)
+  <br>
+  **Kotlin** `1.9.24` • **Compose BOM** `2024.02.01`
 * **Key Responsibilities**:
   * SMS reading automation.
   * Native OS widgets and background services.
