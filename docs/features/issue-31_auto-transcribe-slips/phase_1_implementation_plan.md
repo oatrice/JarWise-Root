@@ -25,17 +25,17 @@
     - `<uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />`
 
 #### Logic / Data Layer
-##### [NEW] `data/repository/SlipRepository.kt`
-- Function `getRecentImages(limit: Int): List<Uri>` using `MediaStore`.
-- Function `getImagesFromFolder(folderUri: Uri): List<Uri>` using `DocumentFile`.
-- **Auto-Detect Logic**: `ContentObserver` implementation to watch for new changes in `MediaStore`.
+#### [MODIFY] `data/repository/SlipRepository.kt`
+- **[UPDATE]** `getRecentImages`: Update to support optional `bucketId` filtering.
+- **[NEW]** `getImageBuckets(): List<Bucket>`: Query MediaStore to get unique folders (Download, Camera, etc.) and their validation info (count, thumbnail).
+- **Remove**: `getImagesFromFolder` (DocumentFile logic) as we are dropping `OPEN_DOCUMENT_TREE`.
 
 #### UI Layer
-##### [NEW] `ui/slip/SlipImportScreen.kt`
-- Simple UI to test the logic:
-    - Button "Select Folder"
-    - List "Detected Images" (Auto-detected recent headers)
-    - Preview selected images.
+#### [MODIFY] `ui/slip/SlipImportScreen.kt`
+- **Folder Picker UI**:
+    - Replace `FloatingActionButton` that launches Intent.
+    - Add `ModalBottomSheet` or `Dialog` showing list of "Albums" (Buckets).
+    - On Album select -> Reload `recentImages` filtered by that bucket.
 
 ## Verification Plan
 

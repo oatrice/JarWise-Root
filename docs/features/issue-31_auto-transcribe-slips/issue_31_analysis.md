@@ -19,9 +19,22 @@
 
 ## 2. การวิเคราะห์ทางเทคนิค (Technical Analysis)
 
-### 2.1 Platform Support & Folder Selection
--   **Android Strategy**: ใช้ `Intent.ACTION_OPEN_DOCUMENT_TREE` (SAF) และ Allow ให้ user pick multiple trees หรือ Add folder ทีละอันเข้ามาใน List การสแกน
--   **Web Strategy**: ใช้ `<input type="file" multiple webkitdirectory />` (อาจจะเลือกได้ทีละ folder แต่ user สามารถทำซ้ำเพื่อ add เข้า list ได้)
+### 2.1 Image Source Strategy (Refined)
+
+We will support two primary modes of image selection:
+
+1.  **Auto-Detect (Quick Mode)**:
+    *   Automatically scan the `MediaStore` for images added in the last 24 hours.
+    *   *Refinement:* Filter specifically for images similar to known Slip directories (e.g., `Pictures/`, `Download/`) if possible, otherwise just recent.
+
+2.  **Custom Album Picker (Manual Mode)**:
+    *   **Problem**: Android 11+ restricts `ACTION_OPEN_DOCUMENT_TREE` on the `Download` folder (Privacy/Scoped Storage restrictions).
+    *   **Solution**: Instead of using the system's folder picker, we will build a **Custom In-App Album Picker**.
+    *   **Mechanism**:
+        *   Query `MediaStore.Images.Media` for **all** images.
+        *   Group images by `BUCKET_DISPLAY_NAME` (which corresponds to folder names like "Download", "Instagram", "Screenshots").
+        *   User selects a "Folder" from our UI, and we filter the displayed list.
+    *   **Benefit**: Bypasses the privacy restriction legitimately, provides a better UX, and feels more native to a photo-heavy feature.
 
 ### 2.2 Smart Slip Detection & Filtering Strategy
 ใช้หลักการ **"Positive Filtering"** เป็นหลักเพื่อความแม่นยำและ Performance:
