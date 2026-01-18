@@ -9,7 +9,7 @@ echo "🔄 Syncing Mock Data from shared-spec/data/mockData.json..."
 echo ""
 
 cd "$(dirname "$0")"
-node scripts/sync_mock_data.js
+node sync_mock_data.js
 
 echo ""
 echo "✅ Mock Data Synced Successfully!"
