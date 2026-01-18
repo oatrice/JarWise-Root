@@ -1,3 +1,14 @@
+# Changelog
+
+## [0.4.0] - 2026-01-18
+
+### Added
+- **[System]** Enhanced the mock data sync script to generate more vibrant and visually distinct colors for Jars, improving the default developer experience.
+- **[Docs]** Added documentation outlining the mock data sync improvements.
+
+### Changed
+- **[System]** Reorganized utility scripts into a central `scripts/` directory for better project maintainability.
+
 # JarWise Project Changelog
 
 ## [0.3.0] - 2026-01-18
