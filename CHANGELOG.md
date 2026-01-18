@@ -1,5 +1,12 @@
 # JarWise Project Changelog
 
+## [0.3.0] - 2026-01-18
+
+### Added
+- **[Feature]** Currency Support (THB, USD, EUR, GBP, JPY) across Web and Android.
+- **[Web]** Mobile Parity: Import Slip UI, Settings Overlay, and responsive header.
+- **[Docs]** Updated readme and implementation plans for currency features.
+
 ## [0.2.0] - 2026-01-15
 
 ### 🎨 Design System & Alignment
