@@ -9,8 +9,6 @@
 ### Changed
 - **[System]** Reorganized utility scripts into a central `scripts/` directory for better project maintainability.
 
-# JarWise Project Changelog
-
 ## [0.3.0] - 2026-01-18
 
 ### Added
