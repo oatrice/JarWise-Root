@@ -1,0 +1,29 @@
+{
+    "$schema": "https://luma.dev/schemas/rules-v1.json",
+    "project_name": "JarWise-Root",
+    "version": "1.0.0",
+    "kanban": {
+        "project_number": 1,
+        "owner": "oatrice"
+    },
+    "preflight_checks": [
+        {
+            "id": "changelog_root",
+            "type": "file_modified",
+            "path": "CHANGELOG.md",
+            "required": true,
+            "message": "Root CHANGELOG.md must be updated"
+        },
+        {
+            "id": "version_root",
+            "type": "version_updated",
+            "path": "VERSION",
+            "required": true,
+            "message": "Root VERSION must be updated"
+        }
+    ],
+    "context_rules": [
+        "Ensure major version bumps are reflected in all sub-projects",
+        "Update OVERVIEW.md if architectural changes are made"
+    ]
+}

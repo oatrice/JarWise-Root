@@ -1,6 +1,6 @@
 # Changelog
 
-## [0.4.1] - 2026-01-18
+## [0.4.0] - 2026-01-18
 
 ### Added
 - **[System]** Enhanced the mock data sync script to generate more vibrant and visually distinct colors for Jars, improving the default developer experience.
