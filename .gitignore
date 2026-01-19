@@ -18,3 +18,4 @@ iOS/
 
 # Temporary data files
 project_items.json
+.luma_state.json
