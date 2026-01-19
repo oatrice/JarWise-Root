@@ -62,12 +62,12 @@ This document serves as the **Single Source of Truth** for the implementation st
 
 ## 🔄 Release Alignment
 
-**Current Target Milestone:** `v0.2.0 (Design System Alignment)`
+**Current Milestone:** `v0.4.0 (Mock Data & Currency)`
 
-- **Goal**: Ensure Web and Android Native look identical using shared tokens.
-- **Status**: ✅ Achieved for Dashboard & Transaction Card UI.
+- **Goal**: Enhanced mock data sync and currency support.
+- **Status**: ✅ Achieved.
 
-**Next Milestone:** `v0.3.0 (Add Transaction Feature)`
+**Next Milestone:** `v0.5.0 (Sub-Transaction Feature)`
 
-- **Goal**: Implement transaction creation across Web and Android.
-- **Status**: ⏳ Planning
+- **Goal**: Enable recording sub-items within a single slip/transaction.
+- **Status**: 🚧 Planning
