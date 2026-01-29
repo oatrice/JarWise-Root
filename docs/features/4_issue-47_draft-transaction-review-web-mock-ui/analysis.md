@@ -1,4 +1,4 @@
-# Feature Analysis: Transaction Group Summary
+# Feature Analysis: Transaction Group Summary (Web)
 
 > 📋 Analysis สำหรับ Feature #47
 
@@ -8,12 +8,23 @@
 
 | รายการ | รายละเอียด |
 |--------|-----------|
-| **Feature Name** | Transaction Group Summary with Scroll-to-Hide |
+| **Feature Name** | Draft Review + Transaction Grouping + Scroll-to-Hide |
 | **Issue** | [#47](https://github.com/oatrice/JarWise-Root/issues/47) |
 | **Date** | 2026-01-29 |
+| **Platform** | 🌐 Web |
 | **Branch** | `feat/transaction-group-summary` |
 | **Priority** | 🟡 Medium |
 | **Status** | ✅ Completed |
+
+### Features Included
+
+| Feature | Description |
+|---------|-------------|
+| **Draft Transaction Review** | Save imported slips as drafts for later review |
+| **Transaction Grouping** | Group transactions by date with daily income/expense totals |
+| **Scroll-to-Hide** | Header and BottomNav hide when scrolling down |
+| **useScrollDirection Hook** | Custom React hook for scroll detection |
+| **BottomNav Component** | Reusable navigation component |
 
 ---
 
