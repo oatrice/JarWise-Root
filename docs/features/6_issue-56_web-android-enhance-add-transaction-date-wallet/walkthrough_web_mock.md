@@ -24,5 +24,16 @@ Captured a screenshot of the new UI running locally:
 
 ![Add Transaction UI](/Users/oatrice/.gemini/antigravity/brain/aafbcd05-0278-4d4b-9b1f-227c537f05c4/add_transaction_v2_ui_1769767724879.png)
 
+## Bug Fixes (Post-Review)
+
+After Luma Code Review, the following issue was identified and fixed:
+
+### `walletId` Validation Gap
+- **Problem**: `validate()` function did not include `selectedWallet`, causing potential runtime crashes if wallet wasn't selected
+- **Fix**: Updated `validation.ts` to include `walletId` in `TransactionData` and added validation logic
+
+**Related Issue**: [#58 - Add Missing Test Coverage for saveTransaction](https://github.com/oatrice/JarWise-Root/issues/58)
+
 ## Next Steps
 - Proceed to Phase 2: Android Implementation (Native Date Picker & Wallet logic).
+
