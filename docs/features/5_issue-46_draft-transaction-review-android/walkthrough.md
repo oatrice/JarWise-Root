@@ -50,11 +50,30 @@ render_diffs(file:///Users/oatrice/Software-projects/JarWise/Android/app/src/mai
 ## 🔜 Next Steps (Phase 2 & 3)
 
 - **Phase 2**: ✅ Complete - Transaction Grouping + Daily Totals
-- **Phase 3**: Scroll-to-Hide + BottomNav
+- **Phase 3**: ✅ Complete - Scroll-to-Hide + BottomNav Refinements
 
 ---
 
-## 📱 Phase 2 Implementation Summary
+## 📱 Phase 3 Implementation Summary
+
+### Files Changed:
+- **[DashboardScreen.kt](file:///Users/oatrice/Software-projects/JarWise/Android/app/src/main/java/com/oatrice/jarwise/ui/DashboardScreen.kt)**: Integrated `DashboardTopBar` and `BottomNav` with scroll visibility.
+- **[TransactionHistoryScreen.kt](file:///Users/oatrice/Software-projects/JarWise/Android/app/src/main/java/com/oatrice/jarwise/ui/TransactionHistoryScreen.kt)**: Refactored layout for consistent BottomNav spacing.
+- **[MainActivity.kt](file:///Users/oatrice/Software-projects/JarWise/Android/app/src/main/java/com/oatrice/jarwise/MainActivity.kt)**: Centralized navigation logic.
+
+### New Components:
+- **[BottomNav.kt](file:///Users/oatrice/Software-projects/JarWise/Android/app/src/main/java/com/oatrice/jarwise/ui/components/BottomNav.kt)**: Glassmorphic navigation bar with animated visibility.
+- **[DashboardTopBar.kt](file:///Users/oatrice/Software-projects/JarWise/Android/app/src/main/java/com/oatrice/jarwise/ui/components/DashboardTopBar.kt)**: Floating header for Dashboard with scroll-to-hide support.
+- **[ScrollVisibilityState.kt](file:///Users/oatrice/Software-projects/JarWise/Android/app/src/main/java/com/oatrice/jarwise/ui/utils/ScrollVisibilityState.kt)**: Logic for detecting scroll direction and visibility state.
+
+### Key Refinements:
+- Implementation of immediate scroll-to-hide/show behavior (delta-based detection).
+- Fixed navigation wiring between Dashboard and Transaction History.
+- Added Previews for new UI components.
+
+---
+
+## 📱 Manual Verification Required
 
 ### Files Changed:
 - **[TransactionGroupingUtils.kt](file:///Users/oatrice/Software-projects/JarWise/Android/app/src/main/java/com/oatrice/jarwise/utils/TransactionGroupingUtils.kt)**: Grouping logic + DailyTransactionGroup
