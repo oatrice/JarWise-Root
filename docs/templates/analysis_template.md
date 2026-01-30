@@ -9,8 +9,9 @@
 | รายการ | รายละเอียด |
 |--------|-----------|
 | **Feature Name** | [ชื่อ Feature] |
+| **Issue URL** | [Link to GitHub Issue, e.g. [#123](https://github.com/owner/repo/issues/123)] |
 | **Date** | [วันที่วิเคราะห์] |
-| **Analyst** | [ชื่อผู้วิเคราะห์] |
+| **Analyst** | Luma AI (Senior Technical Analyst) |
 | **Priority** | 🔴 High / 🟡 Medium / 🟢 Low |
 | **Status** | 📝 Draft / ✅ Approved / 🚀 In Progress |
 
