@@ -141,7 +141,8 @@ function generateTypeScript(data) {
         name: '${jar.name}',
         current: ${jar.current},
         goal: ${jar.goal},
-        level: ${jar.level},
+        parentId: null,
+        level: 0, 
         color: '${jar.color}',
         bgGlow: '${bgGlow}',
         icon: ${jar.icon},
@@ -168,18 +169,22 @@ function generateTypeScript(data) {
 // Generated at: ${timestamp}
 import { ${imports}, type LucideIcon } from 'lucide-react';
 
-export type Jar = {
+export type Allocation = {
     id: string;
     name: string;
     current: number;
     goal: number;
     level: number;
+    parentId: string | null;
     color: string;
     bgGlow: string;
     icon: LucideIcon;
     barColor: string;
     shadowColor: string;
 }
+
+// Backward compatibility alias
+export type Jar = Allocation;
 
 export type Transaction = {
     id: string;
@@ -192,7 +197,7 @@ export type Transaction = {
     icon: LucideIcon;
 }
 
-export const jars: Jar[] = [
+export const jars: Allocation[] = [
 ${jarsArray}
 ];
 

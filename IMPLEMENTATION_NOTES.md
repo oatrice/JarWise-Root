@@ -45,3 +45,11 @@ building features for Flutter or iOS to ensure alignment.
 ## 🐛 Known Issues / Fixes
 
 * *(None yet - Reserved for future bug fix alignments)*
+## 🛠️ Build & Development Guidelines
+
+### Android Build Environment
+* **Issue**: Direct use of `./gradlew` may fail due to JDK version mismatches (e.g., Java 25 vs Android Gradle Plugin incompatibility).
+* **Policy**: ALWAYS use the provided helper scripts in `Android/scripts/` which configure the correct JDK (Java 21 from Android Studio).
+* **Commands**:
+  * Build: `./Android/scripts/build_android.sh :app:assembleDebug`
+  * Test: `./Android/scripts/run_tests.sh` (or `build_android.sh` with test tasks)
