@@ -10,10 +10,10 @@
 |--------|-----------|
 | **Feature Name** | Manage Jars (Edit %, Name, Icon, Color) |
 | **Issue URL** | [#17 - JarWise-Root](https://github.com/oatrice/JarWise-Root/issues/17) |
-| **Date** | 2026-01-30 |
+| **Date** | 2026-01-30 (Updated: 2026-01-31) |
 | **Analyst** | Luma AI (Senior Technical Analyst) |
 | **Priority** | 🔴 High |
-| **Status** | 📝 Draft |
+| **Status** | 🚀 In Progress (Web Mock UI ✅ Complete) |
 
 ---
 
