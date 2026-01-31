@@ -1,34 +1,45 @@
-# 🧪 Walkthrough (Android): Verification & Manual Testing
+# 🧪 Walkthrough (Android): Hierarchical Jars & UI Polish
 
 ## 🎯 Goal
-Verify that the `Allocation` schema update (v4 -> v5 migration) and Data Seeding are working correctly on Android.
+Implement and verify the Android UI for managing hierarchical Jars (Jars & Categories), utilizing the new `Allocation` schema and `AllocationDao`.
 
-## ✅ Verification Steps
+## 🛠️ Implementation Summary (Phase 5 & 5.5)
 
-### 1. Automated Tests (Status)
-- **DAO Test**: `AllocationDaoTest` ✅ PASSED.
-- **Migration Test**: `MigrationTest` ⚠️ Skipped (Environment limitation), reliant on Manual Verification.
+### 1. Data Layer (`AllocationDao`)
+- Integrated `AllocationDao` to replace legacy `JarConfigRepository`.
+- Implemented `getAllAllocations` with flow updates.
+- Ensured `CASCADE` delete logic works for hierarchical data (deleting parent removes children).
 
-### 2. Manual Verification (User Action Required)
-Since this requires an Android Device/Emulator, please follow these steps to verify the Schema Migration and Seed Data:
+### 2. ViewModel Logic (`ManageJarsViewModel`)
+- **Tree Flattening**: Implemented `flattenTree` (DFS traversal) to sort linear list into visual hierarchy (Parent -> Children).
+- **CRUD Operations**:
+    - **Add Jar**: Adds top-level jar.
+    - **Add Category**: Adds sub-category under a parent (Level 1).
+    - **Delete**: Support for deleting items via ID (triggers Cascade).
+- **State Management**: Added `jarToDelete` state for confirmation dialogs.
 
-1.  **Fresh Install (Recommended)**:
-    - Uninstall the existing app from your device/emulator to trigger a fresh database creation.
-    - Run the app from Android Studio (`Shift + F10`).
+### 3. UI Implementation (`ManageJarsScreen`)
+- **Hierarchy Visualization**:
+    - Implemented **Indentation** based on `level` (24dp per level).
+    - Added **Visual Connector Lines** (L-shape) to clearly show Parent-Child relationship.
+- **Interactions**:
+    - **Expandable Cards**: Click to edit details.
+    - **Add Category Button**: Added button in expanded Jar view (Level 0) to create sub-categories.
+    - **Delete Confirmation Dialog**: Added safety dialog warning about recursive deletion.
 
-2.  **Verify Database Schema**:
-    - Open **App Inspection** tab in Android Studio (bottom toolbar).
-    - Select your device and `com.oatrice.jarwise` process.
-    - Go to **Databases Inspector**.
-    - Verify that `allocations` table exists.
-    - Verify columns: `id`, `userId`, `name`, `parentId`, `level`, `targetPercent`, etc.
+## ✅ Verification Results
 
-3.  **Verify Seed Data**:
-    - Double-click the `allocations` table to view data.
-    - Confirm **2 rows** exist (migrated/seeded data):
-        - **Row 1**: Name="Necessities", Percent=55, Level=0
-        - **Row 2**: Name="Financial Freedom", Percent=10, Level=0
-    - Note: If migrated from v4, you might see existing data. If fresh install, you should see the 6 default jars if `SEED_CALLBACK` worked.
+### 1. Build Verification
+- **Status**: ✅ `assembleDebug` PASSED.
+- **Fixes**: Resolved Type Mismatch in `MainActivity` and `GeneratedMockData`.
 
-4.  **Verify DAO Logic (Optional)**:
-    - You can observe Logcat filters for `Room` or `SQLite` to see if queries are executing without error.
+### 2. Manual Verification (User Confirmed)
+- **Visual Hierarchy**: ✅ Confirmed Connector Lines and correct indentation.
+- **Interaction**: ✅ "Add Category" creates item correctly under parent.
+- **Deletion**: ✅ Recursive delete works (Parent deletion removes children) and UI updates instantly due to correct Tree Sorting.
+
+## 📸 Key Features
+*(No screenshots available in this report, verified manually on device)*
+
+## 📌 Next Steps
+- None. Feature Implementation Complete.
