@@ -19,7 +19,7 @@ This document serves as the **Single Source of Truth** for the implementation st
 | `CORE-01` | **6 Jars Summary** | ✅ Live | ⏳ Pending | 🖌️ Mock/UI | ⏳ Pending | Web is reference. Flutter repo is placeholder. |
 | `CORE-02` | **Transaction Feed** | ✅ Live | ⏳ Pending | 🖌️ Mock/UI | ⏳ Pending | Android uses GeneratedMockData. |
 | `CORE-03` | **Add Transaction** | ✅ Live (Basic) | ⏳ Pending | ✅ Live (Basic) | ⏳ Pending | Enhancing for DateTime & Wallet. |
-| `CORE-04` | **Manage Jars** | ⏳ Pending | ⏳ Pending | ⏳ Pending | ⏳ Pending | Edit percentages, rename jars. |
+| `CORE-04` | **Manage Jars** | 🖌️ Mock/UI | ⏳ Pending | ✅ Live | ⏳ Pending | Edit percentages, rename jars. |
 | `CORE-05` | **Transaction History** | ✅ Live | ⏳ Pending | 🖌️ Mock/UI | ⏳ Pending | Dedicated history page with grouping. |
 
 ## 🎨 Design System
