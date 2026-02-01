@@ -3,7 +3,8 @@
 **Feature:** Support Hierarchical Wallets (Sub-accounts)
 **Issue:** [#69](https://github.com/oatrice/JarWise-Root/issues/69)
 **Status:** In Progress
-**Parent Context:** This feature is a specific enhancement under [#67 Hierarchical Accounts](../spec.md).
+**Parent Context:** This feature is a specific enhancement under [#67 Hierarchical Accounts](../../8_issue-67_feature-hierarchical-accounts-categories-sub-wallet-sub-jar/spec.md).
+**Specification:** [spec.md](./spec.md)
 
 ---
 
@@ -30,7 +31,7 @@ Phase 1: Web Mock UI (Current Focus) ──→ Phase 2: Android Implementation �
 |-------|-----------|------|
 | **1 (Priority)** | **Web (Mock)** | **Validate UI/UX for sub-accounts with Visual Tree & Parent Selection.** |
 | 2 | Android | Implement logic in `ManageWalletsViewModel` and UI. |
-| 3 | Shared | Full database migration and integration with Issue #67. |
+| 3 | Shared | Full database migration and integration with Issue #67. See [Issue #70](https://github.com/oatrice/JarWise-Root/issues/70). |
 
 ---
 
