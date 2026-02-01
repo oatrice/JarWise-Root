@@ -74,12 +74,15 @@ function generateKotlin(data) {
 
     const timestamp = new Date().toISOString();
 
+    // Helper to ensure Kotlin Double format (e.g. 100.0)
+    const toDouble = (num) => Number.isInteger(num) ? `${num}.0` : num;
+
     const jars = data.jars.map(jar => `
         Jar(
             id = "${jar.id}",
             name = "${jar.name}",
-            current = ${jar.current},
-            goal = ${jar.goal}.0,
+            current = ${toDouble(jar.current)},
+            goal = ${toDouble(jar.goal)},
             level = ${jar.level},
             icon = Icons.Rounded.${iconMap[jar.icon] || jar.icon},
             color = ${colorMap[jar.color] || 'Blue400'},
@@ -91,7 +94,7 @@ function generateKotlin(data) {
         Transaction(
             id = "${t.id}",
             merchant = "${t.merchant}",
-            amount = ${t.amount},
+            amount = ${toDouble(t.amount)},
             category = "${t.category}",
             date = "${t.date}",
             icon = Icons.Rounded.${iconMap[t.icon] || t.icon},
@@ -141,7 +144,8 @@ function generateTypeScript(data) {
         name: '${jar.name}',
         current: ${jar.current},
         goal: ${jar.goal},
-        level: ${jar.level},
+        parentId: null,
+        level: 0, 
         color: '${jar.color}',
         bgGlow: '${bgGlow}',
         icon: ${jar.icon},
@@ -168,18 +172,22 @@ function generateTypeScript(data) {
 // Generated at: ${timestamp}
 import { ${imports}, type LucideIcon } from 'lucide-react';
 
-export type Jar = {
+export type Allocation = {
     id: string;
     name: string;
     current: number;
     goal: number;
     level: number;
+    parentId: string | null;
     color: string;
     bgGlow: string;
     icon: LucideIcon;
     barColor: string;
     shadowColor: string;
 }
+
+// Backward compatibility alias
+export type Jar = Allocation;
 
 export type Transaction = {
     id: string;
@@ -192,7 +200,7 @@ export type Transaction = {
     icon: LucideIcon;
 }
 
-export const jars: Jar[] = [
+export const jars: Allocation[] = [
 ${jarsArray}
 ];
 

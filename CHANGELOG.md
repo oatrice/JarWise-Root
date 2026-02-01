@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.5.0] - 2026-02-01
+
+### Added
+- **[Feature] Hierarchical Jars & Wallets:** Implemented support for nested "sub-jars" and "sub-wallets", allowing for more granular financial organization and tracking.
+- **[Web & Android]** Introduced a new UI for managing hierarchical structures, including creating, editing, and viewing nested jars and wallets.
+- **[Web & Android]** Enhanced the "Add Transaction" form to include date and wallet selection, providing more control over transaction details.
+- **[Android]** Implemented a draft transaction review screen, allowing users to verify details from imported slips before saving.
+- **[Docs]** Introduced comprehensive pre-coding guidelines, feature analysis templates, and a project glossary to improve development workflow.
+
+### Changed
+- **[Docs]** The project `ROADMAP.md` has been significantly updated with detailed feature statuses, dependencies, and a phased execution plan.
+
 ## [0.4.0] - 2026-01-18
 
 ### Added

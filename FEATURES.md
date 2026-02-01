@@ -16,10 +16,10 @@ This document serves as the **Single Source of Truth** for the implementation st
 
 | ID | Feature Name | 🌐 Web | 📱 Mobile (Flutter) | 🤖 Android (Native) | 🍎 iOS | Notes |
 | :--- | :--- | :---: | :---: | :---: | :---: | :--- |
-| `CORE-01` | **6 Jars Summary** | ✅ Live | ⏳ Pending | 🖌️ Mock/UI | ⏳ Pending | Web is reference. Flutter repo is placeholder. |
+| `CORE-01` | **6 Jars Summary** | ✅ Live | ⏳ Pending | ✅ Live | ⏳ Pending | Web is reference. Flutter repo is placeholder. |
 | `CORE-02` | **Transaction Feed** | ✅ Live | ⏳ Pending | 🖌️ Mock/UI | ⏳ Pending | Android uses GeneratedMockData. |
-| `CORE-03` | **Add Transaction** | ⏳ Pending | ⏳ Pending | ⏳ Pending | ⏳ Pending | |
-| `CORE-04` | **Manage Jars** | ⏳ Pending | ⏳ Pending | ⏳ Pending | ⏳ Pending | Edit percentages, rename jars. |
+| `CORE-03` | **Add Transaction** | ✅ Live (Basic) | ⏳ Pending | ✅ Live (Basic) | ⏳ Pending | Enhancing for DateTime & Wallet. |
+| `CORE-04` | **Manage Jars** | 🖌️ Mock/UI | ⏳ Pending | ✅ Live | ⏳ Pending | Hierarchical Jars & Custom Jars supported. |
 | `CORE-05` | **Transaction History** | ✅ Live | ⏳ Pending | 🖌️ Mock/UI | ⏳ Pending | Dedicated history page with grouping. |
 
 ## 🎨 Design System
@@ -54,7 +54,7 @@ This document serves as the **Single Source of Truth** for the implementation st
 | Platform | Status | Codebase | Notes |
 | :--- | :---: | :--- | :--- |
 | 🌐 **Web** | ✅ Active | React + Vite + TypeScript | Reference implementation |
-| 🤖 **Android** | ✅ Active | Jetpack Compose + Kotlin | Mock data, CI ready |
+| 🤖 **Android** | ✅ Active | Jetpack Compose + Kotlin | **Feature Parity with Web + Hierarchy** |
 | 📱 **Mobile (Flutter)** | ⏳ Placeholder | Dart + Flutter | Only README exists |
 | 🍎 **iOS** | ⏳ Placeholder | SwiftUI | Only README exists |
 
@@ -62,12 +62,12 @@ This document serves as the **Single Source of Truth** for the implementation st
 
 ## 🔄 Release Alignment
 
-**Current Target Milestone:** `v0.2.0 (Design System Alignment)`
+**Current Milestone:** `v1.5.0 (Hierarchical Wallets)`
 
-- **Goal**: Ensure Web and Android Native look identical using shared tokens.
-- **Status**: ✅ Achieved for Dashboard & Transaction Card UI.
+- **Goal**: Hierarchical Wallets & Jars.
+- **Status**: ✅ **Released (v1.5.0)**.
 
-**Next Milestone:** `v0.3.0 (Add Transaction Feature)`
+**Next Milestone:** `v0.5.0 (Sub-Transaction Feature)`
 
-- **Goal**: Implement transaction creation across Web and Android.
-- **Status**: ⏳ Planning
+- **Goal**: Enable recording sub-items within a single slip/transaction.
+- **Status**: 🚧 Planning
