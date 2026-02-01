@@ -59,3 +59,34 @@ data class Wallet(
     - Verify visual indentation of sub-wallets.
     - Test "Add Child" flow and "Parent Selection".
     - Verify Alerts for Max Depth & Circular Dependency.
+    - Test "Add Child" flow and "Parent Selection".
+    - Verify Alerts for Max Depth & Circular Dependency.
+
+## 💾 Phase 3: Database Integration (Persistence)
+**Goal:** Persist hierarchical wallet data using Room Database.
+
+### 1. Database Schema
+**File:** `app/src/main/java/com/oatrice/jarwise/model/Models.kt`
+- Annotate `Wallet` with `@Entity(tableName = "wallets")`.
+- `parentId` should be a nullable String.
+- `level` is persisted to avoid recalculation on load.
+
+### 2. Data Access Object (DAO)
+**File:** `app/src/main/java/com/oatrice/jarwise/data/dao/WalletDao.kt` (Create New)
+- `monitorWallets()`: Returns `Flow<List<Wallet>>`.
+- `insertWallet()`, `updateWallet()`, `deleteWallet()`.
+
+### 3. Repository Layer
+**File:** `app/src/main/java/com/oatrice/jarwise/data/repository/WalletRepository.kt` (Create New)
+- Abstraction layer to handle data operations.
+
+### 4. ViewModel Update
+**File:** `ManageWalletsViewModel.kt`
+- Inject `WalletRepository`.
+- Replace `_wallets` StateFlow based on MockData with `repository.wallets`.
+- Update methods to call suspend repository functions.
+
+### 5. Migration
+**File:** `AppDatabase.kt`
+- Increase Database Version (4 -> 5).
+- Provide Migration Strategy (MIGRATION_4_5) to create the `wallets` table.
