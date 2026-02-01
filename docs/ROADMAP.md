@@ -6,20 +6,18 @@ This document outlines the strategic direction and priority of features for JarW
 *Establishing the core data structures and UI patterns.*
 
 - **#69 Hierarchical Wallets** (Android & Web Mock)
-    - ✅ Android DB Integrated, Migration 4->5 Done.
-    - Status: **In Review** (PR Created)
+    - ✅ **Done** (v1.5.0) - Android Implementation Complete.
 - **#57 Custom Wallets & Jars**
-    - Enable user-defined Jars/Wallets (Foundation for Hierarchy).
-    - Status: **Next Up**
+    - ✅ **Done** (v1.2.0 - v1.3.0) - Foundation for Hierarchy.
 
 ## 🟡 Phase 2: Migration & Architecture
 *Transitioning data and improving codebase scalability.*
 
-- **Implement Koin (Dependency Injection)** 🆕
+- **#34 Implement Koin (Dependency Injection)** 🆕
     - **Goal:** Standardize DI across Android app to replace manual ViewModelFactories before logic gets complex.
     - **Status:** **Planned** (To be done before/during #67)
 - **#67 Hierarchy (Full Implementation)**
-    - Apply hierarchical logic to Jars (Categories) and complete Wallet hierarchy.
+    - ✅ **Done** (v1.4.0) - Hierarchical Jars implemented.
 - **#65 Legacy Data Migration**
     - Import/Migrate data from "Money Manager" or legacy formats to new schema.
 
