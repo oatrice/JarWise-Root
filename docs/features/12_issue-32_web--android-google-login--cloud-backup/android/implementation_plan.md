@@ -1,52 +1,60 @@
-# Android Implementation Plan: Google Login & Cloud Backup
+# Android Implementation Plan: Google Login & Cloud Backup (Issue 32)
 
-**Issue:** [#32](https://github.com/oatrice/JarWise/issues/32)  
-**Scope:** Full Implementation (Production-Ready)  
-**Status:** 📋 Pending (After Web Mock UI)
-
----
-
-## Overview
-This phase will implement the complete Google Sign-In and Google Drive backup functionality for Android.
-
-> [!IMPORTANT]
-> **Development Order:** This phase starts AFTER Web Mock UI is complete.
-> 
-> **Android Build Policy:** MUST use scripts in `Android/scripts/` (e.g., `build_android.sh`) instead of direct `./gradlew`.
+**Status:** ✅ Phase 1-3 Complete | 🚧 Phase 4 (Integration) Planned
+**Goal:** Implement Google Sign-In and Google Drive Cloud Backup for Android using TDD.
 
 ---
 
-## Proposed Changes
+## ✅ Phase 1: Dependencies & Configuration
+- [x] Add `play-services-auth` & `google-api-client-android` dependencies
+- [x] Add `INTERNET` permission
+- [x] Configure `google-services.json`
+- [x] Configure SHA-1 fingerprint for Firebase/Google Cloud Console
 
-### Phase 1: Authentication
-- [ ] Add Google Sign-In SDK to `build.gradle`
-- [ ] Create `AuthService.kt` for OAuth flow
-- [ ] Implement `LoginActivity.kt` with Google button
-- [ ] Store tokens in `EncryptedSharedPreferences`
+## ✅ Phase 2: Authentication (TDD)
+1. **AuthService Interface & Mock**
+   - [x] Define `AuthService` interface.
+   - [x] Create `MockAuthService` for unit testing.
+   - [x] **Test:** `AuthServiceTest` (Verified).
+2. **GoogleAuthService Implementation**
+   - [x] Implement `GoogleAuthService` using `play-services-auth`.
+   - [x] Koin Injection (`AuthModule`).
+   - [x] **Scopes:** `DRIVE_FILE` (for creating files), `DRIVE_APPDATA` (legacy/optional).
+3. **Login UI**
+   - [x] Create `LoginScreen` (Compose).
+   - [x] **Test:** `LoginViewModelTest` (Verified).
+   - [x] **Error Handling:** Enhanced user-friendly messages for Network Errors.
 
-### Phase 2: Synchronization
-- [ ] Create `GoogleDriveSyncService.kt`
-- [ ] Implement `getDataSnapshot()` in `AppDatabase`
-- [ ] Add auto-backup with 10s debounce
-- [ ] Handle offline mode with pending queue
+## ✅ Phase 3: Cloud Backup Logic (TDD)
+1. **GoogleDriveService**
+   - [x] Define `CloudStorageService` interface.
+   - [x] Implement `GoogleDriveService` (REST API).
+   - [x] **Feature:** Timestamped filenames (`jarwise_backup_yyyyMMdd_HHmmss.db`).
+   - [x] **Feature:** Organizational Folder (`JarWise backup`) auto-creation.
+2. **BackupManager**
+   - [x] Implement Debounced Auto-Backup (10s delay).
+   - [x] **Logging:** Added `AppLogger` for detailed "Start/End/File ID" logging.
+   - [x] **Test:** `BackupManagerTest` with CoroutineTestScope (Verified).
 
-### Phase 3: UI/UX
-- [ ] Add Profile section to Settings
-- [ ] Create `SyncStatusView` component
-- [ ] Implement Restore/Conflict dialogs
-- [ ] Add logout with data deletion option
+## 🚧 Phase 4: Integration & UI (Next Steps)
+1. **Settings Integration**
+   - [ ] Update `SettingsScreen` to show Profile and Sync Status.
+   - [ ] Implement "Back up now" button.
+   - [ ] Implement Logout with "Delete Local Data" dialog.
+2. **Restore Flow**
+   - [ ] Implement "Onboarding Restore" check on first run.
 
 ---
 
-## Verification Plan
-
-### Automated Tests
-- [ ] Unit tests for `AuthService`
-- [ ] Unit tests for `GoogleDriveSyncService`
-- [ ] Integration tests for backup/restore flow
+## 🧪 Verification Plan
+### Automated Tests (JUnit)
+- [x] `AuthServiceTest`: Verified session persistence.
+- [x] `BackupManagerTest`: Verified debounce logic & status updates.
+- [x] `LoginViewModelTest`: Verified UI state mapping.
 
 ### Manual Verification
-- [ ] Login with Google account works
-- [ ] Backup uploads to Google Drive
-- [ ] Restore works on fresh install
-- [ ] Offline changes sync when online
+- [x] Sign in with Real Google Account.
+- [x] Add data -> Wait 10s -> Verify Upload to Drive.
+- [x] Verify File exists in "JarWise backup" folder on Drive.
+- [x] Check Logcat for "End backup. File ID: xxx".
+- [ ] Clear App Data -> Open App -> Sign in -> "Restore?" (Pending Phase 4).
