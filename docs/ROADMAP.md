@@ -15,7 +15,7 @@ This document outlines the strategic direction and priority of features for JarW
 
 - **#34 Implement Koin (Dependency Injection)**
     - **Goal:** Standardize DI across Android app to replace manual ViewModelFactories.
-    - **Status:** 🟢 **Ready**
+    - ✅ **Done** (v1.6.0) - Android Implementation Complete.
 - **#67 Hierarchy (Full Implementation)**
     - ✅ **Done** (v1.4.0) - Hierarchical Jars implemented.
 - **#32 Google Login & Cloud Backup**
@@ -44,7 +44,7 @@ graph TD
     end
 
     subgraph Phase 2: Migration
-        KOIN[#34 Koin DI]
+        KOIN[✅ #34 Koin DI]
         I32[#32 Backup & Sync]
         I67[✅ #67 Hierarchy]
         I65[#65 Migration]
