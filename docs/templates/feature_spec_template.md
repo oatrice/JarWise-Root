@@ -25,6 +25,17 @@
 [สรุป Feature ว่าคืออะไร ทำไมต้องสร้าง และใครจากได้ประโยชน์]
 ```
 
+### Scope & Phasing
+
+> [!IMPORTANT]
+> **Platform Scope Policy:**
+> - **Android**: Full implementation with production-ready code and tests.
+> - **Web**: Mock UI only for this phase (visual design and user flow demonstration).
+>
+> **Development Order:** Web Mock UI FIRST → Android Full Implementation SECOND.
+
+*Adjust the above based on the specific feature requirements.*
+
 ---
 
 ## 2. Problem Statement
