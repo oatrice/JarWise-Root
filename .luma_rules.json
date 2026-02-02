@@ -1,0 +1,14 @@
+{
+    "rules": [
+        {
+            "trigger": "when running build or test commands for Android",
+            "action": "always use './Android/scripts/build_android.sh' instead of direct './gradlew'",
+            "reason": "ensures correct JAVA_HOME (JDK 21) from Android Studio is used"
+        },
+        {
+            "trigger": "when running tests",
+            "action": "use './Android/scripts/run_tests.sh'",
+            "reason": "ensures correct environment for Robolectric and Room schemas"
+        }
+    ]
+}
