@@ -39,22 +39,23 @@ We implemented a safe "Download -> Verify -> Swap" strategy:
 ## 4. Key Code Components
 
 ### `BackupManager.kt`
-Handles the orchestration of backups and the complex restore logic.
+Handles the orchestration of backups, complex restore logic, and **local data clearing**.
 ```kotlin
-// Simplified logic
-fun restoreBackup(fileId: String) {
-    downloadToTemp(fileId)
-    verifyTempFile()
-    swapDbFiles()
-    deleteWalAndShm() // Vital for consistency
+fun clearLocalData() {
+    // Deletes .db, -wal, and -shm files
 }
 ```
+
+### `SettingsScreen.kt`
+Now includes a comprehensive Logout Dialog:
+- **Checkbox:** "Also delete local data (start fresh)".
+- Triggers app restart if data is cleared to ensure a clean slate.
 
 ### `GoogleDriveService.kt`
 Handles low-level Drive API interactions, ensuring file streams are properly flushed and synced to disk.
 
 ### `SettingsViewModel.kt`
-Manages the UI state for "Restore Available" dialogs immediately after sign-in.
+Manages User Identity, Backup Status, and Restore Flow state.
 
 ## 5. Verification
 - **Unit Tests:** `BackupManagerTest` verifies the debounce logic and success/failure states.
@@ -63,7 +64,7 @@ Manages the UI state for "Restore Available" dialogs immediately after sign-in.
     - Verified Backup creation in Google Drive.
     - Verified Data Restore (Database correctly populated after app restart).
     - Verified IO Error fix (No more `SHORT_READ` errors).
+    - Verified "Delete Data on Logout" correctly wipes the database.
 
 ## Future Considerations
-- **Delete on Logout:** Currently, signing out keeps local data. Optional feature to clear DB on logout.
-- **Conflict Resolution:** More advanced logic if multiple devices edit simultaneously.
+- **Conflict Resolution:** Tracked in Issue #74 (Multi-device simultaneous edits).

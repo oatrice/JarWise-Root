@@ -24,7 +24,7 @@
 - [x] Update `SettingsScreen` (Profile, Sync Status)
 - [x] Implement Manual Backup Trigger ("Back up now")
 - [x] Implement Persistent Login
-- [ ] Implement Logout & Delete Data logic (Pending)
+- [x] Implement Logout with "Clear Data" option
 
 ### Phase 4: Restore Flow
 - [x] Check for backup on successful login
@@ -38,3 +38,6 @@
 - [x] Add "Sign In" button in Settings when logged out
 - [x] **Fix:** Direct Sign-In Dialog from Settings
 - [x] **Fix:** App Restart on Restore for Data Visibility
+
+## Future Tasks (Tracked)
+- [ ] **Conflict Resolution:** Advanced logic for multi-device edits (Issue #74 created).
