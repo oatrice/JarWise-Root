@@ -1,10 +1,10 @@
 # Implementation Plan: Migrate Data from Money Manager App (.mmbak)
 
 > **Refers to**: [Spec: Money Manager Data Migration](./spec.md)
-> **Status**: Draft
+> **Status**: Verified Plan
 
 ## 1. Architecture & Design
-The implementation will follow a client-server architecture. The Android client will provide the user interface for file selection and status display. The core processing logic—parsing, validation, and data insertion—will be handled by a new backend service. This approach offloads complex and potentially long-running tasks from the user's device, ensuring a responsive UI and robust processing.
+The implementation will follow a client-server architecture. The Android client will provide the user interface for file selection and status display. The core processing logic—parsing, validation, and data insertion—will be handled by a new **backend service written in Go**. This approach offloads complex and potentially long-running tasks from the user's device, ensuring a responsive UI and robust processing.
 
 The process will be exposed via a new REST API endpoint that accepts a multipart form data request containing both the `.mmbak` and `.xls` files.
 
@@ -14,19 +14,19 @@ The process will be exposed via a new REST API endpoint that accepts a multipart
 > - **Android**: Full implementation with production-ready code and tests.
 > - **Web**: Mock UI only for this phase.
 >
-> **Development Order:** Web Mock UI FIRST → Android Full Implementation SECOND.
+> **Development Order:** **Web Mock UI FIRST** → Android Full Implementation / Backend SECOND.
 
 - **Modified Components**:
     - `SettingsScreen` (Android/Web): A new navigation item "Data Migration" will be added.
-    - `Backend API Router`: A new route will be added to handle migration requests.
+    - `Backend API Router`: A new route group for migrations.
 
 - **New Components**:
-    - **Backend**:
-        - `MigrationController`: A new controller to handle the `/api/v1/migrations/money-manager` endpoint.
-        - `MoneyManagerMigrationService`: The main service orchestrating the entire migration flow.
-        - `MmbakParser`: A utility class to read the `.mmbak` (SQLite) file and extract data into DTOs.
-        - `XlsReportParser`: A utility class to parse the `.xls` (HTML) file and extract summary totals.
-        - `MigrationRepository`: A data access class responsible for inserting the mapped data into the JarWise database within a single transaction.
+    - **Backend (Go)**:
+        - `MigrationHandler`: A new HTTP handler (controller) to handle the `/api/v1/migrations/money-manager` endpoint.
+        - `MigrationService`: The main service orchestrating the entire migration flow.
+        - `MmbakParser`: A utility (struct/interface) to read the `.mmbak` (SQLite) file and extract data types.
+        - `XlsReportParser`: A utility to parse the `.xls` (HTML) file and extract summary totals.
+        - `MigrationRepo`: A repository interface responsible for inserting the mapped data into the JarWise database within a single transaction.
     - **Android**:
         - `MigrationUploadScreen.kt`: A new screen for uploading the two required files.
         - `MigrationStatusScreen.kt`: A screen to display the progress, validation result (preview/error), and final status.
@@ -36,100 +36,36 @@ The process will be exposed via a new REST API endpoint that accepts a multipart
         - `MigrationStatusScreen.js`: A mock UI screen for displaying status.
 
 - **Dependencies**:
-    - **Backend (Python)**:
-        - `sqlite3`: Standard library for reading the `.mmbak` database file.
-        - `beautifulsoup4`: For parsing the HTML content of the `.xls` report file.
-        - `python-multipart`: For handling file uploads in the web framework (e.g., FastAPI).
+    - **Backend (Go)**:
+        - `github.com/mattn/go-sqlite3`: Driver for reading the `.mmbak` SQLite database file.
+        - `golang.org/x/net/html` or similar: For parsing the HTML content of the `.xls` report file (or standard `encoding/xml` if applicable, but description says HTML).
+        - Standard `net/http` or `gin/echo`: For handling file uploads and routing.
 
 ### Data Model Changes
 No changes are required to the existing JarWise database schema (`wallets`, `jars`, `transactions`). This feature will only perform `INSERT` operations into these tables.
+
+### Deployment Strategy
+**Cloud Run (Google Cloud)** is the selected deployment target.
+- **Why**: Handles containerized Go binaries efficiently, scales to zero when not in use (cost-effective), and provides a robust environment for SQLite processing compared to Function-as-a-Service.
+- **Configuration**:
+    - Dockerfile optimized for Go (multi-stage build).
+    - Memory limit: 512MB - 1GB (to handle parsing of large DBs).
+    - Timeout: 300s (5 mins) to ensure large migrations complete.
 
 ---
 
 ## 2. Step-by-Step Implementation
 
-### Step 1: Backend - API Endpoint and Service Scaffolding
-- **Goal**: Create the basic structure for the migration feature on the backend.
-- **Code**:
-    - Create a new API endpoint `POST /api/v1/migrations/money-manager` that accepts two file uploads (`database_backup`, `exported_report`).
-    - Create the `MoneyManagerMigrationService` class with placeholder methods for `process_and_validate` and `commit_import`.
-    - The initial endpoint will simply accept the files and return a static JSON response, e.g., `{"status": "received"}`.
-- **Files**:
-    - `backend/app/api/v1/endpoints/migrations.py` (New)
-    - `backend/app/services/migration_service.py` (New)
-- **Verification**:
-    - Use `curl` or Postman to send a multipart/form-data request with two dummy files to the new endpoint.
-    - Verify that the server responds with a `200 OK` status and the expected JSON payload.
-
-### Step 2: Backend - `.mmbak` (SQLite) Parser
-- **Goal**: Implement the logic to read and extract data from the Money Manager database backup.
-- **Code**:
-    - Create an `MmbakParser` class.
-    - Implement a method that takes the path to the `.mmbak` file as input.
-    - Use the `sqlite3` library to connect to the file as a database.
-    - Execute SQL queries to select all records from the `account`, `category`, and `trans` tables.
-    - Map the raw SQL results into structured data transfer objects (DTOs) or simple dictionaries.
-    - The parser should also calculate the total income and total expense from the transaction data.
-- **Files**:
-    - `backend/app/services/parsers/mmbak_parser.py` (New)
-    - `backend/app/tests/parsers/test_mmbak_parser.py` (New)
-- **Verification**:
-    - Write a unit test that provides a sample `.mmbak` file (as specified in SBE).
-    - Assert that the parser correctly extracts the expected number of accounts, categories, and transactions.
-    - Assert that the calculated income and expense totals match the SBE scenario.
-
-### Step 3: Backend - `.xls` (HTML) Report Parser
-- **Goal**: Implement the logic to parse the validation report and extract summary totals.
-- **Code**:
-    - Create an `XlsReportParser` class.
-    - Implement a method that takes the path to the `.xls` file as input.
-    - Use the `BeautifulSoup` library to parse the file content as HTML.
-    - Implement logic to find the specific table cells or tags containing "Total Income" and "Total Expense" and extract their corresponding monetary values.
-    - Handle potential formatting issues like currency symbols or commas.
-- **Files**:
-    - `backend/app/services/parsers/xls_report_parser.py` (New)
-    - `backend/app/tests/parsers/test_xls_report_parser.py` (New)
-- **Verification**:
-    - Write a unit test that provides a sample `.xls` file (as specified in SBE).
-    - Assert that the parser correctly extracts the floating-point values for total income and total expense.
-
-### Step 4: Backend - Validation and Preview Logic
-- **Goal**: Integrate the parsers to perform cross-validation and generate a preview or error response.
-- **Code**:
-    - In `MoneyManagerMigrationService`, implement the `process_and_validate` method.
-    - This method will call both the `MmbakParser` and `XlsReportParser`.
-    - It will compare the calculated totals from the `.mmbak` data with the extracted totals from the `.xls` data.
-    - If they match, it will return a success response containing the preview data (counts of wallets, jars, transactions).
-    - If they don't match, it will return a detailed error response as specified in the SBE.
-- **Files**:
-    - `backend/app/services/migration_service.py` (Modify)
-    - `backend/app/tests/services/test_migration_service.py` (New)
-- **Verification**:
-    - Write integration tests for the service layer.
-    - Test the "happy path" with matching sample files and assert the correct preview data is returned.
-    - Test the "unhappy path" with mismatched sample files and assert the correct error structure and values are returned.
-
-### Step 5: Backend - Transactional Data Import
-- **Goal**: Implement the final, atomic database write operation.
-- **Code**:
-    - Create a `MigrationRepository` with a method like `save_money_manager_data`.
-    - This method must wrap all database `INSERT` statements within a single database transaction.
-    - In `MoneyManagerMigrationService`, create a `commit_import` method that takes the parsed data, maps it to the JarWise schema (`Account` -> `Wallet`, `Category` -> `Jar`, etc.), and calls the repository to save it.
-    - The API endpoint will be updated to have two stages: 1) Validate, 2) Commit. The client will call the commit stage after the user confirms the preview.
-- **Files**:
-    - `backend/app/data/repositories/migration_repository.py` (New)
-    - `backend/app/services/migration_service.py` (Modify)
-- **Verification**:
-    - Write an integration test that calls the full import process.
-    - After the call, query the database directly to verify that all wallets, jars, and transactions were created correctly.
-    - Add a test that simulates a database error midway through the import and verify that the transaction is rolled back (no partial data is left in the database).
-
-### Step 6: Web - Mock UI Implementation
-- **Goal**: Create the non-functional UI for the web platform as per the development policy.
+### Step 1: Web - Mock UI Implementation (PRIORITY)
+- **Goal**: Create the non-functional UI for the web platform first to visualize the flow, including success/failure states.
 - **Code**:
     - Create React components for `MigrationUploadScreen` and `MigrationStatusScreen`.
     - The upload screen will have two `<input type="file">` elements and a disabled "Import" button.
-    - The status screen will have static layouts for the preview, success, and error states.
+    - **Enhanced Status Screen**: Implement static states for:
+        - **Loading**: Spinner with "Parsing files..." text.
+        - **Preview**: Table showing "Found 3 Wallets, 12 Jars, 450 Transactions".
+        - **Success**: Green checkmark with "Import Complete" message.
+        - **Failure**: Red alert box with "Validation Failed: Income mismatch (DB: 500 vs Report: 550)".
     - Add navigation from `SettingsScreen` to the new `MigrationUploadScreen`.
 - **Files**:
     - `web/src/screens/MigrationUploadScreen.js` (New)
@@ -138,7 +74,78 @@ No changes are required to the existing JarWise database schema (`wallets`, `jar
 - **Verification**:
     - Manually navigate through the web application.
     - Confirm the "Data Migration" option appears in Settings.
-    - Confirm the upload and status screens are displayed correctly, though non-functional.
+    - Confirm the upload and status screens are displayed correctly.
+
+### Step 2: Backend - API Endpoint and Service Scaffolding (Go)
+- **Goal**: Create the basic structure for the migration feature on the backend in Go.
+- **Code**:
+    - Define a new struct `MigrationData` to hold the uploaded files' metadata/paths temporarily.
+    - Create a `MigrationHandler` with a method `HandleUpload` mapped to `POST /api/v1/migrations/money-manager`.
+    - Create the `MigrationService` interface and implementation.
+    - The initial handler should parse the multipart form, validate file presence, and return a JSON response `{"status": "received"}`.
+- **Files**:
+    - `backend/internal/api/handlers/migration_handler.go` (New)
+    - `backend/internal/service/migration_service.go` (New)
+    - `backend/cmd/server/routes.go` (Modify)
+- **Verification**:
+    - Use `curl` or Postman to send a multipart/form-data request with two dummy files.
+    - Verify `200 OK` and JSON response.
+
+### Step 3: Backend - `.mmbak` (SQLite) Parser (Go)
+- **Goal**: Implement the logic to read and extract data from the Money Manager database backup.
+- **Code**:
+    - Create an `MmbakParser` struct.
+    - Use `database/sql` with `github.com/mattn/go-sqlite3` to open the uploaded file as a readonly DB.
+    - Execute SQL queries to select from `account`, `category`, and `trans`.
+    - Map rows to struct definitions (`AccountDTO`, `CategoryDTO`, `TransactionDTO`).
+    - Calculate total income and expense in Go or via SQL aggregation.
+- **Files**:
+    - `backend/internal/parser/mmbak_parser.go` (New)
+    - `backend/internal/parser/mmbak_parser_test.go` (New)
+- **Verification**:
+    - Write a Go unit test with a sample `.mmbak` file.
+    - Assert correct counts and totals.
+
+### Step 4: Backend - `.xls` (HTML) Parser (Go)
+- **Goal**: Implement the logic to parse the validation report (HTML format) and extract summary totals.
+- **Code**:
+    - Create an `XlsReportParser` struct.
+    - Use `golang.org/x/net/html` (or `goquery`) to parse the file content.
+    - Implement logic to traverse the DOM, find specific table cells for "Total Income" and "Total Expense".
+    - specific string parsing helper to handle currency symbols and commas.
+- **Files**:
+    - `backend/internal/parser/xls_parser.go` (New)
+    - `backend/internal/parser/xls_parser_test.go` (New)
+- **Verification**:
+    - Write a Go unit test with a sample `.xls` file.
+    - Assert correct float extraction.
+
+### Step 5: Backend - Validation and Preview Logic
+- **Goal**: Integrate parsers to perform cross-validation.
+- **Code**:
+    - In `MigrationService.ProcessAndValidate`, call both parsers.
+    - Compare totals (using a small epsilon for float comparison if needed).
+    - Return `MigrationPreviewResponse` on success or `MigrationErrorResponse` on failure.
+- **Files**:
+    - `backend/internal/service/migration_service.go` (Modify)
+    - `backend/internal/service/migration_service_test.go` (New)
+- **Verification**:
+    - Integration tests for service layer (mocking parsers or using real files).
+
+### Step 6: Backend - Transactional Data Import
+- **Goal**: Implement final atomic database write.
+- **Code**:
+    - In `MigrationRepo`, implement `SaveMoneyManagerData(ctx, data)`.
+    - Use `tx, err := db.BeginTx(ctx, options)` to start a transaction.
+    - Iterate and validly insert Wallets, Jars, and Transactions.
+    - `tx.Commit()` on success, `tx.Rollback()` on error.
+    - Update controller to handle the "Commit" confirmation action if separated, or handle it in one go if designed that way (Plan implies 2 stages: Preview then Commit).
+- **Files**:
+    - `backend/internal/repository/migration_repo.go` (New)
+    - `backend/internal/service/migration_service.go` (Modify)
+- **Verification**:
+    - Integration test with a real test database (e.g. SQLite in memory or Docker Postgres).
+    - Verify Rollback on error.
 
 ### Step 7: Android - Full UI and ViewModel Implementation
 - **Goal**: Build the complete, functional user interface on Android.
@@ -169,6 +176,7 @@ No changes are required to the existing JarWise database schema (`wallets`, `jar
     - `Android/app/src/main/java/.../migration/MigrationViewModel.kt` (Modify)
 - **Verification**:
     - Perform a full manual end-to-end test as described in the Verification Plan below.
+    - Full manual pass (Happy Path & Unhappy Path).
 
 ---
 
@@ -176,7 +184,7 @@ No changes are required to the existing JarWise database schema (`wallets`, `jar
 *How will we verify success?*
 
 > [!IMPORTANT]
-> **Android Build Policy**: MUST use scripts in `Android/scripts/` (e.g., `build_android.sh`) instead of direct `./gradlew` to ensure correct JDK version (Java 21).
+> **Android Build Policy**: MUST use scripts in `Android/scripts/` (e.g., `build_android.sh`) to ensure correct JDK version (Java 21).
 
 ### Automated Tests
 - [X] **Backend Unit Tests**: `backend/app/tests/parsers/` covering both `mmbak_parser` and `xls_report_parser` with valid and malformed sample files.
@@ -208,3 +216,10 @@ No changes are required to the existing JarWise database schema (`wallets`, `jar
     - [ ] Navigate to `Settings > Data Migration`.
     - [ ] Attempt to upload a file with an incorrect extension (e.g., `.txt` or `.jpg`).
     - [ ] Verify the UI prevents selection or the backend returns a user-friendly "Invalid file format" error.
+
+---
+
+## 4. Future Work & Out of Scope
+- **User Override on Validation Error**: Allowing users to force import despite validation mismatches (Risk of data corruption).
+- **Import History**: Keeping a log of past imports.
+- **Undo Import**: One-click rollback after session is closed (Architecture handles rollback on error during import, but not after commit).
