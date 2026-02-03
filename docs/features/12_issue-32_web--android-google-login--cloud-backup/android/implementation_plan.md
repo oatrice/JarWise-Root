@@ -37,7 +37,14 @@
    - [x] **Manual Restore:** Added "Restore from Server" button.
    - [x] **Logout:** Added "Delete local data" option.
 
----
+39: 
+40: ## ✅ Phase 6: Bug Fixes & Stabilization
+41: - [x] **Manage Jars Immediate Save:**
+42:     - Refactored `ManageJarsViewModel` to use In-Memory editing (Draft State).
+43:     - Implemented `save()` for batch transactional updates.
+44:     - Fixed "Auto-Save" illusion by resetting state on navigation in `MainActivity`.
+45: 
+46: ---
 
 ## Verification Plan
 - [x] Build Success.

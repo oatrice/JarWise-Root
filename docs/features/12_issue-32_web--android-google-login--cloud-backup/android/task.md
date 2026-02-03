@@ -41,4 +41,11 @@
 - [x] **Fix:** App Restart on Restore for Data Visibility
 
 ## Future Tasks (Tracked)
+- [x] Bug Fix: `ManageJars` saves immediately on Add/Delete
+    - [x] Create reproduction test case (Red)
+    - [x] Refactor `addJar`/`addCategory` to use temporary IDs
+    - [x] Refactor `deleteJar` to use pending deletion list
+    - [x] Update `save()` to handle Batch operations
+    - [x] Verify fix (Green)
+    - [x] Fix: Reset `ManageJarsViewModel` on navigation to prevent state persistence ("Auto-Save")
 - [ ] **Conflict Resolution:** Advanced logic for multi-device edits (Issue #74 created).
