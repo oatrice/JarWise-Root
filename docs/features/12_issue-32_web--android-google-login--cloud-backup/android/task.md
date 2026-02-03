@@ -25,6 +25,7 @@
 - [x] Implement Manual Backup Trigger ("Back up now")
 - [x] Implement Persistent Login
 - [x] Implement Logout with "Clear Data" option
+- [x] Implement "Restore Data" button in Settings
 
 ### Phase 4: Restore Flow
 - [x] Check for backup on successful login

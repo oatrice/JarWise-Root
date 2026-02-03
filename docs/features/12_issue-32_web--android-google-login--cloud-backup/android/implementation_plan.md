@@ -34,6 +34,8 @@
    - [x] **Sign In:** Show "Sign In with Google" button when logged out.
    - [x] **Direct Dialog:** Triggers Google Sign-In intent directly within Settings.
    - [x] **Auto-Restore Check:** Checks for backup immediately after Settings Sign-In.
+   - [x] **Manual Restore:** Added "Restore from Server" button.
+   - [x] **Logout:** Added "Delete local data" option.
 
 ---
 

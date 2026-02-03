@@ -47,15 +47,15 @@ fun clearLocalData() {
 ```
 
 ### `SettingsScreen.kt`
-Now includes a comprehensive Logout Dialog:
-- **Checkbox:** "Also delete local data (start fresh)".
-- Triggers app restart if data is cleared to ensure a clean slate.
+- **Manual Restore Button:** Added "Restore from Server" to manually check for backups.
+- **Logout Dialog:** Includes "Also delete local data (start fresh)" checkbox.
+- **Restart Logic:** Ensures clean slate after restore or data clearing.
 
 ### `GoogleDriveService.kt`
 Handles low-level Drive API interactions, ensuring file streams are properly flushed and synced to disk.
 
 ### `SettingsViewModel.kt`
-Manages User Identity, Backup Status, and Restore Flow state.
+Manages User Identity, Backup Status, and Restore Flow state including "No Backup Found".
 
 ## 5. Verification
 - **Unit Tests:** `BackupManagerTest` verifies the debounce logic and success/failure states.
@@ -65,6 +65,7 @@ Manages User Identity, Backup Status, and Restore Flow state.
     - Verified Data Restore (Database correctly populated after app restart).
     - Verified IO Error fix (No more `SHORT_READ` errors).
     - Verified "Delete Data on Logout" correctly wipes the database.
+    - Verified "Restore from Server" button correctly finds (or reports missing) backups.
 
 ## Future Considerations
 - **Conflict Resolution:** Tracked in Issue #74 (Multi-device simultaneous edits).
