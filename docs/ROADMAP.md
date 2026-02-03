@@ -20,7 +20,7 @@ This document outlines the strategic direction and priority of features for JarW
     - ✅ **Done** (v1.4.0) - Hierarchical Jars implemented.
 - **#32 Google Login & Cloud Backup**
     - Enable cross-device sync (Android <-> Web) and data persistence.
-    - **Status:** 🟢 **Ready**
+    - ✅ **Done** (v1.7.0) - Implemented Google Login & Drive Backup.
 - **#65 Legacy Data Migration**
     - Import/Migrate data from "Money Manager" or legacy formats to new schema.
     - **Status:** 🟢 **Ready**
@@ -45,7 +45,7 @@ graph TD
 
     subgraph Phase 2: Migration
         KOIN[✅ #34 Koin DI]
-        I32[#32 Backup & Sync]
+        I32[✅ #32 Backup & Sync]
         I67[✅ #67 Hierarchy]
         I65[#65 Migration]
     end
