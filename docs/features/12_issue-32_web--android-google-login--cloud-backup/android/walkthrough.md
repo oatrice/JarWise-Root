@@ -1,51 +1,69 @@
-# Walkthrough: Android Google Login & Cloud Backup
+# Walkthrough - Android Google Login & Cloud Backup
 
-## Summary
-Implemented Google Sign-In, Cloud Backup, and **Restore Flow** on Android using Drive API v3.
+This walkthrough documents the implementation of Google Authentication and Cloud Backup features for JarWise Android, including the robust restore flow.
 
----
+## 1. Google Authentication
+We implemented a clean, secure authentication flow using **Google Sign-In**.
 
-## Features Implemented
-
-### 1. Google Authentication
-- **Secure Sign-In:** Uses `play-services-auth` for robust OAuth 2.0.
+### Features
+- **Login Screen:** Dedicated screen with "Sign In with Google" and "Continue as Guest" options.
 - **Persistent Session:** App remembers login state across restarts.
-- **Privacy:** Requests minimal `DRIVE_FILE` scope.
+- **Profile Integration:** Displays User Name, Email, and Photo in Settings.
+- **Direct Settings Login:** Users can sign in directly from the Settings menu if they initially skipped it.
 
-### 2. Cloud Backup
-- **Automated Sync:** Changes triggers auto-backup (10s debounce).
+## 2. Cloud Backup (Google Drive)
+We integrated **Google Drive API** to safely backup the user's financial data.
+
+### Features
+- **Auto-Backup:** (Debounced) automatically backs up data 10 seconds after changes.
 - **Manual Trigger:** "Back up now" button in Settings.
-- **Smart Pause:** Auto-backup is paused while editing to prevent conflicts.
-- **Organization:** Creates `JarWise backup` folder on Drive.
+- **Smart Sync Status:** UI shows "Syncing...", "Up to date", or "Last synced: [Date]".
 
-### 3. Restore Flow (New)
-- **Detection:** On Login, app automatically checks for existing backups in Drive.
-- **Prompt:** User is asked to "Restore" or "Start Fresh".
-- **Recovery:** Downloads latest backup and restores database seamlessly.
+## 3. Restore Flow (Robust Implementation)
+The restore mechanism was the most technically challenging part. We ensured data consistency and safety.
 
-### 4. Settings Integration
-- **Profile:** Displays User Name & Photo.
-- **Sync Status:** Real-time feedback.
+### The Problem
+Simply overwriting the SQLite `.db` file while the app (Room) has it open causes:
+1. **File Locks:** preventing overwrite.
+2. **Data Corruption:** `SQLITE_IOERR_SHORT_READ`.
+3. **Stale Data:** Room reading old `-wal` (Write-Ahead Log) files instead of the new content.
 
----
+### The Solution (Atomic Swap)
+We implemented a safe "Download -> Verify -> Swap" strategy:
+1. **Download to Temp:** Backup is downloaded to a temporary file (`.restore_temp`) first.
+2. **Safe Inspection:** We inspect this temp file to log debug info (Transaction counts) *before* touching the main DB.
+3. **Atomic Swap:** We delete the old DB and rename the temp file to replace it.
+4. **Cleanup:** **Crucial Step** - We explicitly delete old `-wal` and `-shm` files to force SQLite to read the fresh DB.
+5. **App Restart:** The app automatically restarts to re-initialize the Room database connection with the new file.
 
-## Technical Details
+## 4. Key Code Components
 
-### Architecture
-- **AuthService:** Abstracts Google Sign-In mechanics.
-- **CloudStorageService:** Abstracts Drive API calls (`list`, `create`, `get`).
-- **BackupManager:** Singleton governing backup orchestrations.
-- **LoginViewModel:** Handles Auth + Restore Logic coordination.
-
-### Restore Logic
+### `BackupManager.kt`
+Handles the orchestration of backups and the complex restore logic.
 ```kotlin
-// LoginViewModel.kt
-fun checkForBackup(user) {
-    val backups = backupManager.checkForBackup().getOrNull()
-    if (backups.isNotEmpty()) {
-        _uiState = RestoreAvailable(user, backups.latest)
-    } else {
-        _uiState = Success(user)
-    }
+// Simplified logic
+fun restoreBackup(fileId: String) {
+    downloadToTemp(fileId)
+    verifyTempFile()
+    swapDbFiles()
+    deleteWalAndShm() // Vital for consistency
 }
 ```
+
+### `GoogleDriveService.kt`
+Handles low-level Drive API interactions, ensuring file streams are properly flushed and synced to disk.
+
+### `SettingsViewModel.kt`
+Manages the UI state for "Restore Available" dialogs immediately after sign-in.
+
+## 5. Verification
+- **Unit Tests:** `BackupManagerTest` verifies the debounce logic and success/failure states.
+- **Manual Verification:**
+    - Verified Google Sign-In prompts.
+    - Verified Backup creation in Google Drive.
+    - Verified Data Restore (Database correctly populated after app restart).
+    - Verified IO Error fix (No more `SHORT_READ` errors).
+
+## Future Considerations
+- **Delete on Logout:** Currently, signing out keeps local data. Optional feature to clear DB on logout.
+- **Conflict Resolution:** More advanced logic if multiple devices edit simultaneously.

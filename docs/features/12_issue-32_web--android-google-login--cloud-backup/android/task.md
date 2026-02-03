@@ -30,3 +30,11 @@
 - [x] Check for backup on successful login
 - [x] UI: Download/Restore prompt
 - [x] Implement DB replacement logic
+- [x] **Fix:** Prevent IO Errors (Short Read) using Temp File Swap & WAL Cleanup
+
+### Phase 5: UI Refinements
+- [x] Implement "Continue as Guest"
+- [x] Add Loading indicator for Google Sign In launch
+- [x] Add "Sign In" button in Settings when logged out
+- [x] **Fix:** Direct Sign-In Dialog from Settings
+- [x] **Fix:** App Restart on Restore for Data Visibility
