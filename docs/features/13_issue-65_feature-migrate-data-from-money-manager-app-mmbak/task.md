@@ -16,3 +16,13 @@
    - [x] Compare Total Amounts (Income/Expense)
    - [x] Generate Diff Report
 - [x] Step 6: Implement Transactional Data Import (Mock persistence implemented) <!-- id: 10 -->
+
+## Android Implementation
+- [x] Step 7: Android UI & ViewModel <!-- id: 11 -->
+    - [x] MigrationViewModel with File Logging
+    - [x] MigrationScreen (File Pickers, Status UI)
+- [x] Step 8: Android Integration <!-- id: 12 -->
+    - [x] NetworkModule (Retrofit, OkHttp)
+    - [x] MigrationRepository (Multipart Upload)
+    - [x] End-to-End Verification (Localhost)
+- [x] Refactor: Security & Performance Improvements <!-- id: 13 -->

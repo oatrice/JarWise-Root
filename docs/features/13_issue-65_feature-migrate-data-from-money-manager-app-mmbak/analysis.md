@@ -253,7 +253,27 @@ All API endpoints related to the import feature (`/import/start`, `/import/statu
 - [Link to Design Docs]
 - [Link to API Specs]
 
-### Sign-off
+
+### 9.4 Implementation Strategy (Updated 2026-02-04)
+
+> **IMPORTANT: Platform Logic Separation**
+
+Based on technical decisions during development, the implementation scope is defined as:
+
+1.  **Web Frontend:**
+    - **Scope:** **UI Mock / Prototype Only.**
+    - **Purpose:** To visualize the User Experience (UX), flow, and design of the migration process.
+    - **Functionality:** No API integration required. Does not need to handle actual file uploads or processing.
+
+2.  **Android Mobile:**
+    - **Scope:** **Full Implementation.**
+    - **Purpose:** The primary platform for the migration feature.
+    - **Functionality:** Must fully integrate with the Backend API (`POST /migrations/money-manager`). Handles real file picker, file upload, status polling (if applicable), error handling, and completion flow.
+
+3.  **Backend (Go):**
+    - **Scope:** **Full Implementation (Completed).**
+    - **Status:** Scaffolding, Parsers (SQLite & XLS), Validator, and Mock Importer logic are done.
+    - **API:** Ready at `http://localhost:8080/api/v1/migrations/money-manager`.
 
 | Role | Name | Date | Signature |
 |------|------|------|-----------|
