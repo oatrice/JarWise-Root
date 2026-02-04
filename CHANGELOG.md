@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.6.0] - 2026-02-04
+
+### Added
+- **[Feature] Data Migration from Money Manager:** Implemented a comprehensive tool to import complete financial history from the "Money Manager" app using `.mmbak` backup files.
+- **[Android]** Added a new UI flow for users to select and upload their `.mmbak` file to start the migration process.
+- **[Backend]** Developed a new service in Go to parse `.mmbak` files, mapping and importing all accounts, categories, and transactions into the user's JarWise profile.
+
 ## [0.5.0] - 2026-02-01
 
 ### Added
