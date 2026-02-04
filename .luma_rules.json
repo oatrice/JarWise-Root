@@ -9,6 +9,16 @@
             "trigger": "when running tests",
             "action": "use './Android/scripts/run_tests.sh'",
             "reason": "ensures correct environment for Robolectric and Room schemas"
+        },
+        {
+            "trigger": "when working on Web Frontend",
+            "action": "implement as UI Mock / Prototype only. Do NOT integrate real API endpoints unless explicitly requested.",
+            "reason": "Web is currently for UX visualization only."
+        },
+        {
+            "trigger": "when working on Android Mobile",
+            "action": "implement full functionality with real API integrations.",
+            "reason": "Android is the primary platform for production features."
         }
     ]
 }
