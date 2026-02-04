@@ -220,6 +220,64 @@ As a user, I want to link two transactions together to represent a single financ
 (truncated if too long)
 
 
+## Reference: analysis.md
+# Analysis Template
+
+> 📋 Template สำหรับการวิเคราะห์ก่อนเริ่มพัฒนา Feature
+
+---
+
+## 📌 Feature Information
+
+| รายการ | รายละเอียด |
+|--------|-----------|
+| **Feature Name** | Transaction Linking & Transfers |
+| **Issue URL** | [#71](https://github.com/owner/repo/issues/71) |
+| **Priority** | 🔴 High |
+| **Status** | 📝 Draft |
+
+### User Stories
+
+| # | As a | I want to | So that |
+|---|------|-----------|---------|
+| 1 | User | link an expense from one account to an income in another account | I can accurately represent a transfer of my own funds. |
+| 2 | User | have a simple "Create Transfer" option | I can quickly record transfers without manually creating two separate transactions. |
+| 3 | User | see that two transactions are linked when viewing their details | I can easily navigate between the two sides of a transfer and understand the flow of money. |
+| 4 | User | have transfers excluded from my main income and expense reports | my financial summaries reflect actual gains and losses, not internal fund movements. |
+
+### Acceptance Criteria
+
+- [ ] **AC1:** The `Transaction` data model is updated with a new nullable field, `relatedTransactionId`.
+- [ ] **AC2:** A new "Transfer" option in the UI allows a user to specify a "From" account, a "To" account, and an amount.
+- [ ] **AC3:** Submitting a transfer creates two `Transaction` records: one negative (expense) from the "From" account and one positive (income) to the "To" account, with the same absolute amount.
+- [ ] **AC4:** The two created transactions are linked via their `relatedTransactionId` fields, pointing to each other. This creation process must be atomic.
+- [ ] **AC5:** On the Transaction Detail screen, a linked transaction displays a clickable link to its counterpart.
+- [ ] **AC6:** Deleting one transaction in a linked pair automatically unlinks the other (its `relatedTransactionId` is set to null), but does not delete it.
+- [ ] **AC7:** Reporting features (e.g., Income vs Expense chart) provide an option to include or exclude transactions identified as transfers.
+
+### Screen/Page Requirements
+
+| หน้าจอ | Actions | Components |
+|--------|---------|------------|
+| **Add/Edit Transaction Screen** | - Select transaction type (Income, Expense, Transfer)<br>- Create a transfer by selecting from/to accounts<br>- Edit details of a transaction | - Tabs: `Expense`, `Income`, `Transfer`<br>- Dropdowns: `From Account`, `To Account`<br>- Inputs: `Amount`, `Date`, `Notes`<br>- Button: `Save Transaction` |
+| **Transaction Detail Screen** | - View all transaction details<br>- Navigate to the linked transaction if one exists | - Standard detail fields (Amount, Account, Date, etc.)<br>- New Section: `Linked Transaction`<br>- Hyperlink: `View linked expense/income from [Account Name]` |
+
+### Impact Analysis
+
+| Component | Impact Level | Description |
+|-----------|--------------|-------------|
+| **Frontend (Add Transaction Page)** | 🔴 High | Significant UI changes are needed to introduce the "Transfer" flow. |
+| **Frontend (Reporting Module)** | 🟡 Medium | Reporting logic must be updated to correctly filter and aggregate data, with the ability to exclude transfers. |
+| **Frontend (Transaction Detail Page)** | 🟡 Medium | UI needs to be updated to display the link to the related transaction. |
+
+### Risk Analysis
+
+| Risk | Probability | Impact | Mitigation Plan |
+|------|-------------|--------|-----------------|
+| **Confusing User Experience** | 🟡 Medium | 🟡 Medium | Create clear UI mockups and conduct a design review before implementation. Use clear labels like "From" and "To". |
+| **Incorrect Reporting** | 🟡 Medium | 🟡 Medium | Implement specific unit and integration tests for the reporting module to verify the filtering logic for transfers. |
+
+
 ## Default Guidance (Use only if not specified in Plans)
 - Tech Stack: React/Vue/Web technologies. Focus on UI implementation.
 - Follow Clean Architecture
