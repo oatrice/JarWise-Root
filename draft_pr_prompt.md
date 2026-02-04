@@ -2,156 +2,164 @@
 
 You are an AI assistant helping to create a Pull Request description.
     
-TASK: [Web | Android] Google Login & Cloud Backup
+TASK: [Feature] Migrate Data from Money Manager App (.mmbak)
 ISSUE: {
-  "title": "[Web | Android] Google Login & Cloud Backup",
-  "number": 32
+  "title": "[Feature] Migrate Data from Money Manager App (.mmbak)",
+  "number": 65
 }
 
 GIT CONTEXT:
 COMMITS:
-6aabc5a 🐛 fix(managejars): resolve immediate save and state persistence issues
-1189a2a ✨ feat(settings): add manual restore and logout options
-d6fd9fd 🔧 feat(backup): implement logout with data clearing option
-65584de ✨ feat(backup): complete android cloud backup implementation
-2e5c65c ✨ feat(cloud): Complete Android Google login and cloud backup with restore flow
-2490e0e ✨ feat(auth): implement google login and cloud backup for android
-50b7e85 ✨ feat(di): implement Koin DI integration
-90c9f34 ✅ docs(roadmap): updates Koin DI implementation status
+a73463d ✨ feat(migration): Add Money Manager data migration feature
+2e0eddd ✨ feat(android): implement full migration feature for Money Manager data
+48df385 ✨ feat(migration): implement data migration UI and backend scaffolding
+c21c310 ✨ feat(migration): complete backend implementation in Go and update plan
+854a7aa ✨ feat(migration): add data migration analysis and implementation plan
 
 STATS:
-docs/ROADMAP.md                                    |   4 +-
- .../implementation_plan.md                         |  77 ++++++
- .../analysis.md                                    | 287 +++++++++++++++++++++
- .../android/implementation_plan.md                 |  51 ++++
- .../android/task.md                                |  51 ++++
- .../android/walkthrough.md                         |  71 +++++
- .../assets/dashboard_after_login_1770020338527.png | Bin 0 -> 105231 bytes
- .../assets/dashboard_main_1770018092550.png        | Bin 0 -> 324246 bytes
- .../google_login_mockui_demo_1770018076689.webp    | Bin 0 -> 8564762 bytes
- .../assets/login_screen_capture_1770020324133.webp | Bin 0 -> 328246 bytes
- .../assets/logout_modal_1770019117061.png          | Bin 0 -> 77231 bytes
- .../assets/settings_page_1770019107278.png         | Bin 0 -> 59156 bytes
- .../plan.md                                        | 101 ++++++++
- .../spec.md                                        | 131 ++++++++++
- .../task_tracking.md                               |  48 ++++
- .../walkthrough.md                                 |  65 +++++
- docs/templates/feature_spec_template.md            |  11 +
- docs/templates/plan_template.md                    |  54 ++++
- 18 files changed, 949 insertions(+), 2 deletions(-)
+.gitignore                                         |   1 +
+ .luma_rules.json                                   |  10 +
+ CHANGELOG.md                                       |   7 +
+ README.md                                          |  10 +
+ VERSION                                            |   2 +-
+ .../analysis.md                                    | 282 +++++++++++++++++++++
+ .../plan.md                                        | 225 ++++++++++++++++
+ .../plan_android.md                                |  48 ++++
+ .../spec.md                                        | 179 +++++++++++++
+ .../task.md                                        |  28 ++
+ .../walkthrough_android.md                         |  48 ++++
+ .../walkthrough_backend.md                         |  49 ++++
+ .../walkthrough_web.md                             |  27 ++
+ 13 files changed, 915 insertions(+), 1 deletion(-)
 
 KEY FILE DIFFS:
-diff --git a/docs/ROADMAP.md b/docs/ROADMAP.md
-index 6ea1fea..1b276b9 100644
---- a/docs/ROADMAP.md
-+++ b/docs/ROADMAP.md
-@@ -15,7 +15,7 @@ This document outlines the strategic direction and priority of features for JarW
+diff --git a/.gitignore b/.gitignore
+index 1587b73..639ff07 100644
+--- a/.gitignore
++++ b/.gitignore
+@@ -4,6 +4,7 @@ Mobile/
+ Flutter/
+ /Android/
+ iOS/
++Backend/
  
- - **#34 Implement Koin (Dependency Injection)**
-     - **Goal:** Standardize DI across Android app to replace manual ViewModelFactories.
--    - **Status:** 🟢 **Ready**
-+    - ✅ **Done** (v1.6.0) - Android Implementation Complete.
- - **#67 Hierarchy (Full Implementation)**
-     - ✅ **Done** (v1.4.0) - Hierarchical Jars implemented.
- - **#32 Google Login & Cloud Backup**
-@@ -44,7 +44,7 @@ graph TD
-     end
+ # System Files
+ .DS_Store
+diff --git a/.luma_rules.json b/.luma_rules.json
+index 911e230..0eb7ed6 100644
+--- a/.luma_rules.json
++++ b/.luma_rules.json
+@@ -9,6 +9,16 @@
+             "trigger": "when running tests",
+             "action": "use './Android/scripts/run_tests.sh'",
+             "reason": "ensures correct environment for Robolectric and Room schemas"
++        },
++        {
++            "trigger": "when working on Web Frontend",
++            "action": "implement as UI Mock / Prototype only. Do NOT integrate real API endpoints unless explicitly requested.",
++            "reason": "Web is currently for UX visualization only."
++        },
++        {
++            "trigger": "when working on Android Mobile",
++            "action": "implement full functionality with real API integrations.",
++            "reason": "Android is the primary platform for production features."
+         }
+     ]
+ }
+\ No newline at end of file
+diff --git a/CHANGELOG.md b/CHANGELOG.md
+index 2d35cd7..382df7c 100644
+--- a/CHANGELOG.md
++++ b/CHANGELOG.md
+@@ -1,5 +1,12 @@
+ # Changelog
  
-     subgraph Phase 2: Migration
--        KOIN[#34 Koin DI]
-+        KOIN[✅ #34 Koin DI]
-         I32[#32 Backup & Sync]
-         I67[✅ #67 Hierarchy]
-         I65[#65 Migration]
-diff --git a/docs/features/11_issue-34_android-implement-koin-lib/implementation_plan.md b/docs/features/11_issue-34_android-implement-koin-lib/implementation_plan.md
++## [0.6.0] - 2026-02-04
++
++### Added
++- **[Feature] Data Migration from Money Manager:** Implemented a comprehensive tool to import complete financial history from the "Money Manager" app using `.mmbak` backup files.
++- **[Android]** Added a new UI flow for users to select and upload their `.mmbak` file to start the migration process.
++- **[Backend]** Developed a new service in Go to parse `.mmbak` files, mapping and importing all accounts, categories, and transactions into the user's JarWise profile.
++
+ ## [0.5.0] - 2026-02-01
+ 
+ ### Added
+diff --git a/README.md b/README.md
+index 291d371..3a5a5f3 100644
+--- a/README.md
++++ b/README.md
+@@ -4,6 +4,7 @@ Welcome to the **JarWise** project landing page!
+ ![Version](https://img.shields.io/badge/version-0.0.1-blue.svg)
+ 
+ 
++
+ JarWise is a comprehensive personal finance management system based on the **6
+ Jars money management method** by T. Harv Eker. It is built as a multi-platform
+ solution with distinct specialized squads.
+@@ -18,12 +19,15 @@ solution with distinct specialized squads.
+   
+ ![React](https://img.shields.io/badge/React-19.2.0-20232a?style=for-the-badge&logo=react&logoColor=%2361DAFB)
+ 
++
+   
+ ![Vite](https://img.shields.io/badge/Vite-7.2.4-646CFF?style=for-the-badge&logo=vite&logoColor=white)
+ 
++
+   
+ ![TailwindCSS](https://img.shields.io/badge/Tailwind_CSS-4.1.18-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)
+ 
++
+ * **Key Responsibilities**:
+   * Developing the Core Design System (Neon Theme).
+   * Prototyping new features and logic.
+@@ -37,6 +41,7 @@ solution with distinct specialized squads.
+   
+ ![Flutter](https://img.shields.io/badge/Flutter-%2302569B.svg?style=for-the-badge&logo=Flutter&logoColor=white)
+ 
++
+ * **Key Responsibilities**:
+   * Delivering the iOS & Android application.
+   * Implementing features defined by the Web squad.
+@@ -49,11 +54,14 @@ solution with distinct specialized squads.
+   
+ ![Kotlin](https://img.shields.io/badge/Kotlin-1.9.24-7F52FF?style=for-the-badge&logo=kotlin&logoColor=white)
+ 
++
+   
+ ![Jetpack Compose](https://img.shields.io/badge/Compose_BOM-2024.02.01-4285F4?style=for-the-badge&logo=android&logoColor=white)
+ 
++
+ * **Key Responsibilities**:
+   * SMS reading automation.
++  * Data migration from Money Manager app.
+   * Native OS widgets and background services.
+   * Specific Android platform optimizations.
+ 
+@@ -65,9 +73,11 @@ solution with distinct specialized squads.
+   
+ ![Swift](https://img.shields.io/badge/swift-F54A2A?style=for-the-badge&logo=swift&logoColor=white)
+ 
++
+   
+ ![SwiftUI](https://img.shields.io/badge/SwiftUI-007AFF?style=for-the-badge&logo=swift&logoColor=white)
+ 
++
+ * **Key Responsibilities**:
+   * Siri Shortcuts.
+   * iOS Widgets & App Clips.
+diff --git a/VERSION b/VERSION
+index 8f0916f..a918a2a 100644
+--- a/VERSION
++++ b/VERSION
+@@ -1 +1 @@
+-0.5.0
++0.6.0
+diff --git a/docs/features/13_issue-65_feature-migrate-data-from-money-manager-app-mmbak/analysis.md b/docs/features/13_issue-65_feature-migrate-data-from-money-manager-app-mmbak/analysis.md
 new file mode 100644
-index 0000000..19c877e
+index 0000000..e48435a
 --- /dev/null
-+++ b/docs/features/11_issue-34_android-implement-koin-lib/implementation_plan.md
-@@ -0,0 +1,77 @@
-+# Implementation Plan - Integrating Koin Dependency Injection (Issue #34)
-+
-+This plan outlines the steps to integrate the Koin dependency injection framework into the JarWise Android application. The goal is to replace manual dependency instantiation with a robust, testable, and maintainable DI system.
-+
-+## User Review Required
-+
-+> [!IMPORTANT]
-+> This is a significant architectural change that touches the core of the application (Repositories, ViewModels, and App Initialization).
-+> - **Breaking Change**: The way `ViewModel`s are instantiated will change across the app.
-+> - **New Application Class**: A new `JarWiseApplication` class will be introduced and set in `AndroidManifest.xml`.
-+
-+## Proposed Changes
-+
-+### Build Configuration
-+
-+#### [MODIFY] [build.gradle.kts](file:///Users/oatrice/Software-projects/JarWise/Android/app/build.gradle.kts)
-+- Add `koin-android` and `koin-androidx-compose` dependencies.
-+
-+### Application Initialization
-+
-+#### [NEW] [JarWiseApplication.kt](file:///Users/oatrice/Software-projects/JarWise/Android/app/src/main/java/com/oatrice/jarwise/JarWiseApplication.kt)
-+- Create a new class extending `Application`.
-+- Initialize Koin in `onCreate()` using `startKoin`.
-+- Load modules: `appModule`, `dataModule`, `repositoryModule`, `viewModelModule`.
-+
-+#### [MODIFY] [AndroidManifest.xml](file:///Users/oatrice/Software-projects/JarWise/Android/app/src/main/AndroidManifest.xml)
-+- Update `<application>` tag to point to `.JarWiseApplication`.
-+
-+### Dependency Injection Modules (New Package: `di`)
-+
-+#### [NEW] [AppModule.kt](file:///Users/oatrice/Software-projects/JarWise/Android/app/src/main/java/com/oatrice/jarwise/di/AppModule.kt)
-+- Define general app-wide dependencies (if any).
-+
-+#### [NEW] [DataModule.kt](file:///Users/oatrice/Software-projects/JarWise/Android/app/src/main/java/com/oatrice/jarwise/di/DataModule.kt)
-+- Provide `AppDatabase` singleton.
-+- Provide DAOs: `TransactionDao`, `AllocationDao`, `JarConfigDao`, `WalletDao`.
-+
-+#### [NEW] [RepositoryModule.kt](file:///Users/oatrice/Software-projects/JarWise/Android/app/src/main/java/com/oatrice/jarwise/di/RepositoryModule.kt)
-+- Define `single` definitions for all Repositories, injecting their dependencies (DAOs, Context, etc.).
-+
-+#### [NEW] [ViewModelModule.kt](file:///Users/oatrice/Software-projects/JarWise/Android/app/src/main/java/com/oatrice/jarwise/di/ViewModelModule.kt)
-+- Define `viewModel` definitions for all ViewModels, injecting Repositories.
-+
-+### Refactoring Components
-+
-+#### Repositories
-+Update the following repositories to accept dependencies via **Constructor Injection** instead of internal instantiation:
-+- [MODIFY] [WalletRepository.kt](file:///Users/oatrice/Software-projects/JarWise/Android/app/src/main/java/com/oatrice/jarwise/data/repository/WalletRepository.kt)
-+- [MODIFY] [JarConfigRepository.kt](file:///Users/oatrice/Software-projects/JarWise/Android/app/src/main/java/com/oatrice/jarwise/data/repository/JarConfigRepository.kt)
-+- [MODIFY] [SlipRepository.kt](file:///Users/oatrice/Software-projects/JarWise/Android/app/src/main/java/com/oatrice/jarwise/data/repository/SlipRepository.kt)
-+- [MODIFY] [UserPreferencesRepository.kt](file:///Users/oatrice/Software-projects/JarWise/Android/app/src/main/java/com/oatrice/jarwise/data/repository/UserPreferencesRepository.kt)
-+- [MODIFY] [CurrencyRepository.kt](file:///Users/oatrice/Software-projects/JarWise/Android/app/src/main/java/com/oatrice/jarwise/data/repository/CurrencyRepository.kt)
-+
-+#### ViewModels
-+Update the following ViewModels to accept Repositories via **Constructor Injection**:
-+- [MODIFY] [ManageWalletsViewModel.kt](file:///Users/oatrice/Software-projects/JarWise/Android/app/src/main/java/com/oatrice/jarwise/ui/managewallets/ManageWalletsViewModel.kt)
-+- [MODIFY] [ManageJarsViewModel.kt](file:///Users/oatrice/Software-projects/JarWise/Android/app/src/main/java/com/oatrice/jarwise/ui/managejars/ManageJarsViewModel.kt)
-+- [MODIFY] [SlipViewModel.kt](file:///Users/oatrice/Software-projects/JarWise/Android/app/src/main/java/com/oatrice/jarwise/ui/SlipViewModel.kt)
-+- [MODIFY] [MainViewModel.kt](file:///Users/oatrice/Software-projects/JarWise/Android/app/src/main/java/com/oatrice/jarwise/ui/MainViewModel.kt)
-+
-+### UI Integration
-+
-+#### [MODIFY] [MainActivity.kt](file:///Users/oatrice/Software-projects/JarWise/Android/app/src/main/java/com/oatrice/jarwise/MainActivity.kt)
-+- Replace manual ViewModel instantiation with `koinViewModel()`.
-+- Ensure `KoinAndroidContext` or proper setup is used if relying on Compose.
-+
-+## Verification Plan
-+
-+### Automated Tests
-+- Run `./gradlew testDebugUnitTest` to ensure no existing logic is broken.
-+- (Optional) Add a basic Koin check test to verify module configuration graph.
-+
-+### Manual Verification
-+1.  **Launch App**: Verify the app starts without crashing (validating `JarWiseApplication` and Koin init).
-+2.  **Wallet Management**: Navigate to "Manage Wallets", Add/Edit/Delete a wallet. Verifies `WalletRepository` and `ManageWalletsViewModel` injection.
-+3.  **Jar Management**: Navigate to "Manage Jars", Add/Edit/Delete a jar. Verifies `JarConfigRepository` and `ManageJarsViewModel` injection.
-+4.  **Transactions**: Add a transaction to verify database interactions through the injected stack.
-diff --git a/docs/features/12_issue-32_web--android-google-login--cloud-backup/analysis.md b/docs/features/12_issue-32_web--android-google-login--cloud-backup/analysis.md
-new file mode 100644
-index 0000000..5f007a1
---- /dev/null
-+++ b/docs/features/12_issue-32_web--android-google-login--cloud-backup/analysis.md
-@@ -0,0 +1,287 @@
++++ b/docs/features/13_issue-65_feature-migrate-data-from-money-manager-app-mmbak/analysis.md
+@@ -0,0 +1,282 @@
 +# Analysis Template
 +
 +> 📋 Template สำหรับการวิเคราะห์ก่อนเริ่มพัฒนา Feature
@@ -162,8 +170,8 @@ index 0000000..5f007a1
 +
 +| รายการ | รายละเอียด |
 +|--------|-----------|
-+| **Feature Name** | Google Sign-In & Google Drive Backup |
-+| **Issue URL** | [#32](https://github.com/placeholder/repo/issues/32) |
++| **Feature Name** | Migrate Data from Money Manager App |
++| **Issue URL** | [#65](https://github.com/owner/repo/issues/65) |
 +| **Date** | 2023-10-27 |
 +| **Analyst** | Luma AI (Senior Technical Analyst) |
 +| **Priority** | 🔴 High |
@@ -178,28 +186,27 @@ index 0000000..5f007a1
 +> อธิบายปัญหาที่ต้องการแก้ไข
 +
 +```
-+Currently, users can only use the application anonymously with data stored locally on their device. This presents two major problems: 1) Users cannot access their data across multiple devices (e.g., web and mobile). 2) There is a high risk of permanent data loss if the user uninstalls the app, clears their cache, or loses their device. This creates a fragmented and unreliable user experience.
++ผู้ใช้ใหม่ที่ต้องการย้ายจากแอปพลิเคชัน "Money Manager" มายัง "JarWise" ไม่สามารถนำข้อมูลธุรกรรมในอดีตมาด้วยได้ ทำให้การเริ่มต้นใช้งาน JarWise เป็นเรื่องยากและต้องป้อนข้อมูลใหม่ทั้งหมด ซึ่งเป็นอุปสรรคสำคัญในการดึงดูดผู้ใช้กลุ่มใหม่และทำให้ผู้ใช้ลังเลที่จะเปลี่ยนมาใช้แอปพลิเคชันของเรา
 +```
 +
 +### 1.2 User Stories
 +
 +| # | As a | I want to | So that |
 +|---|------|-----------|---------|
-+| 1 | New User | sign in with my Google account | I can quickly create an account without needing to remember a new password. |
-+| 2 | Registered User | have my app data automatically backed up to my Google Drive | I can be confident my data is safe and accessible from any of my devices. |
-+| 3 | Registered User | manually trigger a data backup | I can ensure my most recent changes are saved before switching to another device. |
-+| 4 | Registered User | restore my data from a Google Drive backup | I can easily set up a new device or recover my data after a re-installation. |
++| 1 | New user from Money Manager | import my complete transaction history (accounts, categories, transactions) | I can seamlessly switch to JarWise without losing my financial data and continue tracking my finances immediately. |
++| 2 | New user | have the imported data validated for accuracy | I can trust that my financial history in JarWise is correct and matches what I had in the old app. |
 +
 +### 1.3 Acceptance Criteria
 +
-+- [ ] **AC1:** Users can successfully authenticate using their Google account on both Web and Android platforms.
-+- [ ] **AC2:** Upon successful login, the user's Google profile name and avatar are displayed within the application's UI.
-+- [ ] **AC3:** The user's session is persisted, allowing them to remain logged in when they reopen the app.
-+- [ ] **AC4:** A "Logout" option is available, which clears the user's session and associated local data.
-+- [ ] **AC5:** Application data (Transactions, Jar configurations, User preferences, App settings) is automatically and periodically backed up to the user's Google Drive.
-+- [ ] **AC6:** Users can manually initiate a backup and restore their data from an existing backup file in Google Drive.
-+- [ ] **AC7:** The UI displays the timestamp of the last successful backup and the current sync status (e.g., "Synced," "Syncing," "Offline").
-+- [ ] **AC8:** The backup file stored in Google Drive is encrypted to protect user data privacy.
++- [ ] **AC1:** The system must provide a user interface for uploading both a `.mmbak` (SQLite) file and an `.xls` file from Money Manager.
++- [ ] **AC2:** The system must successfully parse the `.mmbak` file to extract accounts, categories, and all associated transactions with their details (date, amount, type, etc.).
++- [ ] **AC3:** The system must parse the `.xls` file to extract summary totals for income and expenses.
++- [ ] **AC4:** Before final import, the system must cross-validate the total income and expense calculated from the `.mmbak` data against the totals from the `.xls` file.
++- [ ] **AC5:** If a significant discrepancy is found during validation, the system must notify the user and allow them to either cancel or proceed with the import.
++- [ ] **AC6:** The system must correctly map Money Manager "Accounts" to JarWise "Wallets".
++- [ ] **AC7:** The system must correctly map Money Manager "Categories" to JarWise "Jars".
++- [ ] **AC8:** All parsed transactions must be successfully and accurately saved to the user's JarWise database, linked to the correct wallets and jars.
++- [ ] **AC9:** The import process must be handled asynchronously in the background to prevent UI blocking and request timeouts for large datasets.
 +
 +---
 +
@@ -209,42 +216,27 @@ index 0000000..5f007a1
 +
 +```mermaid
 +flowchart TD
-+    subgraph "Phase 1: Authentication"
-+        A[App Launch] --> B{Is User Logged In?}
-+        B -->|No| C[Show Login Screen]
-+        C --> D[Click "Sign in with Google"]
-+        D --> E[Google OAuth Flow]
-+        E --> F{Authentication Successful?}
-+        F -->|No| G[Show Error Message] --> C
-+        F -->|Yes| H[Fetch Google Profile]
-+        H --> I[Backend: Create Session/User]
-+    end
-+
-+    subgraph "Phase 2: Backup & Restore"
-+        I --> J{Backup exists in Google Drive?}
-+        J -->|Yes| K[Prompt to Restore Data]
-+        K --> L{User chooses to Restore?}
-+        L -->|Yes| M[Download & Decrypt Backup] --> N[Apply Data to App]
-+        L -->|No| O[Proceed with Local/Default Data]
-+        J -->|No| O
-+        N --> P[Show Main App Screen]
-+        O --> P
-+        P --> Q[User interacts with app]
-+        Q --> R((Auto-backup Triggered Periodically))
-+        R --> S[Encrypt & Upload Data to GDrive]
-+        P --> T[User navigates to Settings]
-+        T --> U[Click "Backup Now"] --> S
-+        T --> V[Click "Restore"] --> K
-+    end
++    A["User navigates to Import Data page"] --> B["Selects Import from Money Manager"]
++    B --> C["Uploads .mmbak and .xls files"]
++    C --> D["System starts background import job"]
++    D --> E["Parse .mmbak file"]
++    D --> F["Parse .xls file"]
++    E & F --> G{"Cross-validate totals"}
++    G -->|"✅ Match"| H["Map schema and import data"]
++    G -->|"❌ Mismatch"| I["Notify user of discrepancy"]
++    I --> J{"User action"}
++    J -->|"Proceed anyway"| H
++    J -->|"Cancel"| K["End process"]
++    H --> L["Notify user of successful import"]
++    L --> K
 +```
 +
 +### 2.2 Screen/Page Requirements
 +
 +| หน้าจอ | Actions | Components |
 +|--------|---------|------------|
-+| **Login Screen** | - Sign in with Google | - "Sign in with Google" button<br>- Privacy Policy link |
-+| **Settings / Profile** | - View user profile<br>- Initiate manual backup<br>- Initiate restore from backup<br>- Logout | - User Avatar & Name display<br>- "Backup Now" button<br>- "Restore from Drive" button<br>- "Last Backup: [Timestamp]" status indicator<br>- "Logout" button |
-+| **Initial Setup (Post-Login)** | - Choose to restore data | - Modal/Dialog: "Backup found. Would you like to restore your data?"<br>- "Restore" button<br>- "Start Fresh" button |
++| **Data Import** | - Select "Money Manager" as source<br>- Upload `.mmbak` file<br>- Upload `.xls` file<br>- Click "Start Import" button | - Source selection dropdown<br>- File input for `.mmbak`<br>- File input for `.xls`<br>- Submit button<br>- Instructional text |
++| **Import Status** | - View import progress<br>- View final result (success/failure)<br>- View summary of imported data<br>- View validation errors | - Progress bar/spinner<br>- Status message text area (e.g., "Parsing files...", "Validating...", "Success!")<br>- Summary card (e.g., "5 Wallets, 30 Jars, 2500 Transactions imported")<br>- Error details section (if applicable) |
 +
 +### 2.3 Input/Output Specification
 +
@@ -252,17 +244,17 @@ index 0000000..5f007a1
 +
 +| Field | Type | Required | Validation |
 +|-------|------|----------|------------|
-+| Google Auth Code | string | ✅ | Provided by Google SDK, exchanged on backend |
-+| User Action | click | ✅ | User interaction with UI buttons |
++| `mmbakFile` | File | ✅ | Must be a valid SQLite DB with `.mmbak` extension. Max size 50MB. |
++| `xlsFile` | File | ✅ | Must be a valid `.xls` file. Max size 20MB. |
 +
 +#### Outputs
 +
++(API Response for initiating the import job)
 +| Field | Type | Description |
 +|-------|------|-------------|
-+| Session Token (JWT) | string | A secure token issued by our backend to the client for authenticating API requests. |
-+| User Profile | object | User's ID, name, email, and avatar URL, stored in the app state. |
-+| Backup File | binary | An encrypted file containing a snapshot of the user's app data (e.g., in JSON format). |
-+| Sync Status | string | A UI-friendly string indicating the current state of data synchronization. |
++| `jobId` | string | An identifier for the background import job to check its status. |
++| `status` | string | Initial status, e.g., "QUEUED". |
++| `message` | string | Confirmation message, e.g., "Import process has started." |
 +
 +---
 +
@@ -272,26 +264,20 @@ index 0000000..5f007a1
 +
 +| Component | Impact Level | Description |
 +|-----------|--------------|-------------|
-+| **Authentication Service (Backend)** | 🔴 High | Requires new endpoints for Google OAuth callback, token exchange, token validation, and session management. |
-+| **User Database Schema** | 🔴 High | New `users` table required to store Google ID, email, profile info, and refresh tokens. |
-+| **Frontend State Management** | 🔴 High | Global state needs to manage authentication status, user profile, and sync status. |
-+| **Client-side UI (Web & Android)** | 🔴 High | New login screens, settings page modifications, and profile displays must be built. |
-+| **Local Data Persistence Logic** | 🔴 High | Existing logic must be integrated with the new cloud backup/restore flow. |
-+| **API Gateway / Middleware** | 🟡 Medium | New protected routes and authentication middleware will be needed to secure endpoints. |
++| **Backend API** | 🔴 High | Requires new endpoints for file upload, job status polling, and the entire business logic for parsing, validating, mapping, and importing data. |
++| **Database (JarWise)** | 🔴 High | New data will be inserted in bulk into `wallets`, `jars`, and `transactions` tables. Requires careful handling of transactions and potential performance tuning for bulk inserts. |
++| **Background Worker Service** | 🔴 High | A new type of job for data migration needs to be created. This component is critical for handling the processing asynchronously. |
++| **Frontend (Web/Mobile)** | 🟡 Medium | New screens and components are needed for the import user flow. State management for polling job status is required. |
++| **Authentication Service** | 🟢 Low | No changes needed, but existing authentication must be enforced on new endpoints to ensure data is imported for the correct user. |
 +
 +### 3.2 Breaking Changes
 +
-+- [ ] **BC1:** Introduction of a mandatory authentication layer. Users who previously used the app anonymously will need to sign in to enable cross-device sync and data backup.
-+- [ ] **BC2:** The data storage model will shift from purely local to a cloud-synced model, which may require a one-time data migration for existing users.
++- [ ] **BC1:** None. This is an additive feature and does not alter existing APIs or user flows.
 +
 +### 3.3 Backward Compatibility Plan
 +
 +```
-+For existing users with local data:
-+1. Upon the first app update, the app will continue to function offline as before.
-+2. A prominent, non-intrusive banner will encourage users to "Sign in to back up your data."
-+3. When an existing user signs in for the first time, the app will detect local data and prompt them: "Would you like to upload your current local data to your new account?"
-+4. This one-time migration will associate their existing local data with their new Google-linked account, ensuring a seamless transition without data loss.
++Not applicable as this is a new feature. It will not affect existing users who do not use the import functionality.
 +```
 +
 +---
@@ -302,26 +288,26 @@ index 0000000..5f007a1
 +
 +| คำถาม | คำตอบ | หมายเหตุ |
 +|-------|-------|----------|
-+| เทคโนโลยีรองรับหรือไม่? | ✅ | Google provides official, well-documented SDKs for Web (gis) and Android (Google Sign-In SDK), as well as REST APIs for Google Drive. |
-+| ทีมมี Skills เพียงพอหรือไม่? | ✅ | The implementation uses standard OAuth 2.0 patterns and REST API consumption, which are common skills for web and mobile developers. |
-+| Infrastructure รองรับหรือไม่? | ✅ | The backend infrastructure only needs to handle standard HTTPS requests for the OAuth callback. No specialized hardware or services are required. |
++| เทคโนโลยีรองรับหรือไม่? | ✅ | Standard libraries for SQLite parsing (e.g., `sqlite3`) and XLS/HTML parsing (e.g., `pandas`, `SheetJS`) are readily available and mature. |
++| ทีมมี Skills เพียงพอหรือไม่? | ✅ | The task requires standard backend development skills: file handling, database operations, and asynchronous job processing. This is within the capabilities of a typical development team. |
++| Infrastructure รองรับหรือไม่? | ✅ | The architecture must include a background job queue (e.g., Celery, BullMQ, AWS SQS) to handle asynchronous processing. This is a standard component for scalable applications. |
 +
 +### 4.2 Time Feasibility
 +
 +| ประเด็น | รายละเอียด |
 +|--------|-----------|
-+| **Estimated Effort** | **6 weeks** (Phase 1: 2.5 weeks, Phase 2: 3.5 weeks) |
-+| **Deadline** | Not specified. Assumed to follow standard development cycles. |
++| **Estimated Effort** | 4 weeks (1 Sprint) |
++| **Deadline** | N/A |
 +| **Buffer Time** | 1 week |
-+| **Feasible?** | ✅ | The scope is significant but manageable within the estimated timeframe if split into the two specified phases. |
++| **Feasible?** | ✅ | The timeline is reasonable for a feature of this complexity, assuming a dedicated developer or pair. |
 +
 +### 4.3 Budget Feasibility
 +
 +| รายการ | ค่าใช้จ่าย | หมายเหตุ |
 +|--------|-----------|----------|
-+| Google API Usage | ~$0 | Google Sign-In is free. The Google Drive API has a generous free quota that is highly unlikely to be exceeded by this application's usage pattern. |
-+| Development Hours | [Internal Cost] | The primary cost is the developer time estimated above. |
-+| **Total** | **Negligible (excluding development time)** | |
++| Development Hours | Covered by existing budget | Estimated at ~160 hours of development and testing time. |
++| Infrastructure | Minimal / None | Potential minor cost increase for background worker usage if scaling is required, but likely covered by existing infrastructure budget. |
++| **Total** | **Covered by existing budget** | |
 +
 +---
 +
@@ -331,23 +317,21 @@ index 0000000..5f007a1
 +
 +| ข้อมูล | Sensitivity Level | Protection Method |
 +|--------|------------------|-------------------|
-+| **OAuth Tokens (Access, Refresh)** | 🔴 Critical | **Backend:** Encrypted in the database. **Client:** Stored securely (HttpOnly cookies for web, Android Keystore for mobile). |
-+| **User Application Data Backup** | 🔴 Critical | End-to-end encryption. Data is encrypted on the client device (AES-256) before being uploaded to Google Drive. The encryption key is not stored in plain text. |
-+| **User PII (Name, Email, Avatar)** | 🟡 Sensitive | Stored in the user database with standard access controls. Transmitted over TLS. |
++| User Financial Data (`.mmbak`, `.xls` files) | 🔴 Critical | - Enforce HTTPS for file uploads.<br>- Scan files for malware upon upload.<br>- Process files in an isolated, temporary storage.<br>- Delete the uploaded files immediately after the import job is completed or fails. |
++| User ID | 🟡 Sensitive | Standard API authentication and authorization to ensure a user can only import data into their own account. |
 +
 +### 5.2 Attack Vectors
 +
 +| Vector | Risk Level | Mitigation |
 +|--------|-----------|------------|
-+| **Token Interception/Hijacking** | 🔴 High | Use OAuth 2.0 Authorization Code flow with PKCE. Enforce HTTPS/TLS everywhere. Use secure, HttpOnly cookies on the web to prevent XSS access. |
-+| **Cross-Site Request Forgery (CSRF)** | 🟡 Medium | Implement standard CSRF protection on the backend (e.g., `state` parameter in OAuth flow, anti-CSRF tokens for session-based actions). |
-+| **Unauthorized Data Access** | 🔴 High | Encrypt backup files. Use the `drive.appdata` scope for the Google Drive API, which sandboxes app data and prevents the app from accessing other user files. |
++| Malicious File Upload | 🟡 Medium | A user could upload a crafted file to exploit vulnerabilities in the parsers. Mitigation: Use up-to-date, secure libraries. Run the parsing process in a sandboxed or containerized environment with limited permissions. Enforce strict file type and size validation. |
++| Data Leakage | 🔴 High | Uploaded financial data files are highly sensitive. Mitigation: Implement a strict lifecycle policy for uploaded files—they must be deleted immediately after processing. Limit access to the temporary storage location. |
++| Denial of Service (DoS) | 🟡 Medium | Users could upload very large files or trigger many imports simultaneously. Mitigation: Implement rate limiting on the import endpoint. Enforce strict file size limits. Isolate import jobs in a queue to prevent them from overwhelming the main application servers. |
 +
 +### 5.3 Authentication & Authorization
 +
 +```
-+- **Authentication:** The system will use Google's OAuth 2.0 (Authorization Code Flow with PKCE) as the primary authentication method. The backend will verify the identity with Google and issue a stateless JWT session token to the client.
-+- **Authorization:** All subsequent API requests from the client to our backend will be authorized using the JWT in the `Authorization` header. The Google Drive API access will be authorized by the OAuth access token and restricted to the `drive.appdata` scope.
++All API endpoints related to the import feature (`/import/start`, `/import/status/{jobId}`) must be protected and require a valid user authentication token. The business logic must ensure that the data is only ever inserted into the database under the ID of the authenticated user who initiated the job.
 +```
 +
 +---
@@ -358,18 +342,18 @@ index 0000000..5f007a1
 +
 +| Metric | Target | Current |
 +|--------|--------|---------|
-+| Login Flow Duration | < 5s | N/A |
-+| API Response Time (Backend) | < 250ms (p95) | N/A |
-+| Backup/Restore Duration | < 20s for 5MB data | N/A |
-+| Error Rate | < 0.1% | N/A |
++| API Response Time (Job Start) | < 500ms | N/A |
++| Background Job Execution Time | < 5 minutes for 5 years of data | N/A |
++| Database Insert Throughput | 1000 transactions/sec | N/A |
++| Error Rate | < 0.5% | N/A |
 +
 +### 6.2 Scalability Plan
 +
 +| Scenario | Expected Users | Scaling Strategy |
 +|----------|---------------|------------------|
-+| Normal | 10,000 DAU | The backend authentication service will be stateless and can be horizontally scaled using a load balancer. |
-+| Peak | 50,000 DAU | The authentication and backup loads are distributed across Google's infrastructure, which is highly scalable. Our backend only handles token exchange and session management. |
-+| Growth (1yr) | 200,000 DAU | Monitor API response times and database load. Implement database read replicas if necessary. The architecture is inherently scalable. |
++| Normal | ~10 concurrent imports | A small, fixed pool of 2-3 background workers. |
++| Peak | ~100+ concurrent imports | The background worker service should be configured to auto-scale based on the length of the job queue. |
++| Growth (1yr) | Consistent import traffic | Optimize database inserts by using bulk operations (`BULK INSERT`, `COPY`, etc.) instead of single-row inserts to improve efficiency. |
 +
 +---
 +
@@ -377,9 +361,8 @@ index 0000000..5f007a1
 +
 +| ด้าน | As-Is (ปัจจุบัน) | To-Be (ต้องการ) | Gap |
 +|------|-----------------|-----------------|-----|
-+| **Authentication** | No user accounts. All usage is anonymous and local. | A complete user authentication system based on Google Sign-In. | The entire authentication stack (client-side SDK integration, backend OAuth handling, session management) needs to be built from scratch. |
-+| **Data Persistence** | Data is stored exclusively on the device's local storage. | Data is automatically backed up to the user's personal Google Drive and can be restored. | A comprehensive backup, restore, and sync engine needs to be developed, including data serialization, encryption, and Google Drive API integration. |
-+| **User Experience** | Single-device experience with risk of data loss. | A multi-device, persistent experience where user data is safe and accessible. | UI/UX for login, profile management, and sync status needs to be designed and implemented. |
++| **Data Import Functionality** | The application has no mechanism to import data from any external source. Users must start from scratch. | The application can import a user's complete financial history from the Money Manager app via `.mmbak` and `.xls` files. | The entire import module needs to be designed and built, including file handling, parsing, validation, schema mapping, and data insertion logic. |
++| **User Onboarding** | The onboarding flow is generic for all new users and assumes they have no prior data. | A new onboarding path exists for users migrating from Money Manager, guiding them through the import process. | The frontend needs a new UI flow specifically for data migration, which can be integrated into the initial user onboarding experience. |
 +
 +---
 +
@@ -387,8 +370,71 @@ index 0000000..5f007a1
 +
 +| Risk | Probability | Impact | Score | Mitigation Plan |
 +|------|-------------|--------|-------|-----------------|
-+| **Complex Conflict Resolution** | 🟡 Medium | 🔴 High | 6 | For the initial release, implement a simple "last write wins" strategy. If a conflict is detected on restore, clearly prompt the user to choose between the local version and the cloud version. Defer complex data merging. |
-+| **Security Flaw in OAuth Flow** | 🟡 Medium | 🔴 High | 6 | Strictly adhere to Google's official implementation guidelines and OAuth 2.0 best practices (including PKCE). Conduct a thoro
++| **Incorrect Schema Mapping** | 🟡 Medium | 🔴 High | 6 | Create a detailed mapping document based on analysis of multiple sample `.mmbak` files. Implement a comprehensive suite of unit and integration tests using these files to verify data integrity post-import. |
++| **Performance Bottlenecks with Large Files** | 🟡 Medium | 🟡 Medium | 4 | Design the process to be fully asynchronous from the start. Use efficient parsing methods and database bulk-insert operations. Load test with realistically large data files. |
++| **Inconsistent Data Between Sources** | 🟡 Medium | 🟡 Medium | 4 | The cross-validation step is designed to catch this. Provide clear feedback to the user about any discrepancies and give them the option to proceed if the difference is minor. Log all validation failures for analysis. |
++| **Parser Failure on Different App Versions** | 🟢 Low | 🔴 High | 3 | The schema of the `.mmbak` file may vary slightly between Money Manager versions. Mitigation: Research common schema versions. Implement robust error handling in the parser. Initially, state which versions of Money Manager are officially supported. |
++
++> **Risk Score:** Probability × Impact (High=3, Medium=2, Low=1)
++
++---
++
++## 9. Summary & Recommendations
++
++### 9.1 Analysis Summary
++
++| หมวด | Status | Key Findings |
++|------|--------|--------------|
++| Requirement | ✅ Clear | The objective and specifications are well-defined in the issue. |
++| Feature | ✅ Defined | The user flow, UI, and I/O are clearly outlined. |
++| Impact | 🟡 Medium | High impact on the backend and database, but it's an isolated, new feature. |
++| Feasibility | ✅ Feasible | Technically feasible with standard technologies and within a reasonable timeframe. |
++| Security | ⚠️ Needs Review | Handling of sensitive financial files requires strict security measures for storage and processing. |
++| Performance | ✅ Acceptable | An asynchronous, job-based architecture is required and will meet performance needs. |
++| Risk | 🟡 Medium | The primary risks are data corruption due to incorrect mapping and poor user experience from validation failures. |
++
++### 9.2 Recommendations
++
++1.  **Build a Secure, Asynchronous Foundation:** Prioritize creating a robust background job system for the import. Ensure temporary file handling is secure and files are deleted immediately after use.
++2.  **Schema Mapping First:** Before writing import code, create a detailed schema mapping document (`Money Manager Table/Column` -> `JarWise Table/Column`). This document should be peer-reviewed.
++3.  **Develop with Test Data:** Obtain or create a variety of sample `.mmbak` and `.xls` files (e.g., small, large, different currencies, complex categories) to use for development and testing.
++
++### 9.3 Next Steps
++
++- [ ] Create a detailed technical design document for the import service, including API contracts and database schema mapping.
++- [ ] Set up the initial backend boilerplate for file uploads and queuing background jobs.
++- [ ] Begin development of the SQLite (`.mmbak`) parser module.
++
++---
++
++## 📎 Appendix
++
++### Related Documents
++
++- [Link to PRD]
++- [Link to Design Docs]
++- [Link to API Specs]
++
++
++### 9.4 Implementation Strategy (Updated 2026-02-04)
++
++> **IMPORTANT: Platform Logic Separation**
++
++Based on technical decisions during development, the implementation scope is defined as:
++
++1.  **Web Frontend:**
++    - **Scope:** **UI Mock / Prototype Only.**
++    - **Purpose:** To visualize the User Experience (UX), flow, and design of the migration process.
++    - **Functionality:** No API integration required. Does not need to handle actual file uploads or processing.
++
++2.  **Android Mobile:**
++    - **Scope:** **Full Implementation.**
++    - **Purpose:** The primary platform for the migration feature.
++    - **Functionality:** Must fully integrate with the Backend API (`POST /migrations/money-manager`). Handles real file picker, file upload, status polling (if applicable), error handling, and completion flow.
++
++3.  **Backend (Go):**
++    - **Scope:** **Full Implementation (Completed).**
++    - **Status:** Scaffolding, Parsers (SQLite & XLS), Validator, and Mock Importer logic 
 ... (Diff truncated for size) ...
 
 PR TEMPLATE:
