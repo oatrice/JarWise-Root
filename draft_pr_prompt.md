@@ -2,156 +2,88 @@
 
 You are an AI assistant helping to create a Pull Request description.
     
-TASK: [Web | Android] Google Login & Cloud Backup
+TASK: [Feature] Transaction Linking & Transfers
 ISSUE: {
-  "title": "[Web | Android] Google Login & Cloud Backup",
-  "number": 32
+  "title": "[Feature] Transaction Linking & Transfers",
+  "number": 71
 }
 
 GIT CONTEXT:
 COMMITS:
-6aabc5a 🐛 fix(managejars): resolve immediate save and state persistence issues
-1189a2a ✨ feat(settings): add manual restore and logout options
-d6fd9fd 🔧 feat(backup): implement logout with data clearing option
-65584de ✨ feat(backup): complete android cloud backup implementation
-2e5c65c ✨ feat(cloud): Complete Android Google login and cloud backup with restore flow
-2490e0e ✨ feat(auth): implement google login and cloud backup for android
-50b7e85 ✨ feat(di): implement Koin DI integration
-90c9f34 ✅ docs(roadmap): updates Koin DI implementation status
+c50c14c feat: [Feature] Transaction Linking & Transfers...
+4029c35 ✨ feat(transactions): implement transfer linking feature
+8511921 ✨ feat(transactions): add transaction linking feature for transfers
+8a95ed3 ✨ feat(transactions): add transaction linking and transfer functionality
+1fd04d8 ✨ feat(transactions): add transaction linking and transfer feature
+b74985f ✨ feat(migration): Implement Money Manager data migration
 
 STATS:
-docs/ROADMAP.md                                    |   4 +-
- .../implementation_plan.md                         |  77 ++++++
- .../analysis.md                                    | 287 +++++++++++++++++++++
- .../android/implementation_plan.md                 |  51 ++++
- .../android/task.md                                |  51 ++++
- .../android/walkthrough.md                         |  71 +++++
- .../assets/dashboard_after_login_1770020338527.png | Bin 0 -> 105231 bytes
- .../assets/dashboard_main_1770018092550.png        | Bin 0 -> 324246 bytes
- .../google_login_mockui_demo_1770018076689.webp    | Bin 0 -> 8564762 bytes
- .../assets/login_screen_capture_1770020324133.webp | Bin 0 -> 328246 bytes
- .../assets/logout_modal_1770019117061.png          | Bin 0 -> 77231 bytes
- .../assets/settings_page_1770019107278.png         | Bin 0 -> 59156 bytes
- .../plan.md                                        | 101 ++++++++
- .../spec.md                                        | 131 ++++++++++
- .../task_tracking.md                               |  48 ++++
- .../walkthrough.md                                 |  65 +++++
- docs/templates/feature_spec_template.md            |  11 +
- docs/templates/plan_template.md                    |  54 ++++
- 18 files changed, 949 insertions(+), 2 deletions(-)
+CHANGELOG.md                                       |   9 +
+ VERSION                                            |   2 +-
+ docs/ROADMAP.md                                    |   2 +-
+ .../14-issue-71_transaction_linking/analysis.md    | 264 +++++++++++
+ .../android/implementation_plan.md                 |  72 +++
+ .../android/task.md                                |  21 +
+ .../android/walkthrough.md                         |  59 +++
+ .../14-issue-71_transaction_linking/code_review.md |  15 +
+ .../14-issue-71_transaction_linking/plan.md        | 217 +++++++++
+ .../14-issue-71_transaction_linking/spec.md        | 166 +++++++
+ .../specs/sbe_issue-71.md                          |  53 +++
+ .../unified-transfer-row.md                        |  77 ++++
+ docs/features/issue-71_transaction_linking/spec.md |  37 --
+ draft_pr_body.md                                   | 199 ++++++---
+ draft_pr_prompt.md                                 | 484 +++++++++++----------
+ prompt_android.txt                                 | 238 ++++++++++
+ prompt_backend.txt                                 | 238 ++++++++++
+ prompt_frontend.txt                                | 296 +++++++++++++
+ 18 files changed, 2136 insertions(+), 313 deletions(-)
 
 KEY FILE DIFFS:
+diff --git a/CHANGELOG.md b/CHANGELOG.md
+index 382df7c..9077615 100644
+--- a/CHANGELOG.md
++++ b/CHANGELOG.md
+@@ -1,5 +1,14 @@
+ # Changelog
+ 
++## [0.7.0] - 2026-02-11
++
++### Added
++- **[Feature] Transaction Linking for Transfers:** Implemented a system to link the debit and credit transactions when transferring funds between user-owned accounts (e.g., from a Wallet to a Jar). This provides a clearer financial overview by treating internal transfers as a single, unified event, preventing them from being incorrectly counted in income or expense reports.
++- **[Docs]** Added extensive new planning, analysis, and specification documents for the transaction linking feature.
++
++### Changed
++- **[Docs]** Updated the project `ROADMAP.md` to reflect the completion of new features.
++
+ ## [0.6.0] - 2026-02-04
+ 
+ ### Added
+diff --git a/VERSION b/VERSION
+index a918a2a..faef31a 100644
+--- a/VERSION
++++ b/VERSION
+@@ -1 +1 @@
+-0.6.0
++0.7.0
 diff --git a/docs/ROADMAP.md b/docs/ROADMAP.md
-index 6ea1fea..1b276b9 100644
+index dc4f665..c2e4171 100644
 --- a/docs/ROADMAP.md
 +++ b/docs/ROADMAP.md
-@@ -15,7 +15,7 @@ This document outlines the strategic direction and priority of features for JarW
- 
- - **#34 Implement Koin (Dependency Injection)**
-     - **Goal:** Standardize DI across Android app to replace manual ViewModelFactories.
+@@ -23,7 +23,7 @@ This document outlines the strategic direction and priority of features for JarW
+     - ✅ **Done** (v1.7.0) - Implemented Google Login & Drive Backup.
+ - **#65 Legacy Data Migration**
+     - Import/Migrate data from "Money Manager" or legacy formats to new schema.
 -    - **Status:** 🟢 **Ready**
-+    - ✅ **Done** (v1.6.0) - Android Implementation Complete.
- - **#67 Hierarchy (Full Implementation)**
-     - ✅ **Done** (v1.4.0) - Hierarchical Jars implemented.
- - **#32 Google Login & Cloud Backup**
-@@ -44,7 +44,7 @@ graph TD
-     end
++    - ✅ **Done** (v1.8.0) - Android Implementation Complete.
  
-     subgraph Phase 2: Migration
--        KOIN[#34 Koin DI]
-+        KOIN[✅ #34 Koin DI]
-         I32[#32 Backup & Sync]
-         I67[✅ #67 Hierarchy]
-         I65[#65 Migration]
-diff --git a/docs/features/11_issue-34_android-implement-koin-lib/implementation_plan.md b/docs/features/11_issue-34_android-implement-koin-lib/implementation_plan.md
+ ## 🔴 Phase 3: Usability & Advanced Features
+ *Enhancing user experience and reporting.*
+diff --git a/docs/features/14-issue-71_transaction_linking/analysis.md b/docs/features/14-issue-71_transaction_linking/analysis.md
 new file mode 100644
-index 0000000..19c877e
+index 0000000..884f3ae
 --- /dev/null
-+++ b/docs/features/11_issue-34_android-implement-koin-lib/implementation_plan.md
-@@ -0,0 +1,77 @@
-+# Implementation Plan - Integrating Koin Dependency Injection (Issue #34)
-+
-+This plan outlines the steps to integrate the Koin dependency injection framework into the JarWise Android application. The goal is to replace manual dependency instantiation with a robust, testable, and maintainable DI system.
-+
-+## User Review Required
-+
-+> [!IMPORTANT]
-+> This is a significant architectural change that touches the core of the application (Repositories, ViewModels, and App Initialization).
-+> - **Breaking Change**: The way `ViewModel`s are instantiated will change across the app.
-+> - **New Application Class**: A new `JarWiseApplication` class will be introduced and set in `AndroidManifest.xml`.
-+
-+## Proposed Changes
-+
-+### Build Configuration
-+
-+#### [MODIFY] [build.gradle.kts](file:///Users/oatrice/Software-projects/JarWise/Android/app/build.gradle.kts)
-+- Add `koin-android` and `koin-androidx-compose` dependencies.
-+
-+### Application Initialization
-+
-+#### [NEW] [JarWiseApplication.kt](file:///Users/oatrice/Software-projects/JarWise/Android/app/src/main/java/com/oatrice/jarwise/JarWiseApplication.kt)
-+- Create a new class extending `Application`.
-+- Initialize Koin in `onCreate()` using `startKoin`.
-+- Load modules: `appModule`, `dataModule`, `repositoryModule`, `viewModelModule`.
-+
-+#### [MODIFY] [AndroidManifest.xml](file:///Users/oatrice/Software-projects/JarWise/Android/app/src/main/AndroidManifest.xml)
-+- Update `<application>` tag to point to `.JarWiseApplication`.
-+
-+### Dependency Injection Modules (New Package: `di`)
-+
-+#### [NEW] [AppModule.kt](file:///Users/oatrice/Software-projects/JarWise/Android/app/src/main/java/com/oatrice/jarwise/di/AppModule.kt)
-+- Define general app-wide dependencies (if any).
-+
-+#### [NEW] [DataModule.kt](file:///Users/oatrice/Software-projects/JarWise/Android/app/src/main/java/com/oatrice/jarwise/di/DataModule.kt)
-+- Provide `AppDatabase` singleton.
-+- Provide DAOs: `TransactionDao`, `AllocationDao`, `JarConfigDao`, `WalletDao`.
-+
-+#### [NEW] [RepositoryModule.kt](file:///Users/oatrice/Software-projects/JarWise/Android/app/src/main/java/com/oatrice/jarwise/di/RepositoryModule.kt)
-+- Define `single` definitions for all Repositories, injecting their dependencies (DAOs, Context, etc.).
-+
-+#### [NEW] [ViewModelModule.kt](file:///Users/oatrice/Software-projects/JarWise/Android/app/src/main/java/com/oatrice/jarwise/di/ViewModelModule.kt)
-+- Define `viewModel` definitions for all ViewModels, injecting Repositories.
-+
-+### Refactoring Components
-+
-+#### Repositories
-+Update the following repositories to accept dependencies via **Constructor Injection** instead of internal instantiation:
-+- [MODIFY] [WalletRepository.kt](file:///Users/oatrice/Software-projects/JarWise/Android/app/src/main/java/com/oatrice/jarwise/data/repository/WalletRepository.kt)
-+- [MODIFY] [JarConfigRepository.kt](file:///Users/oatrice/Software-projects/JarWise/Android/app/src/main/java/com/oatrice/jarwise/data/repository/JarConfigRepository.kt)
-+- [MODIFY] [SlipRepository.kt](file:///Users/oatrice/Software-projects/JarWise/Android/app/src/main/java/com/oatrice/jarwise/data/repository/SlipRepository.kt)
-+- [MODIFY] [UserPreferencesRepository.kt](file:///Users/oatrice/Software-projects/JarWise/Android/app/src/main/java/com/oatrice/jarwise/data/repository/UserPreferencesRepository.kt)
-+- [MODIFY] [CurrencyRepository.kt](file:///Users/oatrice/Software-projects/JarWise/Android/app/src/main/java/com/oatrice/jarwise/data/repository/CurrencyRepository.kt)
-+
-+#### ViewModels
-+Update the following ViewModels to accept Repositories via **Constructor Injection**:
-+- [MODIFY] [ManageWalletsViewModel.kt](file:///Users/oatrice/Software-projects/JarWise/Android/app/src/main/java/com/oatrice/jarwise/ui/managewallets/ManageWalletsViewModel.kt)
-+- [MODIFY] [ManageJarsViewModel.kt](file:///Users/oatrice/Software-projects/JarWise/Android/app/src/main/java/com/oatrice/jarwise/ui/managejars/ManageJarsViewModel.kt)
-+- [MODIFY] [SlipViewModel.kt](file:///Users/oatrice/Software-projects/JarWise/Android/app/src/main/java/com/oatrice/jarwise/ui/SlipViewModel.kt)
-+- [MODIFY] [MainViewModel.kt](file:///Users/oatrice/Software-projects/JarWise/Android/app/src/main/java/com/oatrice/jarwise/ui/MainViewModel.kt)
-+
-+### UI Integration
-+
-+#### [MODIFY] [MainActivity.kt](file:///Users/oatrice/Software-projects/JarWise/Android/app/src/main/java/com/oatrice/jarwise/MainActivity.kt)
-+- Replace manual ViewModel instantiation with `koinViewModel()`.
-+- Ensure `KoinAndroidContext` or proper setup is used if relying on Compose.
-+
-+## Verification Plan
-+
-+### Automated Tests
-+- Run `./gradlew testDebugUnitTest` to ensure no existing logic is broken.
-+- (Optional) Add a basic Koin check test to verify module configuration graph.
-+
-+### Manual Verification
-+1.  **Launch App**: Verify the app starts without crashing (validating `JarWiseApplication` and Koin init).
-+2.  **Wallet Management**: Navigate to "Manage Wallets", Add/Edit/Delete a wallet. Verifies `WalletRepository` and `ManageWalletsViewModel` injection.
-+3.  **Jar Management**: Navigate to "Manage Jars", Add/Edit/Delete a jar. Verifies `JarConfigRepository` and `ManageJarsViewModel` injection.
-+4.  **Transactions**: Add a transaction to verify database interactions through the injected stack.
-diff --git a/docs/features/12_issue-32_web--android-google-login--cloud-backup/analysis.md b/docs/features/12_issue-32_web--android-google-login--cloud-backup/analysis.md
-new file mode 100644
-index 0000000..5f007a1
---- /dev/null
-+++ b/docs/features/12_issue-32_web--android-google-login--cloud-backup/analysis.md
-@@ -0,0 +1,287 @@
++++ b/docs/features/14-issue-71_transaction_linking/analysis.md
+@@ -0,0 +1,264 @@
 +# Analysis Template
 +
 +> 📋 Template สำหรับการวิเคราะห์ก่อนเริ่มพัฒนา Feature
@@ -162,8 +94,8 @@ index 0000000..5f007a1
 +
 +| รายการ | รายละเอียด |
 +|--------|-----------|
-+| **Feature Name** | Google Sign-In & Google Drive Backup |
-+| **Issue URL** | [#32](https://github.com/placeholder/repo/issues/32) |
++| **Feature Name** | Transaction Linking & Transfers |
++| **Issue URL** | [#71](https://github.com/owner/repo/issues/71) |
 +| **Date** | 2023-10-27 |
 +| **Analyst** | Luma AI (Senior Technical Analyst) |
 +| **Priority** | 🔴 High |
@@ -178,28 +110,27 @@ index 0000000..5f007a1
 +> อธิบายปัญหาที่ต้องการแก้ไข
 +
 +```
-+Currently, users can only use the application anonymously with data stored locally on their device. This presents two major problems: 1) Users cannot access their data across multiple devices (e.g., web and mobile). 2) There is a high risk of permanent data loss if the user uninstalls the app, clears their cache, or loses their device. This creates a fragmented and unreliable user experience.
++Currently, users lack a proper way to record fund transfers between their own accounts (e.g., moving money from a checking account to a savings account). Such transfers are often recorded as a separate expense and a separate income, which incorrectly inflates the total income/expense figures in reports. This makes it difficult for users to get an accurate overview of their financial health, as internal money movements are treated the same as external spending or earning.
 +```
 +
 +### 1.2 User Stories
 +
 +| # | As a | I want to | So that |
 +|---|------|-----------|---------|
-+| 1 | New User | sign in with my Google account | I can quickly create an account without needing to remember a new password. |
-+| 2 | Registered User | have my app data automatically backed up to my Google Drive | I can be confident my data is safe and accessible from any of my devices. |
-+| 3 | Registered User | manually trigger a data backup | I can ensure my most recent changes are saved before switching to another device. |
-+| 4 | Registered User | restore my data from a Google Drive backup | I can easily set up a new device or recover my data after a re-installation. |
++| 1 | User | link an expense from one account to an income in another account | I can accurately represent a transfer of my own funds. |
++| 2 | User | have a simple "Create Transfer" option | I can quickly record transfers without manually creating two separate transactions. |
++| 3 | User | see that two transactions are linked when viewing their details | I can easily navigate between the two sides of a transfer and understand the flow of money. |
++| 4 | User | have transfers excluded from my main income and expense reports | my financial summaries reflect actual gains and losses, not internal fund movements. |
 +
 +### 1.3 Acceptance Criteria
 +
-+- [ ] **AC1:** Users can successfully authenticate using their Google account on both Web and Android platforms.
-+- [ ] **AC2:** Upon successful login, the user's Google profile name and avatar are displayed within the application's UI.
-+- [ ] **AC3:** The user's session is persisted, allowing them to remain logged in when they reopen the app.
-+- [ ] **AC4:** A "Logout" option is available, which clears the user's session and associated local data.
-+- [ ] **AC5:** Application data (Transactions, Jar configurations, User preferences, App settings) is automatically and periodically backed up to the user's Google Drive.
-+- [ ] **AC6:** Users can manually initiate a backup and restore their data from an existing backup file in Google Drive.
-+- [ ] **AC7:** The UI displays the timestamp of the last successful backup and the current sync status (e.g., "Synced," "Syncing," "Offline").
-+- [ ] **AC8:** The backup file stored in Google Drive is encrypted to protect user data privacy.
++- [ ] **AC1:** The `Transaction` data model is updated with a new nullable field, `relatedTransactionId`.
++- [ ] **AC2:** A new "Transfer" option in the UI allows a user to specify a "From" account, a "To" account, and an amount.
++- [ ] **AC3:** Submitting a transfer creates two `Transaction` records: one negative (expense) from the "From" account and one positive (income) to the "To" account, with the same absolute amount.
++- [ ] **AC4:** The two created transactions are linked via their `relatedTransactionId` fields, pointing to each other. This creation process must be atomic.
++- [ ] **AC5:** On the Transaction Detail screen, a linked transaction displays a clickable link to its counterpart.
++- [ ] **AC6:** Deleting one transaction in a linked pair automatically unlinks the other (its `relatedTransactionId` is set to null), but does not delete it.
++- [ ] **AC7:** Reporting features (e.g., Income vs Expense chart) provide an option to include or exclude transactions identified as transfers.
 +
 +---
 +
@@ -209,60 +140,46 @@ index 0000000..5f007a1
 +
 +```mermaid
 +flowchart TD
-+    subgraph "Phase 1: Authentication"
-+        A[App Launch] --> B{Is User Logged In?}
-+        B -->|No| C[Show Login Screen]
-+        C --> D[Click "Sign in with Google"]
-+        D --> E[Google OAuth Flow]
-+        E --> F{Authentication Successful?}
-+        F -->|No| G[Show Error Message] --> C
-+        F -->|Yes| H[Fetch Google Profile]
-+        H --> I[Backend: Create Session/User]
-+    end
-+
-+    subgraph "Phase 2: Backup & Restore"
-+        I --> J{Backup exists in Google Drive?}
-+        J -->|Yes| K[Prompt to Restore Data]
-+        K --> L{User chooses to Restore?}
-+        L -->|Yes| M[Download & Decrypt Backup] --> N[Apply Data to App]
-+        L -->|No| O[Proceed with Local/Default Data]
-+        J -->|No| O
-+        N --> P[Show Main App Screen]
-+        O --> P
-+        P --> Q[User interacts with app]
-+        Q --> R((Auto-backup Triggered Periodically))
-+        R --> S[Encrypt & Upload Data to GDrive]
-+        P --> T[User navigates to Settings]
-+        T --> U[Click "Backup Now"] --> S
-+        T --> V[Click "Restore"] --> K
-+    end
++    A[User opens Add Transaction screen] --> B{Selects Transaction Type}
++    B -->|Expense/Income| C[Fills standard form]
++    B -->|Transfer| D[Selects 'Transfer' tab]
++    D --> E[Fills 'From Account', 'To Account', 'Amount', 'Date']
++    E --> F[Clicks 'Save']
++    F --> G[System creates two linked transactions in a single DB transaction]
++    G --> H[Redirects to transaction list and shows success message]
++    H --> I[End]
++    C --> F
 +```
 +
 +### 2.2 Screen/Page Requirements
 +
 +| หน้าจอ | Actions | Components |
 +|--------|---------|------------|
-+| **Login Screen** | - Sign in with Google | - "Sign in with Google" button<br>- Privacy Policy link |
-+| **Settings / Profile** | - View user profile<br>- Initiate manual backup<br>- Initiate restore from backup<br>- Logout | - User Avatar & Name display<br>- "Backup Now" button<br>- "Restore from Drive" button<br>- "Last Backup: [Timestamp]" status indicator<br>- "Logout" button |
-+| **Initial Setup (Post-Login)** | - Choose to restore data | - Modal/Dialog: "Backup found. Would you like to restore your data?"<br>- "Restore" button<br>- "Start Fresh" button |
++| **Add/Edit Transaction Screen** | - Select transaction type (Income, Expense, Transfer)<br>- Create a transfer by selecting from/to accounts<br>- Edit details of a transaction | - Tabs: `Expense`, `Income`, `Transfer`<br>- Dropdowns: `From Account`, `To Account`<br>- Inputs: `Amount`, `Date`, `Notes`<br>- Button: `Save Transaction` |
++| **Transaction Detail Screen** | - View all transaction details<br>- Navigate to the linked transaction if one exists | - Standard detail fields (Amount, Account, Date, etc.)<br>- New Section: `Linked Transaction`<br>- Hyperlink: `View linked expense/income from [Account Name]` |
 +
 +### 2.3 Input/Output Specification
 +
 +#### Inputs
 +
++*API Endpoint: `POST /api/transfers`*
++
 +| Field | Type | Required | Validation |
 +|-------|------|----------|------------|
-+| Google Auth Code | string | ✅ | Provided by Google SDK, exchanged on backend |
-+| User Action | click | ✅ | User interaction with UI buttons |
++| `fromAccountId` | string (UUID) | ✅ | Must be a valid account ID belonging to the user. |
++| `toAccountId` | string (UUID) | ✅ | Must be a valid account ID belonging to the user, different from `fromAccountId`. |
++| `amount` | number | ✅ | Must be a positive number. |
++| `transactionDate` | string (ISO 8601) | ✅ | Must be a valid date. |
++| `notes` | string | ❌ | Max 500 characters. |
 +
 +#### Outputs
 +
++*API Response: `201 Created`*
++
 +| Field | Type | Description |
 +|-------|------|-------------|
-+| Session Token (JWT) | string | A secure token issued by our backend to the client for authenticating API requests. |
-+| User Profile | object | User's ID, name, email, and avatar URL, stored in the app state. |
-+| Backup File | binary | An encrypted file containing a snapshot of the user's app data (e.g., in JSON format). |
-+| Sync Status | string | A UI-friendly string indicating the current state of data synchronization. |
++| `expenseTransaction` | object | The newly created expense transaction object. |
++| `incomeTransaction` | object | The newly created income transaction object. |
 +
 +---
 +
@@ -272,26 +189,21 @@ index 0000000..5f007a1
 +
 +| Component | Impact Level | Description |
 +|-----------|--------------|-------------|
-+| **Authentication Service (Backend)** | 🔴 High | Requires new endpoints for Google OAuth callback, token exchange, token validation, and session management. |
-+| **User Database Schema** | 🔴 High | New `users` table required to store Google ID, email, profile info, and refresh tokens. |
-+| **Frontend State Management** | 🔴 High | Global state needs to manage authentication status, user profile, and sync status. |
-+| **Client-side UI (Web & Android)** | 🔴 High | New login screens, settings page modifications, and profile displays must be built. |
-+| **Local Data Persistence Logic** | 🔴 High | Existing logic must be integrated with the new cloud backup/restore flow. |
-+| **API Gateway / Middleware** | 🟡 Medium | New protected routes and authentication middleware will be needed to secure endpoints. |
++| **Database (Transaction Table)** | 🔴 High | Requires a schema migration to add the `relatedTransactionId` column and a foreign key constraint/index. |
++| **Backend API (Transaction Service)** | 🔴 High | Requires a new endpoint for creating transfers and modifications to existing CUD logic to handle linking/unlinking. |
++| **Frontend (Add Transaction Page)** | 🔴 High | Significant UI changes are needed to introduce the "Transfer" flow, which is different from standard income/expense entry. |
++| **Frontend (Reporting Module)** | 🟡 Medium | Reporting logic must be updated to correctly filter and aggregate data, with the ability to exclude transfers. |
++| **Frontend (Transaction Detail Page)** | 🟡 Medium | UI needs to be updated to display the link to the related transaction. |
++| **Data Access Layer (Repository)** | 🔴 High | New methods are required to perform the atomic creation of two linked transactions. |
 +
 +### 3.2 Breaking Changes
 +
-+- [ ] **BC1:** Introduction of a mandatory authentication layer. Users who previously used the app anonymously will need to sign in to enable cross-device sync and data backup.
-+- [ ] **BC2:** The data storage model will shift from purely local to a cloud-synced model, which may require a one-time data migration for existing users.
++- [ ] **BC1:** The `Transaction` object returned from all transaction-related API endpoints will now include the `relatedTransactionId` field. Mobile and web clients must be updated to handle this new field, even if just to ignore it, to prevent deserialization errors.
 +
 +### 3.3 Backward Compatibility Plan
 +
 +```
-+For existing users with local data:
-+1. Upon the first app update, the app will continue to function offline as before.
-+2. A prominent, non-intrusive banner will encourage users to "Sign in to back up your data."
-+3. When an existing user signs in for the first time, the app will detect local data and prompt them: "Would you like to upload your current local data to your new account?"
-+4. This one-time migration will associate their existing local data with their new Google-linked account, ensuring a seamless transition without data loss.
++The new `relatedTransactionId` field will be nullable in the database, ensuring that existing records are not affected. The API will be versioned (e.g., /v2/transactions) if the change is deemed too disruptive. However, the current plan is to coordinate frontend and backend releases. Older clients will ignore the new field. The core create/update/delete endpoints for single transactions will remain unchanged in their function.
 +```
 +
 +---
@@ -302,26 +214,25 @@ index 0000000..5f007a1
 +
 +| คำถาม | คำตอบ | หมายเหตุ |
 +|-------|-------|----------|
-+| เทคโนโลยีรองรับหรือไม่? | ✅ | Google provides official, well-documented SDKs for Web (gis) and Android (Google Sign-In SDK), as well as REST APIs for Google Drive. |
-+| ทีมมี Skills เพียงพอหรือไม่? | ✅ | The implementation uses standard OAuth 2.0 patterns and REST API consumption, which are common skills for web and mobile developers. |
-+| Infrastructure รองรับหรือไม่? | ✅ | The backend infrastructure only needs to handle standard HTTPS requests for the OAuth callback. No specialized hardware or services are required. |
++| เทคโนโลยีรองรับหรือไม่? | ✅ | Standard feature for RDBMS and backend frameworks. Requires database transaction support. |
++| ทีมมี Skills เพียงพอหรือไม่? | ✅ | The required skills (SQL, API development, frontend development) are present in the team. |
++| Infrastructure รองรับหรือไม่? | ✅ | No new infrastructure is required. |
 +
 +### 4.2 Time Feasibility
 +
 +| ประเด็น | รายละเอียด |
 +|--------|-----------|
-+| **Estimated Effort** | **6 weeks** (Phase 1: 2.5 weeks, Phase 2: 3.5 weeks) |
-+| **Deadline** | Not specified. Assumed to follow standard development cycles. |
-+| **Buffer Time** | 1 week |
-+| **Feasible?** | ✅ | The scope is significant but manageable within the estimated timeframe if split into the two specified phases. |
++| **Estimated Effort** | 15 person-days (Backend: 5, Frontend: 7, QA: 3) |
++| **Deadline** | N/A (To be determined by project manager) |
++| **Buffer Time** | 3 days |
++| **Feasible?** | ✅ | The effort is manageable within a standard 2-3 week sprint. |
 +
 +### 4.3 Budget Feasibility
 +
 +| รายการ | ค่าใช้จ่าย | หมายเหตุ |
 +|--------|-----------|----------|
-+| Google API Usage | ~$0 | Google Sign-In is free. The Google Drive API has a generous free quota that is highly unlikely to be exceeded by this application's usage pattern. |
-+| Development Hours | [Internal Cost] | The primary cost is the developer time estimated above. |
-+| **Total** | **Negligible (excluding development time)** | |
++| Development Hours | N/A | Internal resource allocation. No direct external cost. |
++| **Total** | **0** | |
 +
 +---
 +
@@ -331,23 +242,21 @@ index 0000000..5f007a1
 +
 +| ข้อมูล | Sensitivity Level | Protection Method |
 +|--------|------------------|-------------------|
-+| **OAuth Tokens (Access, Refresh)** | 🔴 Critical | **Backend:** Encrypted in the database. **Client:** Stored securely (HttpOnly cookies for web, Android Keystore for mobile). |
-+| **User Application Data Backup** | 🔴 Critical | End-to-end encryption. Data is encrypted on the client device (AES-256) before being uploaded to Google Drive. The encryption key is not stored in plain text. |
-+| **User PII (Name, Email, Avatar)** | 🟡 Sensitive | Stored in the user database with standard access controls. Transmitted over TLS. |
++| Transaction Details (amount, date) | 🟡 Sensitive | Standard TLS encryption, access control based on user ownership. |
++| Account/Wallet IDs | 🟡 Sensitive | Access control to ensure users can only interact with their own accounts. |
++| `relatedTransactionId` | 🟢 Normal | No direct sensitive information, but access should be controlled as part of the transaction record. |
 +
 +### 5.2 Attack Vectors
 +
 +| Vector | Risk Level | Mitigation |
 +|--------|-----------|------------|
-+| **Token Interception/Hijacking** | 🔴 High | Use OAuth 2.0 Authorization Code flow with PKCE. Enforce HTTPS/TLS everywhere. Use secure, HttpOnly cookies on the web to prevent XSS access. |
-+| **Cross-Site Request Forgery (CSRF)** | 🟡 Medium | Implement standard CSRF protection on the backend (e.g., `state` parameter in OAuth flow, anti-CSRF tokens for session-based actions). |
-+| **Unauthorized Data Access** | 🔴 High | Encrypt backup files. Use the `drive.appdata` scope for the Google Drive API, which sandboxes app data and prevents the app from accessing other user files. |
++| **Cross-User Data Manipulation** | 🔴 High | Backend logic must strictly validate that both `fromAccountId` and `toAccountId` belong to the authenticated user making the request. |
++| **Data Integrity Violation** | 🟡 Medium | The creation of the two linked transactions must be wrapped in a single database transaction to ensure atomicity. If one part fails, the entire operation must be rolled back. |
 +
 +### 5.3 Authentication & Authorization
 +
 +```
-+- **Authentication:** The system will use Google's OAuth 2.0 (Authorization Code Flow with PKCE) as the primary authentication method. The backend will verify the identity with Google and issue a stateless JWT session token to the client.
-+- **Authorization:** All subsequent API requests from the client to our backend will be authorized using the JWT in the `Authorization` header. The Google Drive API access will be authorized by the OAuth access token and restricted to the `drive.appdata` scope.
++All API endpoints related to this feature (`POST /api/transfers`, updates to `PUT /api/transactions/:id`, etc.) must be protected and require a valid user authentication token (e.g., JWT). The business logic layer must contain authorization checks to verify that the user owns all resources (accounts, transactions) they are attempting to modify.
 +```
 +
 +---
@@ -358,18 +267,17 @@ index 0000000..5f007a1
 +
 +| Metric | Target | Current |
 +|--------|--------|---------|
-+| Login Flow Duration | < 5s | N/A |
-+| API Response Time (Backend) | < 250ms (p95) | N/A |
-+| Backup/Restore Duration | < 20s for 5MB data | N/A |
++| Response Time (Create Transfer) | < 300ms | N/A |
++| DB Query Time (Find linked tx) | < 50ms | N/A |
 +| Error Rate | < 0.1% | N/A |
 +
 +### 6.2 Scalability Plan
 +
 +| Scenario | Expected Users | Scaling Strategy |
 +|----------|---------------|------------------|
-+| Normal | 10,000 DAU | The backend authentication service will be stateless and can be horizontally scaled using a load balancer. |
-+| Peak | 50,000 DAU | The authentication and backup loads are distributed across Google's infrastructure, which is highly scalable. Our backend only handles token exchange and session management. |
-+| Growth (1yr) | 200,000 DAU | Monitor API response times and database load. Implement database read replicas if necessary. The architecture is inherently scalable. |
++| Normal | 10k | A database index should be added to the `relatedTransactionId` column to ensure efficient lookups. |
++| Peak | 50k | The current architecture (standard web app stack) is sufficient. No special scaling is needed for this feature. |
++| Growth (1yr) | 100k+ | Monitor query performance on the Transaction table. If it becomes a bottleneck, consider read replicas. |
 +
 +---
 +
@@ -377,9 +285,9 @@ index 0000000..5f007a1
 +
 +| ด้าน | As-Is (ปัจจุบัน) | To-Be (ต้องการ) | Gap |
 +|------|-----------------|-----------------|-----|
-+| **Authentication** | No user accounts. All usage is anonymous and local. | A complete user authentication system based on Google Sign-In. | The entire authentication stack (client-side SDK integration, backend OAuth handling, session management) needs to be built from scratch. |
-+| **Data Persistence** | Data is stored exclusively on the device's local storage. | Data is automatically backed up to the user's personal Google Drive and can be restored. | A comprehensive backup, restore, and sync engine needs to be developed, including data serialization, encryption, and Google Drive API integration. |
-+| **User Experience** | Single-device experience with risk of data loss. | A multi-device, persistent experience where user data is safe and accessible. | UI/UX for login, profile management, and sync status needs to be designed and implemented. |
++| **Data Model** | `Transaction` table has no field for linking. | `Transaction` table has a `relatedTransactionId` field. | A database migration script is required to alter the table schema. |
++| **Business Logic** | Transactions are treated as independent events. | A "Transfer" is a special, atomic operation creating two linked transactions. | New service-layer logic is needed to handle the atomic creation, linking, and unlinking of transactions. |
++| **User Interface** | Users must manually create two separate transactions to simulate a transfer. | A streamlined, dedicated UI for creating transfers. | A new "Transfer" tab/view must be designed and implemented on the "Add Transaction" screen. |
 +
 +---
 +
@@ -387,8 +295,143 @@ index 0000000..5f007a1
 +
 +| Risk | Probability | Impact | Score | Mitigation Plan |
 +|------|-------------|--------|-------|-----------------|
-+| **Complex Conflict Resolution** | 🟡 Medium | 🔴 High | 6 | For the initial release, implement a simple "last write wins" strategy. If a conflict is detected on restore, clearly prompt the user to choose between the local version and the cloud version. Defer complex data merging. |
-+| **Security Flaw in OAuth Flow** | 🟡 Medium | 🔴 High | 6 | Strictly adhere to Google's official implementation guidelines and OAuth 2.0 best practices (including PKCE). Conduct a thoro
++| **Data Inconsistency** (e.g., only one side of a transfer is created) | 🟡 Medium | 🔴 High | 6 | Enforce the creation of the transaction pair within a single, atomic database transaction in the backend service. |
++| **Confusing User Experience** | 🟡 Medium | 🟡 Medium | 4 | Create clear UI mockups and conduct a design review before implementation. Use clear labels like "From" and "To". |
++| **Incorrect Reporting** (Transfers are not excluded correctly) | 🟡 Medium | 🟡 Medium | 4 | Implement specific unit and integration tests for the reporting module to verify the filtering logic for transfers. |
++
++> **Risk Score:** Probability × Impact (High=3, Medium=2, Low=1)
++
++---
++
++## 9. Summary & Recommendations
++
++### 9.1 Analysis Summary
++
++| หมวด | Status | Key Findings |
++|------|--------|--------------|
++| Requirement | ✅ Clear | The goal and user needs are well-defined. |
++| Feature | ✅ Defined | The technical requirements for the data model, logic, and UI are specified. |
++| Impact | 🔴 High | This feature requires changes across the entire stack: database, backend, and frontend. |
++| Feasibility | ✅ Feasible | The feature is technically feasible with the current team and technology stack. |
++| Security | ⚠️ Needs Review | Authorization checks are critical to prevent users from manipulating others' data. |
++| Performance | ✅ Acceptable | A database index on the new column is required to maintain performance. |
++| Risk | ⚠️ Some Risks | The primary risk is data inconsistency, which can be mitigated with atomic database transactions. |
++
++### 9.2 Recommendations
++
++1.  **Implement with Atomicity:** The backend logic for creating a transfer MUST use a database transaction to ensure that either both linked transactions are created successfully or none are.
++2.  **Add Database Index:** A database index must be created on the `relatedTransactionId` column to prevent performance degradation on transaction lookups.
++3.  **Prioritize Clear UX:** Design a dedicated and intuitive UI for the "Transfer" flow. Avoid retrofitting the existing income/expense forms, as this could lead to user confusion.
++
++### 9.3 Next Steps
++
++- [ ] Create and review the database migration script.
++- [ ] Define the final API contract for the `POST /api/transfers` endpoint.
++- [ ] Develop UI/UX mockups for the "Add Transfer" screen and the updated "Transaction Detail" screen.
++- [ ] Create backend tasks for API endpoint and service logic.
++- [ ] Create frontend tasks for UI implementation.
++
++---
++
++## 📎 Appendix
++
++### Related Documents
++
++- [Link to PRD]
++- [Link to Design Docs]
++- [Link to API Specs]
++
++### Sign-off
++
++| Role | Name | Date | Signature |
++|------|------|------|-----------|
++| Analyst | Luma AI | 2023-10-27 | ✅ |
++| Tech Lead | [Name] | [Date] | ⬜ |
++| PM | [Name] | [Date] | ⬜ |
+\ No newline at end of file
+diff --git a/docs/features/14-issue-71_transaction_linking/android/implementation_plan.md b/docs/features/14-issue-71_transaction_linking/android/implementation_plan.md
+new file mode 100644
+index 0000000..549285d
+--- /dev/null
++++ b/docs/features/14-issue-71_transaction_linking/android/implementation_plan.md
+@@ -0,0 +1,72 @@
++# Implementation Plan - Issue #71: Transaction Linking & Transfers
++
++This plan outlines the steps to implement transaction linking, specifically for the "Transfer" feature.
++
++## User Review Required
++
++> [!IMPORTANT]
++> **Database Migration**: A destructive migration is NOT planned, but we will be adding a column `linkedTransactionId`. Ensure strict testing of the migration script.
++
++> [!WARNING]
++> **Architecture**: We are introducing new Use Cases (`CreateTransferUseCase`) and modifying the Repository. If `TransactionRepository` does not exist, it will be created to abstract the DAO.
++
++## Proposed Changes
++
++### Data Layer
++
++#### [MODIFY] [Transaction.kt](file:///Users/oatrice/Software-projects/JarWise/Android/app/src/main/java/com/oatrice/jarwise/data/Transaction.kt)
++- Add `linkedTransactionId: String? = null` to the data class.
++
++#### [NEW] [TransactionRepository.kt](file:///Users/oatrice/Software-projects/JarWise/Android/app/src/main/java/com/oatrice/jarwise/data/repository/TransactionRepository.kt)
++- Create interface and implementation if missing, or update existing.
++- Add `createTransfer(fromTransaction: Transaction, toTransaction: Transaction)` method.
++- Ensure this method executes in a database transaction (using `@Transaction` in DAO or `withTransaction` block).
++
++#### [MODIFY] [TransactionDao.kt](file:///Users/oatrice/Software-projects/JarWise/Android/app/src/main/java/com/oatrice/jarwise/data/TransactionDao.kt)
++- Functionality for inserting multiple transactions will be handled here or in the Repository via `RoomDatabase.withTransaction`.
++
++### Domain Layer
++
++#### [NEW] [CreateTransferUseCase.kt](file:///Users/oatrice/Software-projects/JarWise/Android/app/src/main/java/com/oatrice/jarwise/domain/use_case/CreateTransferUseCase.kt)
++- Encapsulate the logic for creating two linked transactions (Expense + Income).
++- Validate inputs (Same amount, different wallets).
++
++#### [NEW] [UnlinkTransactionsUseCase.kt](file:///Users/oatrice/Software-projects/JarWise/Android/app/src/main/java/com/oatrice/jarwise/domain/use_case/UnlinkTransactionsUseCase.kt)
++- handle unlinking logic.
++
++### UI Layer
++
++#### [MODIFY] [AddTransactionScreen.kt](file:///Users/oatrice/Software-projects/JarWise/Android/app/src/main/java/com/oatrice/jarwise/ui/AddTransactionScreen.kt)
++- Add "Transfer" Tab (alongside Income/Expense).
++- When "Transfer" is selected:
++    - Show `From Wallet` and `To Wallet` dropdowns/cards.
++    - Hide `Jar` selection (or auto-select "Transfer" jar if applicable).
++- Update logic to call `CreateTransferUseCase` (via ViewModel).
++
++#### [MODIFY] [TransactionHistoryScreen.kt](file:///Users/oatrice/Software-projects/JarWise/Android/app/src/main/java/com/oatrice/jarwise/ui/TransactionHistoryScreen.kt) / Detail Screen
++- Show "Linked to" indicator.
++
++## Verification Plan
++
++### Automated Tests
++- **Unit Tests**:
++    - `CreateTransferUseCaseTest`: Verify it creates two transactions with correct IDs linked.
++    - `TransactionRepositoryTest`: Verify database insertion and rollback on failure.
++    - `TransactionTest`: Verify model integrity.
++- **Migration Test**:
++    - Verify schema upgrade works without data loss.
++
++### Manual Verification
++1.  **Create Transfer**:
++    - Open Add Transaction > Select "Transfer" tab.
++    - Select From: Wallet A, To: Wallet B, Amount: 100.
++    - Save.
++    - **Expect**: Two transactions appear in history. -100 in Wallet A, +100 in Wallet B.
++2.  **Verify Link**:
++    - Click on the -100 transaction.
++    - **Expect**: See "Linked to: +100 (Wallet B)".
++    - Click the link.
++    - **Expect**: Navigate to the +100 transaction details.
++3.  **Delete Transfer**:
++    - Delete the -100 transaction.
++    - **Expect**: The +100 transaction remains but is now unlinked (standalone income).
+diff --git a/docs/features/14-issue-71_transaction_linking/android/task.md b/docs/features/14-issue-71_transaction_linking/android/task.md
+new file mode 100644
+index 0000000..0645093
+--- /dev/null
++++ b/docs/features/14-issue-71_transaction_li
 ... (Diff truncated for size) ...
 
 PR TEMPLATE:

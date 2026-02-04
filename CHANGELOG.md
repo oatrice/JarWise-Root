@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.7.0] - 2026-02-11
+
+### Added
+- **[Feature] Transaction Linking for Transfers:** Implemented a system to link the debit and credit transactions when transferring funds between user-owned accounts (e.g., from a Wallet to a Jar). This provides a clearer financial overview by treating internal transfers as a single, unified event, preventing them from being incorrectly counted in income or expense reports.
+- **[Docs]** Added extensive new planning, analysis, and specification documents for the transaction linking feature.
+
+### Changed
+- **[Docs]** Updated the project `ROADMAP.md` to reflect the completion of new features.
+
 ## [0.6.0] - 2026-02-04
 
 ### Added
