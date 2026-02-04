@@ -33,7 +33,7 @@ This document outlines the strategic direction and priority of features for JarW
     - **Status:** 🟢 **Ready**
 - **#71 Transaction Linking (Transfers)**
     - Enable transfers between wallets/jars.
-    - **Status:** 🟢 **Ready**
+    - ✅ **Done** (v1.9.0)
 
 ## 🔗 Simplified Dependency Graph
 ```mermaid
