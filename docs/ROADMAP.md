@@ -23,7 +23,7 @@ This document outlines the strategic direction and priority of features for JarW
     - ✅ **Done** (v1.7.0) - Implemented Google Login & Drive Backup.
 - **#65 Legacy Data Migration**
     - Import/Migrate data from "Money Manager" or legacy formats to new schema.
-    - **Status:** 🟢 **Ready**
+    - ✅ **Done** (v1.8.0) - Android Implementation Complete.
 
 ## 🔴 Phase 3: Usability & Advanced Features
 *Enhancing user experience and reporting.*
