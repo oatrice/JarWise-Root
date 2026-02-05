@@ -53,3 +53,46 @@ Backend support was added to `/api/v1/reports` to accept jar/wallet filters for 
 - Clear → Apply → list resets.
 - Filter indicator shows when active.
 - No-matches state shows if filters return empty list.
+
+---
+
+## 4. Manual Verification (Human QA)
+
+### Android (Transaction History)
+
+1. Open **Transaction History**.
+2. Tap **Filter** icon (top-right).
+   - Expect: Bottom sheet appears with **Jars** and **Wallets** sections.
+3. Select one Jar (e.g. `Necessities`), tap **Apply**.
+   - Expect: List is filtered, count decreases, filter icon turns **active** (blue).
+4. Open Filter again, select another Jar (e.g. `Play`), tap **Apply**.
+   - Expect: List shows both jars.
+5. Open Filter, tap **Clear** then **Apply**.
+   - Expect: All transactions return, filter icon inactive (gray).
+6. Select combination with no matches, tap **Apply**.
+   - Expect: Empty state “No matches found”.
+7. Open Filter, change selections, dismiss by tapping outside.
+   - Expect: No change unless **Apply** tapped.
+
+### Web (Transaction History)
+
+1. Navigate to **Transaction History**.
+2. Click **Filter** icon.
+   - Expect: Bottom sheet modal opens.
+3. Select Jar(s) and Wallet(s), click **Apply Filters**.
+   - Expect: List filtered, count updates, active dot appears.
+4. Click **Clear**, then **Apply Filters**.
+   - Expect: Full list returns.
+5. Choose filters with no matches.
+   - Expect: “No matches found” empty state.
+
+### Backend (Reports API)
+
+1. Start server: `cd Backend && go run cmd/server/main.go`
+2. Visit:
+   - `GET /api/v1/reports`
+   - `GET /api/v1/reports?jar_ids=necessities`
+   - `GET /api/v1/reports?wallet_ids=wallet-bank`
+3. Expect:
+   - JSON response includes `transaction_count` and filtered list.
+
