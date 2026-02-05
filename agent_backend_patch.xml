@@ -1,0 +1,664 @@
+Of course. As a Senior Polyglot Developer, I will implement the backend components for the multi-select category and account filter feature using Go. I will follow Test-Driven Development (TDD) principles, starting with tests for the core business logic.
+
+Here is the complete implementation, structured for clarity and maintainability.
+
+<file path="go.mod">
+```go
+module github.com/example/reporting
+
+go 1.21
+
+require (
+	github.com/gorilla/mux v1.8.1
+	github.com/stretchr/testify v1.8.4
+)
+
+require (
+	github.com/davecgh/go-spew v1.1.1 // indirect
+	github.com/pmezard/go-difflib v1.0.0 // indirect
+	gopkg.in/yaml.v3 v3.0.1 // indirect
+)
+```
+</file>
+
+<file path="model/entities.go">
+```go
+package model
+
+import "time"
+
+// Transaction represents a single financial transaction.
+type Transaction struct {
+	ID          int
+	Amount      float64
+	Description string
+	Date        time.Time
+	CategoryID  int
+	AccountID   int
+}
+
+// ReportFilter holds the criteria for filtering transactions for a report.
+// Slices for CategoryIDs and AccountIDs allow for multi-selection.
+type ReportFilter struct {
+	StartDate   time.Time
+	EndDate     time.Time
+	CategoryIDs []int
+	AccountIDs  []int
+}
+
+// Report represents the generated report data.
+type Report struct {
+	TotalAmount float64
+	TransactionCount int
+	Transactions []Transaction
+	FilterUsed   ReportFilter
+}
+```
+</file>
+
+<file path="storage/repository.go">
+```go
+package storage
+
+import (
+	"context"
+	"time"
+	"github.com/example/reporting/model"
+)
+
+// TransactionRepository defines the interface for accessing transaction data.
+// This abstraction allows us to easily switch between a mock, a real database,
+// or any other data source.
+type TransactionRepository interface {
+	FindTransactionsByDateRange(ctx context.Context, start, end time.Time) ([]model.Transaction, error)
+}
+```
+</file>
+
+<file path="storage/mock_repository.go">
+```go
+package storage
+
+import (
+	"context"
+	"time"
+	"github.com/example/reporting/model"
+)
+
+// MockTransactionRepository is a mock implementation of TransactionRepository for testing.
+type MockTransactionRepository struct {
+	transactions []model.Transaction
+}
+
+// NewMockTransactionRepository creates and seeds a mock repository.
+func NewMockTransactionRepository() *MockTransactionRepository {
+	// Sample data for demonstration and testing
+	transactions := []model.Transaction{
+		{ID: 1, Amount: 100.50, Description: "Groceries", Date: time.Date(2023, 10, 1, 0, 0, 0, 0, time.UTC), CategoryID: 1, AccountID: 101},
+		{ID: 2, Amount: 25.00, Description: "Coffee", Date: time.Date(2023, 10, 2, 0, 0, 0, 0, time.UTC), CategoryID: 2, AccountID: 102},
+		{ID: 3, Amount: 1200.00, Description: "Rent", Date: time.Date(2023, 10, 5, 0, 0, 0, 0, time.UTC), CategoryID: 3, AccountID: 101},
+		{ID: 4, Amount: 75.25, Description: "Dinner", Date: time.Date(2023, 10, 8, 0, 0, 0, 0, time.UTC), CategoryID: 2, AccountID: 101},
+		{ID: 5, Amount: 300.00, Description: "Utilities", Date: time.Date(2023, 10, 15, 0, 0, 0, 0, time.UTC), CategoryID: 3, AccountID: 102},
+		{ID: 6, Amount: 50.00, Description: "Gas", Date: time.Date(2023, 10, 20, 0, 0, 0, 0, time.UTC), CategoryID: 4, AccountID: 101},
+		{ID: 7, Amount: 15.00, Description: "Movie Ticket", Date: time.Date(2023, 10, 22, 0, 0, 0, 0, time.UTC), CategoryID: 5, AccountID: 102},
+		{ID: 8, Amount: 45.50, Description: "Lunch", Date: time.Date(2023, 10, 25, 0, 0, 0, 0, time.UTC), CategoryID: 2, AccountID: 102},
+	}
+	return &MockTransactionRepository{transactions: transactions}
+}
+
+// FindTransactionsByDateRange simulates fetching data from a database.
+func (m *MockTransactionRepository) FindTransactionsByDateRange(ctx context.Context, start, end time.Time) ([]model.Transaction, error) {
+	var results []model.Transaction
+	for _, t := range m.transactions {
+		if !t.Date.Before(start) && !t.Date.After(end) {
+			results = append(results, t)
+		}
+	}
+	return results, nil
+}
+```
+</file>
+
+<file path="service/report_service.go">
+```go
+package service
+
+import (
+	"context"
+	"github.com/example/reporting/model"
+	"github.com/example/reporting/storage"
+)
+
+// ReportService defines the interface for the report generation business logic.
+type ReportService interface {
+	GenerateReport(ctx context.Context, filter model.ReportFilter) (*model.Report, error)
+}
+
+// reportServiceImpl is the implementation of ReportService.
+type reportServiceImpl struct {
+	repo storage.TransactionRepository
+}
+
+// NewReportService creates a new instance of the report service.
+func NewReportService(repo storage.TransactionRepository) ReportService {
+	return &reportServiceImpl{repo: repo}
+}
+
+// GenerateReport creates a report based on the provided filters.
+func (s *reportServiceImpl) GenerateReport(ctx context.Context, filter model.ReportFilter) (*model.Report, error) {
+	// Fetch all transactions within the date range first.
+	allTransactions, err := s.repo.FindTransactionsByDateRange(ctx, filter.StartDate, filter.EndDate)
+	if err != nil {
+		return nil, err
+	}
+
+	filteredTransactions := s.applyFilters(allTransactions, filter)
+
+	report := &model.Report{
+		FilterUsed:   filter,
+		Transactions: filteredTransactions,
+		TransactionCount: len(filteredTransactions),
+	}
+
+	// Calculate total amount from filtered transactions
+	var total float64
+	for _, t := range filteredTransactions {
+		total += t.Amount
+	}
+	report.TotalAmount = total
+
+	return report, nil
+}
+
+// applyFilters processes transactions against category and account filters.
+func (s *reportServiceImpl) applyFilters(transactions []model.Transaction, filter model.ReportFilter) []model.Transaction {
+	// If no filters are provided, return all transactions
+	if len(filter.CategoryIDs) == 0 && len(filter.AccountIDs) == 0 {
+		return transactions
+	}
+
+	// Create maps for quick lookups
+	categoryFilter := make(map[int]bool)
+	if len(filter.CategoryIDs) > 0 {
+		for _, id := range filter.CategoryIDs {
+			categoryFilter[id] = true
+		}
+	}
+
+	accountFilter := make(map[int]bool)
+	if len(filter.AccountIDs) > 0 {
+		for _, id := range filter.AccountIDs {
+			accountFilter[id] = true
+		}
+	}
+
+	var result []model.Transaction
+	for _, t := range transactions {
+		// Logic for matching:
+		// A transaction must match the category filter (if present) AND the account filter (if present).
+		categoryMatch := len(categoryFilter) == 0 || categoryFilter[t.CategoryID]
+		accountMatch := len(accountFilter) == 0 || accountFilter[t.AccountID]
+
+		if categoryMatch && accountMatch {
+			result = append(result, t)
+		}
+	}
+
+	return result
+}
+```
+</file>
+
+<file path="service/report_service_test.go">
+```go
+package service
+
+import (
+	"context"
+	"testing"
+	"time"
+
+	"github.com/example/reporting/model"
+	"github.com/example/reporting/storage"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
+)
+
+func setupServiceTest() (ReportService, time.Time, time.Time) {
+	repo := storage.NewMockTransactionRepository()
+	service := NewReportService(repo)
+	startDate := time.Date(2023, 10, 1, 0, 0, 0, 0, time.UTC)
+	endDate := time.Date(2023, 10, 31, 0, 0, 0, 0, time.UTC)
+	return service, startDate, endDate
+}
+
+func TestGenerateReport_NoFilters(t *testing.T) {
+	service, startDate, endDate := setupServiceTest()
+	filter := model.ReportFilter{
+		StartDate: startDate,
+		EndDate:   endDate,
+	}
+
+	report, err := service.GenerateReport(context.Background(), filter)
+
+	require.NoError(t, err)
+	assert.Equal(t, 8, report.TransactionCount)
+	assert.InDelta(t, 1811.25, report.TotalAmount, 0.001)
+}
+
+func TestGenerateReport_MultiSelectCategories(t *testing.T) {
+	service, startDate, endDate := setupServiceTest()
+	filter := model.ReportFilter{
+		StartDate:   startDate,
+		EndDate:     endDate,
+		CategoryIDs: []int{2, 3}, // Coffee, Dinner, Rent, Utilities, Lunch
+	}
+
+	report, err := service.GenerateReport(context.Background(), filter)
+	require.NoError(t, err)
+
+	// Expected transactions: ID 2, 3, 4, 5, 8
+	assert.Equal(t, 5, report.TransactionCount)
+	assert.InDelta(t, 1645.75, report.TotalAmount, 0.001)
+
+	// Check that only transactions with CategoryID 2 or 3 are present
+	for _, tx := range report.Transactions {
+		assert.Contains(t, []int{2, 3}, tx.CategoryID)
+	}
+}
+
+func TestGenerateReport_MultiSelectAccounts(t *testing.T) {
+	service, startDate, endDate := setupServiceTest()
+	filter := model.ReportFilter{
+		StartDate:  startDate,
+		EndDate:    endDate,
+		AccountIDs: []int{102}, // Filter for account 102
+	}
+
+	report, err := service.GenerateReport(context.Background(), filter)
+	require.NoError(t, err)
+
+	// Expected transactions: ID 2, 5, 7, 8
+	assert.Equal(t, 4, report.TransactionCount)
+	assert.InDelta(t, 385.50, report.TotalAmount, 0.001)
+
+	for _, tx := range report.Transactions {
+		assert.Equal(t, 102, tx.AccountID)
+	}
+}
+
+func TestGenerateReport_MultiSelectCategoriesAndAccounts(t *testing.T) {
+	service, startDate, endDate := setupServiceTest()
+	filter := model.ReportFilter{
+		StartDate:   startDate,
+		EndDate:     endDate,
+		CategoryIDs: []int{2, 5}, // Coffee, Dinner, Lunch & Movie Ticket
+		AccountIDs:  []int{102},  // Only from account 102
+	}
+
+	report, err := service.GenerateReport(context.Background(), filter)
+	require.NoError(t, err)
+
+	// Expected transactions:
+	// ID 2 (Cat 2, Acc 102)
+	// ID 7 (Cat 5, Acc 102)
+	// ID 8 (Cat 2, Acc 102)
+	assert.Equal(t, 3, report.TransactionCount)
+	assert.InDelta(t, 85.50, report.TotalAmount, 0.001)
+
+	for _, tx := range report.Transactions {
+		assert.Contains(t, []int{2, 5}, tx.CategoryID)
+		assert.Equal(t, 102, tx.AccountID)
+	}
+}
+
+func TestGenerateReport_NoResults(t *testing.T) {
+	service, startDate, endDate := setupServiceTest()
+	filter := model.ReportFilter{
+		StartDate:   startDate,
+		EndDate:     endDate,
+		CategoryIDs: []int{99}, // Non-existent category
+	}
+
+	report, err := service.GenerateReport(context.Background(), filter)
+	require.NoError(t, err)
+
+	assert.Equal(t, 0, report.TransactionCount)
+	assert.Equal(t, 0.0, report.TotalAmount)
+	assert.Empty(t, report.Transactions)
+}
+```
+</file>
+
+<file path="api/handler_utils.go">
+```go
+package api
+
+import (
+	"encoding/json"
+	"log"
+	"net/http"
+	"strconv"
+	"strings"
+)
+
+// respondWithError sends a JSON error response.
+func respondWithError(w http.ResponseWriter, code int, message string) {
+	respondWithJSON(w, code, map[string]string{"error": message})
+}
+
+// respondWithJSON sends a JSON response.
+func respondWithJSON(w http.ResponseWriter, code int, payload interface{}) {
+	response, err := json.Marshal(payload)
+	if err != nil {
+		log.Printf("Error marshalling JSON: %v", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(`{"error": "Internal server error"}`))
+		return
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(code)
+	w.Write(response)
+}
+
+// parseCommaSeparatedInts parses a comma-separated string from a URL query into a slice of ints.
+func parseCommaSeparatedInts(queryValue string) ([]int, error) {
+	if queryValue == "" {
+		return []int{}, nil
+	}
+
+	idStrings := strings.Split(queryValue, ",")
+	ids := make([]int, 0, len(idStrings))
+
+	for _, idStr := range idStrings {
+		trimmedStr := strings.TrimSpace(idStr)
+		if trimmedStr == "" {
+			continue
+		}
+		id, err := strconv.Atoi(trimmedStr)
+		if err != nil {
+			return nil, err
+		}
+		ids = append(ids, id)
+	}
+	return ids, nil
+}
+```
+</file>
+
+<file path="api/handlers.go">
+```go
+package api
+
+import (
+	"log"
+	"net/http"
+	"time"
+
+	"github.com/example/reporting/model"
+	"github.com/example/reporting/service"
+)
+
+// ReportHandler handles HTTP requests for reports.
+type ReportHandler struct {
+	service service.ReportService
+}
+
+// NewReportHandler creates a new ReportHandler.
+func NewReportHandler(s service.ReportService) *ReportHandler {
+	return &ReportHandler{service: s}
+}
+
+// GetReport is the handler function for GET /api/reports.
+// It parses query parameters for filtering and returns a report.
+func (h *ReportHandler) GetReport(w http.ResponseWriter, r *http.Request) {
+	// Default date range to the current month if not provided
+	now := time.Now()
+	defaultStart := time.Date(now.Year(), now.Month(), 1, 0, 0, 0, 0, time.UTC)
+	defaultEnd := defaultStart.AddDate(0, 1, -1)
+
+	// Parse date filters
+	startDateStr := r.URL.Query().Get("start_date")
+	endDateStr := r.URL.Query().Get("end_date")
+
+	startDate, err := parseDate(startDateStr, defaultStart)
+	if err != nil {
+		respondWithError(w, http.StatusBadRequest, "Invalid start_date format. Use YYYY-MM-DD.")
+		return
+	}
+	endDate, err := parseDate(endDateStr, defaultEnd)
+	if err != nil {
+		respondWithError(w, http.StatusBadRequest, "Invalid end_date format. Use YYYY-MM-DD.")
+		return
+	}
+
+	// Parse multi-select filters
+	categoryIDs, err := parseCommaSeparatedInts(r.URL.Query().Get("category_ids"))
+	if err != nil {
+		respondWithError(w, http.StatusBadRequest, "Invalid category_ids format. Must be comma-separated integers.")
+		return
+	}
+
+	accountIDs, err := parseCommaSeparatedInts(r.URL.Query().Get("account_ids"))
+	if err != nil {
+		respondWithError(w, http.StatusBadRequest, "Invalid account_ids format. Must be comma-separated integers.")
+		return
+	}
+
+	filter := model.ReportFilter{
+		StartDate:   startDate,
+		EndDate:     endDate,
+		CategoryIDs: categoryIDs,
+		AccountIDs:  accountIDs,
+	}
+
+	log.Printf("Generating report with filter: %+v", filter)
+	report, err := h.service.GenerateReport(r.Context(), filter)
+	if err != nil {
+		log.Printf("Error generating report: %v", err)
+		respondWithError(w, http.StatusInternalServerError, "Could not generate report")
+		return
+	}
+
+	respondWithJSON(w, http.StatusOK, report)
+}
+
+// parseDate is a helper to parse date strings with a fallback default.
+func parseDate(dateStr string, defaultValue time.Time) (time.Time, error) {
+	if dateStr == "" {
+		return defaultValue, nil
+	}
+	return time.Parse("2006-01-02", dateStr)
+}
+```
+</file>
+
+<file path="api/handlers_test.go">
+```go
+package api
+
+import (
+	"context"
+	"encoding/json"
+	"net/http"
+	"net/http/httptest"
+	"testing"
+	"time"
+
+	"github.com/example/reporting/model"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
+)
+
+// MockReportService for handler tests
+type mockReportService struct {
+	GenerateReportFunc func(ctx context.Context, filter model.ReportFilter) (*model.Report, error)
+}
+
+func (m *mockReportService) GenerateReport(ctx context.Context, filter model.ReportFilter) (*model.Report, error) {
+	return m.GenerateReportFunc(ctx, filter)
+}
+
+func TestGetReportHandler_Success(t *testing.T) {
+	mockService := &mockReportService{
+		GenerateReportFunc: func(ctx context.Context, filter model.ReportFilter) (*model.Report, error) {
+			// Assert that the filter values from the URL are correctly passed to the service
+			assert.Equal(t, []int{2, 3}, filter.CategoryIDs)
+			assert.Equal(t, []int{101}, filter.AccountIDs)
+			assert.Equal(t, "2023-10-01", filter.StartDate.Format("2006-01-02"))
+			assert.Equal(t, "2023-10-31", filter.EndDate.Format("2006-01-02"))
+
+			return &model.Report{
+				TransactionCount: 2,
+				TotalAmount:      1275.25,
+			}, nil
+		},
+	}
+
+	handler := NewReportHandler(mockService)
+	req := httptest.NewRequest("GET", "/api/reports?category_ids=2,3&account_ids=101&start_date=2023-10-01&end_date=2023-10-31", nil)
+	rr := httptest.NewRecorder()
+
+	handler.GetReport(rr, req)
+
+	assert.Equal(t, http.StatusOK, rr.Code)
+
+	var report model.Report
+	err := json.NewDecoder(rr.Body).Decode(&report)
+	require.NoError(t, err)
+	assert.Equal(t, 2, report.TransactionCount)
+	assert.Equal(t, 1275.25, report.TotalAmount)
+}
+
+func TestGetReportHandler_NoFilters(t *testing.T) {
+	mockService := &mockReportService{
+		GenerateReportFunc: func(ctx context.Context, filter model.ReportFilter) (*model.Report, error) {
+			assert.Empty(t, filter.CategoryIDs)
+			assert.Empty(t, filter.AccountIDs)
+			// Check that default dates are used
+			now := time.Now()
+			expectedStart := time.Date(now.Year(), now.Month(), 1, 0, 0, 0, 0, time.UTC)
+			assert.Equal(t, expectedStart, filter.StartDate)
+			return &model.Report{TransactionCount: 8}, nil
+		},
+	}
+
+	handler := NewReportHandler(mockService)
+	req := httptest.NewRequest("GET", "/api/reports", nil)
+	rr := httptest.NewRecorder()
+
+	handler.GetReport(rr, req)
+
+	assert.Equal(t, http.StatusOK, rr.Code)
+	var report model.Report
+	err := json.NewDecoder(rr.Body).Decode(&report)
+	require.NoError(t, err)
+	assert.Equal(t, 8, report.TransactionCount)
+}
+
+func TestGetReportHandler_InvalidParams(t *testing.T) {
+	handler := NewReportHandler(nil) // Service won't be called
+
+	testCases := []struct {
+		name       string
+		url        string
+		expectedMsg string
+	}{
+		{
+			name:       "Invalid Category ID",
+			url:        "/api/reports?category_ids=1,abc,3",
+			expectedMsg: `{"error":"Invalid category_ids format. Must be comma-separated integers."}`,
+		},
+		{
+			name:       "Invalid Account ID",
+			url:        "/api/reports?account_ids=xyz",
+			expectedMsg: `{"error":"Invalid account_ids format. Must be comma-separated integers."}`,
+		},
+		{
+			name:       "Invalid Start Date",
+			url:        "/api/reports?start_date=2023/10/01",
+			expectedMsg: `{"error":"Invalid start_date format. Use YYYY-MM-DD."}`,
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			req := httptest.NewRequest("GET", tc.url, nil)
+			rr := httptest.NewRecorder()
+			handler.GetReport(rr, req)
+
+			assert.Equal(t, http.StatusBadRequest, rr.Code)
+			assert.JSONEq(t, tc.expectedMsg, rr.Body.String())
+		})
+	}
+}
+```
+</file>
+
+<file path="api/router.go">
+```go
+package api
+
+import (
+	"net/http"
+	"github.com/gorilla/mux"
+)
+
+// NewRouter creates a new router and registers the API routes.
+func NewRouter(reportHandler *ReportHandler) *mux.Router {
+	router := mux.NewRouter()
+
+	apiRouter := router.PathPrefix("/api").Subrouter()
+	apiRouter.HandleFunc("/reports", reportHandler.GetReport).Methods("GET")
+
+	return router
+}
+```
+</file>
+
+<file path="main.go">
+```go
+package main
+
+import (
+	"log"
+	"net/http"
+	"time"
+
+	"github.com/example/reporting/api"
+	"github.com/example/reporting/service"
+	"github.com/example/reporting/storage"
+)
+
+func main() {
+	// --- Dependency Injection ---
+	// 1. Create Repository
+	transactionRepo := storage.NewMockTransactionRepository()
+
+	// 2. Create Service
+	reportService := service.NewReportService(transactionRepo)
+
+	// 3. Create Handlers
+	reportHandler := api.NewReportHandler(reportService)
+
+	// 4. Create Router
+	router := api.NewRouter(reportHandler)
+
+	// --- Server Configuration ---
+	server := &http.Server{
+		Addr:         ":8080",
+		Handler:      router,
+		ReadTimeout:  15 * time.Second,
+		WriteTimeout: 15 * time.Second,
+	}
+
+	log.Println("Starting server on http://localhost:8080")
+	log.Println("Try visiting: http://localhost:8080/api/reports?category_ids=2,3&account_ids=101")
+	log.Println("Or: http://localhost:8080/api/reports?account_ids=102")
+
+	if err := server.ListenAndServe(); err != nil {
+		log.Fatalf("Could not start server: %s\n", err)
+	}
+}
+```
+</file>

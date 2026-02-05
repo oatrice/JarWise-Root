@@ -1,0 +1,489 @@
+As a Senior Polyglot Developer, I will implement the requested frontend components for the report filter feature. I'll use React with Vite for a modern, fast development setup. The solution will feature a reusable multi-select dropdown component and a main filter component to house the category and account selectors, adhering to best practices for component design and state management.
+
+Here is the high-quality, production-ready code.
+
+<file path="Web/package.json">
+```json
+{
+  "name": "report-filters-ui",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.0.0",
+    "vite": "^4.3.2"
+  }
+}
+```
+</file>
+<file path="Web/index.html">
+```html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Report Filters</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>
+```
+</file>
+<file path="Web/src/main.jsx">
+```javascript
+import React from 'react'
+import ReactDOM from 'react-dom/client'
+import App from './App'
+import './index.css'
+
+ReactDOM.createRoot(document.getElementById('root')).render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>,
+)
+```
+</file>
+<file path="Web/src/index.css">
+```css
+:root {
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  color-scheme: light dark;
+  color: rgba(255, 255, 255, 0.87);
+  background-color: #242424;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-text-size-adjust: 100%;
+
+  --border-color: #555;
+  --background-color: #2f2f2f;
+  --background-color-hover: #3a3a3a;
+  --primary-color: #646cff;
+  --text-color: #f0f0f0;
+  --placeholder-color: #888;
+}
+
+body {
+  margin: 0;
+  display: flex;
+  place-items: center;
+  min-width: 320px;
+  min-height: 100vh;
+}
+
+#root {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem;
+  width: 100%;
+}
+
+.App {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    align-items: center;
+}
+
+.App header {
+    text-align: center;
+}
+
+.App header h1 {
+    font-size: 2.5em;
+    line-height: 1.1;
+    margin-bottom: 0.5rem;
+}
+
+.App header p {
+    color: var(--placeholder-color);
+    margin-top: 0;
+}
+
+.App main {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+```
+</file>
+<file path="Web/src/App.jsx">
+```javascript
+import React from 'react';
+import ReportFilters from './components/ReportFilters';
+
+function App() {
+  return (
+    <div className="App">
+      <header>
+        <h1>Financial Report Generator</h1>
+        <p>Use the filters below to customize your report.</p>
+      </header>
+      <main>
+        <ReportFilters />
+      </main>
+    </div>
+  );
+}
+
+export default App;
+```
+</file>
+<file path="Web/src/components/MultiSelectDropdown.jsx">
+```javascript
+import React, { useState, useEffect, useRef } from 'react';
+import './MultiSelectDropdown.css';
+
+// Custom hook to detect clicks outside a referenced component
+const useOutsideClick = (ref, callback) => {
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (ref.current && !ref.current.contains(event.target)) {
+        callback();
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [ref, callback]);
+};
+
+const MultiSelectDropdown = ({ label, options, selectedIds, onChange }) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
+  const wrapperRef = useRef(null);
+
+  useOutsideClick(wrapperRef, () => setIsOpen(false));
+
+  const handleOptionClick = (optionId) => {
+    const newSelectedIds = selectedIds.includes(optionId)
+      ? selectedIds.filter(id => id !== optionId)
+      : [...selectedIds, optionId];
+    onChange(newSelectedIds);
+  };
+
+  const filteredOptions = options.filter(option =>
+    option.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  const getSelectionSummary = () => {
+    if (selectedIds.length === 0) return `Select ${label}...`;
+    if (selectedIds.length === 1) {
+        const selectedOption = options.find(opt => opt.id === selectedIds[0]);
+        return selectedOption ? selectedOption.name : '1 selected';
+    }
+    if (selectedIds.length === options.length) return `All ${label} selected`;
+    return `${selectedIds.length} ${label} selected`;
+  };
+
+  return (
+    <div className="multiselect-container" ref={wrapperRef}>
+      <label className="multiselect-label">{label}</label>
+      <button className="multiselect-toggle" onClick={() => setIsOpen(!isOpen)}>
+        <span>{getSelectionSummary()}</span>
+        <span className={`multiselect-arrow ${isOpen ? 'open' : ''}`}>&#9660;</span>
+      </button>
+      {isOpen && (
+        <div className="multiselect-dropdown">
+          <input
+            type="text"
+            className="multiselect-search"
+            placeholder={`Search ${label}...`}
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            autoFocus
+          />
+          <ul className="multiselect-list">
+            {filteredOptions.length > 0 ? (
+              filteredOptions.map(option => (
+                <li key={option.id} className="multiselect-list-item" onClick={() => handleOptionClick(option.id)}>
+                  <input
+                    type="checkbox"
+                    checked={selectedIds.includes(option.id)}
+                    readOnly
+                  />
+                  <span>{option.name}</span>
+                </li>
+              ))
+            ) : (
+              <li className="multiselect-no-results">No results found</li>
+            )}
+          </ul>
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default MultiSelectDropdown;
+```
+</file>
+<file path="Web/src/components/MultiSelectDropdown.css">
+```css
+.multiselect-container {
+  position: relative;
+  width: 100%;
+  max-width: 300px;
+  text-align: left;
+}
+
+.multiselect-label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    color: var(--text-color);
+}
+
+.multiselect-toggle {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  background-color: var(--background-color);
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: var(--text-color);
+  font-size: 1rem;
+}
+
+.multiselect-toggle:hover {
+  border-color: var(--primary-color);
+}
+
+.multiselect-arrow {
+  transition: transform 0.2s ease-in-out;
+}
+
+.multiselect-arrow.open {
+  transform: rotate(180deg);
+}
+
+.multiselect-dropdown {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  background-color: var(--background-color);
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  z-index: 1000;
+  max-height: 250px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+}
+
+.multiselect-search {
+  width: calc(100% - 2rem);
+  padding: 0.75rem 1rem;
+  border: none;
+  border-bottom: 1px solid var(--border-color);
+  background-color: transparent;
+  color: var(--text-color);
+  font-size: 1rem;
+}
+
+.multiselect-search:focus {
+  outline: none;
+  border-bottom-color: var(--primary-color);
+}
+
+.multiselect-list {
+  list-style: none;
+  margin: 0;
+  padding: 0.5rem 0;
+  overflow-y: auto;
+}
+
+.multiselect-list-item {
+  padding: 0.75rem 1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+}
+
+.multiselect-list-item:hover {
+  background-color: var(--background-color-hover);
+}
+
+.multiselect-list-item input[type="checkbox"] {
+  margin-right: 0.75rem;
+  height: 1rem;
+  width: 1rem;
+  pointer-events: none; /* The whole li is clickable */
+}
+
+.multiselect-no-results {
+    padding: 0.75rem 1rem;
+    color: var(--placeholder-color);
+    font-style: italic;
+}
+```
+</file>
+<file path="Web/src/components/ReportFilters.jsx">
+```javascript
+import React, { useState } from 'react';
+import MultiSelectDropdown from './MultiSelectDropdown';
+import './ReportFilters.css';
+
+// Mock data - in a real application, this would come from an API
+const mockCategories = [
+  { id: 1, name: 'Groceries' },
+  { id: 2, name: 'Utilities' },
+  { id: 3, name: 'Rent' },
+  { id: 4, name: 'Entertainment' },
+  { id: 5, name: 'Transportation' },
+  { id: 6, name: 'Health' },
+  { id: 7, name: 'Dining Out' },
+  { id: 8, name: 'Shopping' },
+];
+
+const mockAccounts = [
+  { id: 101, name: 'Checking Account' },
+  { id: 102, name: 'Savings Account' },
+  { id: 103, name: 'Credit Card A' },
+  { id: 104, name: 'Credit Card B' },
+  { id: 105, name: 'Investment Portfolio' },
+];
+
+
+const ReportFilters = () => {
+  const [selectedCategoryIds, setSelectedCategoryIds] = useState([]);
+  const [selectedAccountIds, setSelectedAccountIds] = useState([]);
+
+  const handleClearFilters = () => {
+    setSelectedCategoryIds([]);
+    setSelectedAccountIds([]);
+  };
+
+  const handleApplyFilters = () => {
+    console.log("Applying filters:", {
+      categories: selectedCategoryIds,
+      accounts: selectedAccountIds,
+    });
+    // In a real application, this would trigger a data fetch or report generation
+    alert(`Filters Applied!\nCategories: ${selectedCategoryIds.join(', ')}\nAccounts: ${selectedAccountIds.join(', ')}`);
+  };
+
+  return (
+    <div className="report-filters-card">
+      <h2 className="report-filters-title">Report Filters</h2>
+      <div className="filters-container">
+        <MultiSelectDropdown
+          label="Categories"
+          options={mockCategories}
+          selectedIds={selectedCategoryIds}
+          onChange={setSelectedCategoryIds}
+        />
+        <MultiSelectDropdown
+          label="Accounts"
+          options={mockAccounts}
+          selectedIds={selectedAccountIds}
+          onChange={setSelectedAccountIds}
+        />
+      </div>
+      <div className="actions-container">
+        <button className="filter-button secondary" onClick={handleClearFilters}>
+          Clear Filters
+        </button>
+        <button className="filter-button primary" onClick={handleApplyFilters}>
+          Apply Filters
+        </button>
+      </div>
+    </div>
+  );
+};
+
+export default ReportFilters;
+```
+</file>
+<file path="Web/src/components/ReportFilters.css">
+```css
+.report-filters-card {
+  background-color: var(--background-color);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 2rem;
+  width: 100%;
+  max-width: 700px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.report-filters-title {
+  margin: 0;
+  text-align: left;
+  font-size: 1.5rem;
+  color: var(--text-color);
+}
+
+.filters-container {
+  display: flex;
+  flex-direction: row;
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+
+.actions-container {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 1rem;
+  border-top: 1px solid var(--border-color);
+  padding-top: 1.5rem;
+}
+
+.filter-button {
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 4px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s, color 0.2s, border-color 0.2s;
+}
+
+.filter-button.primary {
+  background-color: var(--primary-color);
+  color: #ffffff;
+}
+
+.filter-button.primary:hover {
+  background-color: #535bf2;
+}
+
+.filter-button.secondary {
+  background-color: transparent;
+  color: var(--text-color);
+  border: 1px solid var(--border-color);
+}
+
+.filter-button.secondary:hover {
+  background-color: var(--background-color-hover);
+  border-color: var(--text-color);
+}
+```
+</file>
