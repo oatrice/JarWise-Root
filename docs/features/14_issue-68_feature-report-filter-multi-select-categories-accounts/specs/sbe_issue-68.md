@@ -1,57 +1,50 @@
-# SBE: Report Filtering by Categories and Accounts
+# SBE: Transaction History Filtering by Jars and Wallets
 
-> 📅 Created: 2026-02-05
+> 📅 Updated: 2026-02-05
 > 🔗 Issue: https://github.com/oatrice/JarWise-Root/issues/68
 
 ---
 
-## Feature: Report Filtering by Categories and Accounts
+## Feature: Transaction History Filtering
 
-To provide users with granular control over their financial reports, this feature allows for the filtering of data by selecting multiple categories (Jars) and accounts (Wallets). The report updates in real-time to reflect the selections, and a visual indicator displays the number of active filters and matching transactions.
+Users can filter Transaction History by selecting multiple Jars (Categories) and Wallets (Accounts). Filters are applied when the user taps **Apply**, and cleared via **Clear**. An active indicator appears on the filter icon when filters are applied.
 
-### Scenario: Happy Path - Filtering by multiple categories and accounts
+### Scenario 1: Filter by Jar + Wallet
 
-**Given** the user is viewing the "Monthly Expenses" report for January 2026
-**When** the user selects a combination of Jars and Wallets from the filter panel
-**Then** the report data and transaction count update to display only transactions that belong to ANY of the selected Jars AND ANY of the selected Wallets
+**Given** the user is viewing Transaction History
+**And** the list contains these transactions:
 
-#### Examples
+| ID | Jar | Wallet | Amount |
+|----|-----|--------|--------|
+| 1  | necessities | wallet-cash | 50 |
+| 2  | play | wallet-cash | 5 |
+| 3  | play | wallet-bank | 20 |
+| 4  | education | wallet-bank | 40 |
 
-| Selected Jars                 | Selected Wallets          | Expected Transaction IDs | Expected Count | Filter Indicator Text |
-|-------------------------------|---------------------------|--------------------------|----------------|-----------------------|
-| `["Groceries"]`               | `["Main Checking"]`       | `[101, 108]`             | 2              | "2 filters active"    |
-| `["Groceries", "Transport"]`  | `["Main Checking"]`       | `[101, 105, 108]`        | 3              | "3 filters active"    |
-| `["Utilities"]`               | `["Credit Card", "PayPal"]` | `[210, 215, 221]`        | 3              | "3 filters active"    |
-| `["Entertainment", "Health"]` | `["Credit Card"]`         | `[301, 305, 310]`        | 3              | "3 filters active"    |
-| `["Shopping"]`                | `["Main Checking", "PayPal"]` | `[404, 409]`             | 2              | "3 filters active"    |
+**When** the user selects:
+- Jars: `necessities`, `play`
+- Wallets: `wallet-cash`
 
-### Scenario: Edge Case - Filtering with hierarchical parent items
+**And** taps **Apply**
 
-**Given** the user's Jars are structured hierarchically (e.g., "Food" contains "Groceries" and "Restaurants")
-**When** the user selects a parent Jar or Wallet in the filter panel
-**Then** the report includes all transactions from the selected parent item AND all of its child items
+**Then** the list shows only transactions `1` and `2`
+**And** the transaction count updates to `2`
+**And** the filter indicator is active
 
-#### Examples
+---
 
-| Selected Item (Parent) | Expected Items in Filter                            | Expected Transaction IDs | Expected Count |
-|------------------------|-----------------------------------------------------|--------------------------|----------------|
-| `["Food"]`             | `["Food", "Groceries", "Restaurants"]`              | `[101, 108, 115, 119]`   | 4              |
-| `["Bank of Example"]`  | `["Bank of Example", "Main Checking", "Savings"]`   | `[101, 105, 108, 501]`   | 4              |
-| `["Utilities"]`        | `["Utilities", "Electricity", "Internet", "Water"]` | `[210, 211, 212]`        | 3              |
-| `["Food", "Health"]`   | `["Food", "Groceries", "Restaurants", "Health"]`    | `[101, 108, 115, 119, 310]` | 5              |
+### Scenario 2: Clear Filters
 
-### Scenario: Error Handling - No transactions match the filter criteria
+**Given** filters are active
+**When** the user taps **Clear** and **Apply**
+**Then** the full list is shown
+**And** the filter indicator turns off
 
-**Given** the user is viewing the "Monthly Expenses" report
-**When** the user selects a combination of Jars and Wallets for which no transactions exist, or clears all selections
-**Then** the report area displays a message "No matching transactions found" and the transaction count is updated to 0
+---
 
-#### Examples
+### Scenario 3: No Matches Found
 
-| Selected Jars       | Selected Wallets      | Expected Message                 | Expected Count |
-|---------------------|-----------------------|----------------------------------|----------------|
-| `["Entertainment"]` | `["Savings Account"]` | "No matching transactions found" | 0              |
-| `["Gifts"]`         | `["Main Checking"]`   | "No matching transactions found" | 0              |
-| `[]` (Cleared All)  | `["Credit Card"]`     | "No matching transactions found" | 0              |
-| `["Groceries"]`     | `[]` (Cleared All)    | "No matching transactions found" | 0              |
-| `["Investments"]`   | `["PayPal"]`          | "No matching transactions found" | 0              |
+**Given** the user selects a jar/wallet combination with no results
+**When** the user taps **Apply**
+**Then** the empty state message is shown
+**And** the transaction count is `0`

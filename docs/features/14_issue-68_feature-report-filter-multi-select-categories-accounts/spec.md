@@ -4,118 +4,100 @@
 | --- | --- |
 | **Feature ID** | `REPORT-02` |
 | **Feature Name** | Report Filter: Multi-Select Categories & Accounts |
-| **Version** | `1.0` |
-| **Status** | `Draft` |
+| **Issue URL** | https://github.com/oatrice/JarWise-Root/issues/68 |
+| **Version** | `1.1` |
+| **Status** | `Implemented (MVP)` |
 
 ---
 
 ## 1. Goal
 
-To provide users with granular control over their financial reports and charts by allowing them to dynamically include or exclude specific categories (Jars) and accounts (Wallets). This enables more focused analysis, helping users gain precise insights into their spending, saving, and income patterns.
+Provide users with granular control over **Transaction History** by allowing them to filter results by multiple Categories (Jars) and Accounts (Wallets). The intent is to enable focused review of transactions without changing core report logic yet.
 
-## 2. Actors
+## 2. Scope (Current Implementation)
 
-*   **User**: Any individual viewing a report who wants to customize the data being displayed.
+### 2.1 Web
+- Location: **Transaction History** page.
+- UI: Bottom sheet modal with multi-select dropdowns for Jars and Wallets.
+- Actions: **Apply** and **Clear**.
+- Indicator: Active filter dot on filter icon.
+- Data: Client-side filtering of local transactions (localStorage).
 
-## 3. User Journey
+### 2.2 Android
+- Location: **Transaction History** screen.
+- UI: Bottom sheet with selectable lists for Jars and Wallets.
+- Actions: **Apply** and **Clear**.
+- Indicator: Filter icon changes color when active.
+- Data: Client-side filtering of in-memory transactions.
 
-1.  **Navigate to Reports**: The user navigates to a report page (e.g., "Spending by Category").
-2.  **Identify Filter Control**: The user sees a "Filter" button. By default, it may have a badge indicating no active filters.
-3.  **Open Filter Panel**: The user clicks the "Filter" button, which opens a filter panel (e.g., a collapsible sidebar or a modal).
-4.  **View Filter Options**: The panel displays two primary sections:
-    *   **Accounts (Wallets)**: A list of all available accounts with checkboxes.
-    *   **Categories (Jars)**: A list of all available categories with checkboxes.
-    *   By default, all checkboxes in both sections are checked.
-5.  **Apply Filters**: The user customizes the selection. For example, they uncheck the "Groceries" category and the "Business Credit Card" account.
-6.  **See Real-time Updates**: As the user changes the checkbox selections, the report data (charts, tables, summary totals) updates instantly to reflect the new criteria. The total count of displayed transactions also updates.
-7.  **Use Bulk Actions**: The user notices the "Select All" and "Clear All" buttons within each section. They click "Clear All" under "Categories" to quickly deselect everything, then select only the "Travel" and "Dining Out" categories.
-8.  **Close Panel**: The user closes the filter panel. The report remains in its filtered state.
-9.  **Observe Filter Indicator**: The "Filter" button now displays a visual indicator (e.g., a colored dot or a badge) to signify that filters are currently active.
-10. **Session Persistence**: The user navigates to another part of the application and then returns to the same report. Their previously selected filters ("Travel" and "Dining Out" categories) are still applied.
+### 2.3 Backend
+- Endpoint: `GET /api/v1/reports`
+- Filters: `jar_ids`, `wallet_ids` (comma-separated strings).
+- Compatibility: Supports `category_ids` and `account_ids` aliases.
+- Date filters: `start_date`, `end_date` (YYYY-MM-DD or RFC3339).
 
-## 4. Functional Requirements
+## 3. User Journey (Implemented)
 
-| ID | Requirement | Description |
-| --- | --- | --- |
-| **FR1** | **Filter Panel UI** | The system must provide a filter panel (sidebar or modal) that is accessible from report pages. |
-| **FR2** | **Multi-Select Accounts** | Users must be able to select or deselect one or more accounts (Wallets) using checkboxes to include or exclude their transactions from the report. |
-| **FR3** | **Multi-Select Categories** | Users must be able to select or deselect one or more categories (Jars) using checkboxes to include or exclude their transactions from the report. |
-| **FR4** | **Bulk Selection Actions** | Each filter section (Accounts, Categories) must include "Select All" and "Clear All" (or "Deselect All") actions to modify all checkboxes in that section at once. |
-| **FR5** | **Real-time Report Update** | The report data, charts, and summary figures must update automatically and immediately whenever a filter selection is changed. |
-| **FR6** | **Filtered Transaction Count** | The UI must display a count of the transactions that match the current filter criteria. |
-| **FR7** | **Active Filter Indicator** | A persistent visual indicator (e.g., a badge on the "Filter" button) must be displayed when any filter is active (i.e., not in its default "all selected" state). |
-| **FR8** | **Session Persistence** | The applied filter state for a given report type must be remembered for the duration of the user's session. |
-| **FR9** | **Hierarchical Selection (Conditional)** | *If hierarchical items are available (see Dependencies)*, selecting/deselecting a parent item must automatically select/deselect all of its child items. |
+1. User opens **Transaction History**.
+2. User taps the **Filter** icon.
+3. User selects one or more Jars and/or Wallets.
+4. User taps **Apply**.
+5. Transaction list and count update to match the selected filters.
+6. Filter icon shows active state.
+7. User can tap **Clear** to remove all filters.
 
-## 5. Non-Functional Requirements
+## 4. Functional Requirements (Implemented)
 
 | ID | Requirement | Description |
 | --- | --- | --- |
-| **NFR1** | **Performance** | Report updates after a filter change should complete in under 2 seconds for a dataset of up to 10,000 transactions. |
-| **NFR2** | **Usability** | The filter panel must be intuitive and handle a large number of categories/accounts gracefully (e.g., with scrolling). |
+| **FR1** | Filter UI | A filter modal/bottom sheet is accessible from Transaction History. |
+| **FR2** | Multi-Select Jars | Users can select multiple Jars (Categories). |
+| **FR3** | Multi-Select Wallets | Users can select multiple Wallets (Accounts). |
+| **FR4** | Apply/Clear | Users can apply current selections or clear all filters. |
+| **FR5** | Filtered Count | The transaction count reflects filtered results. |
+| **FR6** | Active Indicator | Filter icon shows active state when filters are applied. |
 
-## 6. Specification by Example (SBE)
+## 5. Deferred / Not Implemented (Yet)
 
-### Scenario 1: Vacation Spending Review
+- **Select All** action per section.
+- **Real-time updates** without pressing Apply.
+- **Session persistence** when navigating away and returning.
+- **Hierarchy-aware selection** (parent/child).
+- **Report page integration** (filters currently live on Transaction History only).
 
-*   **Given**: The user has the following transactions recorded:
+## 6. Non-Functional Requirements
 
-    | Date | Payee | Amount | Category | Account |
-    | :--- | :--- | :--- | :--- | :--- |
-    | 2023-10-01 | SuperMart | $50.00 | Groceries | Checking |
-    | 2023-10-02 | Gas Station | $40.00 | Transport | Credit Card |
-    | 2023-10-03 | Airline Co. | $300.00 | Travel | Credit Card |
-    | 2023-10-04 | Beach Cafe | $25.00 | Dining Out | Credit Card |
-    | 2023-10-05 | Rent | $1200.00 | Housing | Checking |
+| ID | Requirement | Description |
+| --- | --- | --- |
+| **NFR1** | Usability | Filter lists remain scrollable when options exceed viewport height. |
+| **NFR2** | Performance | Filtering should feel instant for typical local datasets (<1,000 transactions). |
 
-*   **When**: The user wants to review only their vacation spending, which was paid for with their Credit Card. They apply the following filters:
+## 7. Specification by Example (Updated)
 
-    **User Filter Selection**
-    | Filter Group | Selected Items |
-    | :--- | :--- |
-    | **Accounts** | `[x] Credit Card`, `[ ] Checking` |
-    | **Categories** | `[x] Travel`, `[x] Dining Out`, `[ ] Groceries`, `[ ] Transport`, `[ ] Housing` |
+### Scenario: Filter Transaction History by Jar + Wallet
 
-*   **Then**: The report updates to show only the transactions that match **both** the account and category selections.
+**Given** the user has these transactions:
 
-    **Resulting Report Data**
-    | Date | Payee | Amount | Category | Account |
-    | :--- | :--- | :--- | :--- | :--- |
-    | 2023-10-03 | Airline Co. | $300.00 | Travel | Credit Card |
-    | 2023-10-04 | Beach Cafe | $25.00 | Dining Out | Credit Card |
-    | | **Total** | **$325.00** | | |
-    | | **Transaction Count** | **2** | | |
+| Date | Note | Amount | Jar | Wallet |
+| --- | --- | --- | --- | --- |
+| 2026-02-01 | Groceries | 50 | necessities | wallet-cash |
+| 2026-02-02 | Flight | 300 | travel | wallet-bank |
+| 2026-02-03 | Coffee | 5 | play | wallet-cash |
 
-### Scenario 2: Excluding a Single Account
+**When** the user selects:
+- Jars: `necessities`, `play`
+- Wallets: `wallet-cash`
 
-*   **Given**: The user has the same initial set of transactions as in Scenario 1.
+**Then** only these transactions are shown:
 
-*   **When**: The user wants to see all their spending **except** for what was paid from their Checking account. They apply the following filters:
+| Date | Note | Amount | Jar | Wallet |
+| --- | --- | --- | --- | --- |
+| 2026-02-01 | Groceries | 50 | necessities | wallet-cash |
+| 2026-02-03 | Coffee | 5 | play | wallet-cash |
 
-    **User Filter Selection**
-    | Filter Group | Selected Items |
-    | :--- | :--- |
-    | **Accounts** | `[x] Credit Card`, `[ ] Checking` |
-    | **Categories** | `[x] Groceries`, `[x] Transport`, `[x] Travel`, `[x] Dining Out`, `[x] Housing` (All selected) |
-
-*   **Then**: The report updates to show all transactions from the "Credit Card" account, regardless of category.
-
-    **Resulting Report Data**
-    | Date | Payee | Amount | Category | Account |
-    | :--- | :--- | :--- | :--- | :--- |
-    | 2023-10-02 | Gas Station | $40.00 | Transport | Credit Card |
-    | 2023-10-03 | Airline Co. | $300.00 | Travel | Credit Card |
-    | 2023-10-04 | Beach Cafe | $25.00 | Dining Out | Credit Card |
-    | | **Total** | **$365.00** | | |
-    | | **Transaction Count** | **3** | | |
-
-## 7. Out of Scope
-
-*   Saving filter configurations as named "presets" for later use.
-*   Filtering by other transaction attributes like tags, payees, or notes.
-*   Applying filters globally across different report types (e.g., filters on a "Spending" report will not affect an "Income vs. Expense" report).
+**And** the transaction count updates to `2`.
 
 ## 8. Dependencies
 
-*   **#67 (Hierarchical Accounts & Categories)**: The implementation of hierarchical selection (FR9) is dependent on the completion of this feature. If #67 is not implemented, the filter will display a flat list of items.
-*   **#59 (Reports & Data Export)**: This feature is an enhancement to the core reporting functionality defined in #59. A base report view must exist to apply these filters to.
+- **#67 (Hierarchical Accounts & Categories)**: Needed for hierarchical selection (deferred).
+- **#59 (Reports & Data Export)**: Filters are currently applied in Transaction History; report pages can adopt these filters later.
