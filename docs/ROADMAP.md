@@ -2,7 +2,11 @@
 
 This document outlines the strategic direction and priority of features for JarWise, structured into execution phases.
 
-## 🟢 Phase 1: Foundation (Current)
+## 🎯 Current Milestone: v2.0.0 MVP (Mar 17, 2026)
+- Includes: #34, #32, #65, #68, #71
+- Remaining: #68 Report Filters (Ready)
+
+## 🟢 Phase 1: Foundation (Complete)
 *Establishing the core data structures and UI patterns.*
 
 - **#69 Hierarchical Wallets** (Android & Web Mock)
@@ -10,7 +14,7 @@ This document outlines the strategic direction and priority of features for JarW
 - **#57 Custom Wallets & Jars**
     - ✅ **Done** (v0.5.0) - Foundation for Hierarchy.
 
-## 🟡 Phase 2: Migration & Architecture
+## 🟡 Phase 2: Migration & Architecture (Complete)
 *Transitioning data and improving codebase scalability.*
 
 - **#34 Implement Koin (Dependency Injection)**
@@ -25,7 +29,7 @@ This document outlines the strategic direction and priority of features for JarW
     - Import/Migrate data from "Money Manager" or legacy formats to new schema.
     - ✅ **Done** (v0.6.0) - Android Implementation Complete.
 
-## 🔴 Phase 3: Usability & Advanced Features
+## 🔴 Phase 3: Usability & Advanced Features (Current)
 *Enhancing user experience and reporting.*
 
 - **#68 Report Filters**

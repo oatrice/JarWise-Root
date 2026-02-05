@@ -9,12 +9,11 @@ This is the public-facing version number used in marketing announcements, blog p
 *   **Format**: `Year.Quarter.Release` (e.g., `2026.Q1.0`, `2026.Q1.1`)
 *   **Purpose**: Communicates value to the user. "JarWise 2026.Q1 brings Dark Mode!"
 
-### Current Milestone: `2026.Q1.0 (Foundation)`
+### Current Milestone: `2026.Q1.0 (MVP)`
+*   **Alignment**: This marketing release maps to the internal milestone `v2.0.0 MVP` (see `docs/ROADMAP.md`).
 *   **Target Scope**:
-    *   Design System (Neon) live on Web & Android.
-    *   6 Jars Dashboard View.
-    *   Basic Transaction Feed.
-*   **Deadline**: Feb 28, 2026.
+    *   Complete #34, #32, #65, #68, #71.
+*   **Deadline**: Mar 17, 2026.
 
 ## 2. Platform Versions (Semantic Versioning)
 

@@ -62,12 +62,15 @@ This document serves as the **Single Source of Truth** for the implementation st
 
 ## 🔄 Release Alignment
 
-**Current Milestone:** `v1.5.0 (Hierarchical Wallets)`
+**Previous Milestone:** `v1.5.0 (Hierarchical Wallets)`
 
-- **Goal**: Hierarchical Wallets & Jars.
 - **Status**: ✅ **Released (v1.5.0)**.
 
-**Next Milestone:** `v0.5.0 (Sub-Transaction Feature)`
+**Current Milestone:** `v2.0.0 MVP (Mar 17, 2026)`
 
-- **Goal**: Enable recording sub-items within a single slip/transaction.
-- **Status**: 🚧 Planning
+- **Goal**: Complete #34, #32, #65, #68, #71 (see `docs/ROADMAP.md`).
+- **Status**: 🚧 **In Progress** — #68 Report Filters pending.
+
+**Next Milestone:** `TBD (post-v2.0.0)`
+
+- **Status**: ⏳ Not defined in roadmap yet.
