@@ -1,31 +1,19 @@
 # Luma Code Review Report
 
-**Date:** 2026-02-04 19:10:28
-**Files Reviewed:** ['draft_pr_prompt.md', 'docs/features/14-issue-71_transaction_linking/android/walkthrough.md', 'docs/features/14-issue-71_transaction_linking/spec.md', 'VERSION', 'draft_pr_body.md', 'CHANGELOG.md', 'prompt_backend.txt', 'docs/features/14-issue-71_transaction_linking/code_review.md', 'prompt_frontend.txt', 'docs/features/14-issue-71_transaction_linking/analysis.md', 'docs/features/14-issue-71_transaction_linking/specs/sbe_issue-71.md', 'docs/features/14-issue-71_transaction_linking/unified-transfer-row.md', 'docs/features/14-issue-71_transaction_linking/plan.md', 'docs/features/14-issue-71_transaction_linking/android/implementation_plan.md', 'docs/ROADMAP.md', 'docs/features/14-issue-71_transaction_linking/android/task.md', 'prompt_android.txt']
+**Date:** 2026-02-05 19:57:47
+**Files Reviewed:** ['docs/features/14_issue-68_feature-report-filter-multi-select-categories-accounts/specs/sbe_issue-68.md', 'docs/GLOSSARY.md', 'docs/features/14_issue-68_feature-report-filter-multi-select-categories-accounts/spec.md', 'FEATURES.md', 'docs/ROADMAP.md', 'agent_backend_patch.xml', 'agent_android_patch.xml', 'docs/features/14_issue-68_feature-report-filter-multi-select-categories-accounts/analysis.md', 'docs/features/14_issue-68_feature-report-filter-multi-select-categories-accounts/plan.md', 'RELEASES.md', 'agent_frontend_patch.xml']
 
 ## 📝 Reviewer Feedback
 
-There are inconsistencies in the project management and documentation files.
-
-**1. Roadmap Version Inconsistency:**
-
-The `VERSION` file and `CHANGELOG.md` are being updated to `0.7.0` for the "Transaction Linking" feature (#71). However, `docs/ROADMAP.md` marks this same feature as completed in a future version:
-
--   **File:** `docs/ROADMAP.md`
--   **Problem:** The line for issue #71 reads `✅ Done (v1.9.0)`.
--   **Fix:** This should be consistent with the current release. Change the line to `✅ Done (v0.7.0)`.
-
-**2. Out-of-Scope Roadmap Update:**
-
-This Pull Request is for feature #71, but it also incorrectly updates the status of an unrelated feature, #65.
-
--   **File:** `docs/ROADMAP.md`
--   **Problem:** The status of `#65 Legacy Data Migration` is changed to `✅ Done (v1.8.0)`. This change does not belong in this PR.
--   **Fix:** Revert the status of issue #65 to its original state (`Status: 🟢 Ready`). This change should be made in a separate PR related to that feature.
+PASS
 
 ## 🧪 Test Suggestions
 
-*   **Editing or Deleting One Side of a Linked Transfer:** Attempt to edit the amount of only the debit transaction in a linked pair. The corresponding credit transaction should either update automatically, or the edit should be blocked. Similarly, attempt to delete only one of the two linked transactions; the system should either delete both or prevent the deletion to maintain data integrity.
-*   **Data Migration and Historical Reporting:** Verify financial reports (e.g., Income vs. Expense) for a date range *before* this feature was implemented. The migration should not have incorrectly linked old, unrelated transactions, and the overall summary for past periods should remain unchanged, ensuring the integrity of historical user data.
-*   **Transfers Between Accounts with Different Currencies:** If the system supports multiple currencies, create a transfer from an account in one currency (e.g., USD) to an account in another (e.g., EUR). Verify that the exchange rate is handled correctly, both transactions are linked, and the transfer does not incorrectly appear as income or expense in financial summaries.
+Here are 3 critical, edge-case test cases that should be added or verified for the new filtering feature:
+
+*   **Filter by only one category type (e.g., Jars only).** The specification only covers filtering by both Jars and Wallets simultaneously. A critical test is to select one or more Jars but leave the Wallet selection completely empty, then tap "Apply". The system should correctly interpret this as "show transactions from the selected Jars, regardless of the Wallet."
+
+*   **Select filter options, but cancel or dismiss the action.** A user might open the filter menu, select several Jars and Wallets, but then close the menu without tapping "Apply" (e.g., by tapping outside the dialog or using a back button). The test should verify that the transaction list remains unchanged and the filter indicator does not become active.
+
+*   **Apply a filter after deselecting all options.** A user might apply a filter, then re-open the filter menu, deselect all previously chosen Jars and Wallets, and tap "Apply" again. This action is functionally equivalent to "Clear" but follows a different user path. The test should confirm that this returns the full, unfiltered list of transactions and deactivates the filter indicator.
 
