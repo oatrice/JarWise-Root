@@ -34,7 +34,7 @@ This document outlines the strategic direction and priority of features for JarW
 
 - **#68 Report Filters**
     - Advanced filtering by Wallet, Jar, or Tag (utilizing the new Hierarchy).
-    - ✅ **Done** (v0.8.0) - Multi-select filters implemented on Transaction History.
+    - ✅ **Done** (v1.8.0)
 - **#71 Transaction Linking (Transfers)**
     - Enable transfers between wallets/jars.
     - ✅ **Done** (v0.7.0)
