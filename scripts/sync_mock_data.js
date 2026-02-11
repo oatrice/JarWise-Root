@@ -200,12 +200,28 @@ export type Transaction = {
     icon: LucideIcon;
 }
 
+export type SubTransaction = {
+    id: string;
+    parentId: string;
+    description: string;
+    amount: number;
+}
+
 export const jars: Allocation[] = [
 ${jarsArray}
 ];
 
 export const transactions: Transaction[] = [
 ${transactionsArray}
+];
+
+export const subTransactions: SubTransaction[] = [
+${data.subTransactions ? data.subTransactions.map(s => `    {
+        id: '${s.id}',
+        parentId: '${s.parentId}',
+        description: '${s.description}',
+        amount: ${s.amount}
+    }`).join(',\n') : ''}
 ];
 `;
 }

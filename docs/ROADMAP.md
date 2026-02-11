@@ -3,8 +3,8 @@
 This document outlines the strategic direction and priority of features for JarWise, structured into execution phases.
 
 ## 🎯 Current Milestone: v2.0.0 MVP (Mar 17, 2026)
-- Includes: #34, #32, #65, #68, #71
-- Remaining: #68 Report Filters (Ready)
+- Includes: #34, #32, #65, #68, #71, #46, #47
+- Remaining: #46 Draft Review, #47 Web Mock
 
 ## 🟢 Phase 1: Foundation (Complete)
 *Establishing the core data structures and UI patterns.*
@@ -34,10 +34,20 @@ This document outlines the strategic direction and priority of features for JarW
 
 - **#68 Report Filters**
     - Advanced filtering by Wallet, Jar, or Tag (utilizing the new Hierarchy).
-    - **Status:** 🟢 **Ready**
+    - ✅ **Done** (v0.8.0) - Multi-select filters implemented on Transaction History.
 - **#71 Transaction Linking (Transfers)**
     - Enable transfers between wallets/jars.
     - ✅ **Done** (v0.7.0)
+
+## 🔵 Phase 4: Refinement & Validation (Upcoming)
+*Polishing the user experience and validating core flows.*
+
+- **#46 Draft Transaction Review (Android)**
+    - Save transactions as "Draft" for later review.
+    - **Status:** 📝 Planned
+- **#47 Draft Transaction Review (Web Mock)**
+    - Web UI mockups for the draft review flow.
+    - **Status:** 📝 Planned
 
 ## 🔗 Simplified Dependency Graph
 ```mermaid
@@ -55,8 +65,10 @@ graph TD
     end
 
     subgraph Phase 3: Usability
-        I68[#68 Report Filter]
-        I71[#71 Transaction Linking]
+        I68[✅ #68 Report Filter]
+        I71[✅ #71 Transaction Linking]
+        I46[#46 Draft Review]
+        I47[#47 Web/Mock UI]
     end
 
     I69 --> I67
