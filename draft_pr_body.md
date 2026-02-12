@@ -1,6 +1,5 @@
 # 📋 Monorepo Update Summary
-
-This PR implements **Transaction Linking & Transfers** functionality, allowing users to properly record fund transfers between their own accounts. The feature introduces a mechanism to link debit and credit transactions, preventing internal transfers from being incorrectly counted in income/expense reports.
+This pull request introduces a major new feature: multi-select filtering for reports across multiple platforms. Users can now refine report and chart data by selecting specific categories (Jars) and accounts (Wallets). This change involves coordinated updates to the backend API, web frontend, and Android application to provide a consistent user experience.
 
 ## ✅ Checklist
 - [x] 🏗️ I have moved the related issue to "In Progress" on the Kanban board
@@ -15,98 +14,48 @@ This PR implements **Transaction Linking & Transfers** functionality, allowing u
 
 ## 🔗 Affected Platforms
 
-- [ ] Web
+- [x] Web
 - [x] Android
 - [ ] iOS
 - [ ] Mobile (Flutter)
 
 ## 📝 Detailed Changes
 
-### Feature Implementation
-Implemented a comprehensive transaction linking system that addresses the core issue of internal fund transfers being incorrectly recorded as separate income and expenses. This feature provides:
+This PR implements the functionality outlined in issue #68, enabling powerful and granular filtering on all reporting screens.
 
-- **Database Schema Update**: Added `relatedTransactionId` field to the Transaction model to establish bidirectional links between transfer transactions
-- **Transfer Creation Flow**: New "Transfer" transaction type that atomically creates two linked transactions (debit from source account, credit to destination account)
-- **UI Enhancements**: 
-  - Added Transfer tab in Add Transaction screen
-  - From/To account selection interface
-  - Transaction detail screen now displays linked transaction information with navigation support
-- **Data Integrity**: Atomic transaction creation ensures both transactions are created or neither exists
-- **Smart Deletion**: Deleting one transaction in a linked pair automatically unlinks the counterpart without deleting it
+**Key Features & Implementation Details:**
 
-### Documentation Updates
-Added extensive planning and specification documents:
-- Comprehensive analysis document with user stories and acceptance criteria
-- Android implementation plan with detailed file modifications
-- Technical specifications for unified transfer row display
-- Migration guides and testing verification plans
+*   **Filter Panel UI**: A new filter panel has been added, allowing users to view and select from a list of their categories and accounts.
+*   **Multi-Select Checkboxes**: Users can check/uncheck multiple items to include in the report. The UI includes "Apply" and "Clear All" actions for ease of use.
+*   **Real-time Updates**: Once filters are applied, the report data and associated charts dynamically update to reflect the new selection.
+*   **Backend Support**: The transaction query endpoints on the backend have been enhanced to accept arrays of `category_ids` and `account_ids` to perform the filtering.
+*   **Android Implementation**: The Android filter screen was built using Jetpack Compose, with a dedicated `ReportFilterViewModel` to manage state, handle user interactions, and fetch data from repositories. Unit tests for the ViewModel have been included to ensure logic correctness.
+*   **Documentation**: The project roadmap, changelog, and feature lists have been updated to reflect the completion of this feature. Manual verification steps have also been documented.
 
-### Version Bump
-Updated project version from `0.6.0` to `0.7.0` to reflect the new feature addition.
+## 📸 Screenshots (if applicable)
 
-### Roadmap Updates
-- Updated ROADMAP.md to mark Issue #71 (Transaction Linking) as completed
-- Updated Legacy Data Migration (#65) status to Done (v1.8.0)
+Here is a preview of the new filter screen on Android:
 
-## 📊 Impact
+<img src="https://i.imgur.com/example-screenshot.png" width="400" alt="A screenshot of the new filter screen showing a list of categories and accounts with checkboxes next to them. An 'Apply' button is visible at the bottom." />
 
-### User Benefits
-- ✅ Accurate financial reporting without inflated income/expense figures
-- ✅ Clear visibility of fund movements between accounts
-- ✅ Simplified transfer recording process
-- ✅ Better understanding of actual gains and losses vs internal movements
-
-### Technical Changes
-- **Data Layer**: Modified Transaction model with nullable `linkedTransactionId`
-- **Repository Layer**: Added `createTransfer` method with transactional guarantees
-- **Domain Layer**: New use cases for transfer creation and unlinking
-- **UI Layer**: Enhanced Add Transaction screen with Transfer tab
+*(Note: Please replace with actual screenshot before merging)*
 
 ## 🧪 Testing
-
 - [x] Changes verified locally
 - [x] Documentation reviewed for accuracy
-- [x] Unit tests planned for CreateTransferUseCase
-- [x] Repository tests for atomic operations
-- [x] Migration tests for schema upgrades
 
-### Manual Testing Checklist
-- [x] Create transfer between two accounts
-- [x] Verify two linked transactions appear correctly
-- [x] Confirm navigation between linked transactions
-- [x] Test deletion behavior (unlinks without deleting counterpart)
-- [x] Verify reporting exclusion capability
+Unit tests for the Android ViewModel have been added to cover selection, clearing, and state update logic. Manual end-to-end testing was performed on both web and Android platforms to ensure the filter correctly applies to transaction queries and the UI updates as expected.
 
 ## 🚀 Migration/Deployment
 
-- [x] Environment variables updated (if applicable)
+- [ ] Environment variables updated
 - [ ] Global Dependencies installed
 
-```bash
-# Database migration will add linkedTransactionId column
-# No destructive changes - additive only
-# Existing transactions remain unaffected
-```
-
-### Migration Notes
-- New `linkedTransactionId` column is nullable
-- Existing transactions are not affected
-- No data transformation required
-- Backward compatible
-
-## 📁 Files Changed
-
-**Statistics**: 18 files changed, 2136 insertions(+), 313 deletions(-)
-
-### Key Files
-- `CHANGELOG.md` - Added v0.7.0 release notes
-- `VERSION` - Bumped from 0.6.0 to 0.7.0
-- `docs/ROADMAP.md` - Updated feature status
-- Documentation suite for Issue #71 (analysis, specs, implementation plans)
+No migration or special deployment steps are required for this feature.
 
 ## 🔗 Related Issues
 
-Resolves https://github.com/oatrice/JarWise-Root/issues/71
+- Resolves https://github.com/oatrice/JarWise-Root/issues/68
 
-**Breaking Changes**: No  
-**Migration Required**: Yes (database schema only - non-destructive)
+**Breaking Changes**: No
+**Migration Required**: No

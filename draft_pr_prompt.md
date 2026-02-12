@@ -2,436 +2,637 @@
 
 You are an AI assistant helping to create a Pull Request description.
     
-TASK: [Feature] Transaction Linking & Transfers
+TASK: [Feature] Report Filter: Multi-Select Categories & Accounts
 ISSUE: {
-  "title": "[Feature] Transaction Linking & Transfers",
-  "number": 71
+  "title": "[Feature] Report Filter: Multi-Select Categories & Accounts",
+  "number": 68,
+  "body": "# \ud83c\udfaf Objective\nEnable users to filter reports and charts by selecting specific categories (Jars) and accounts (Wallets) via multi-select checkboxes.\n\n## \ud83d\udcdd Specifications\n\n### UI Components\n- [ ] **Filter Panel**: Collapsible sidebar or modal with checkbox tree\n- [ ] **Category Checkboxes**: Select/deselect individual Jars (including sub-jars if HIER-01 is done)\n- [ ] **Account Checkboxes**: Select/deselect individual Wallets (including sub-wallets if HIER-01 is done)\n- [ ] **Select All / Clear All**: Quick actions\n- [ ] **Remember Selection**: Persist filter state per session or per report type\n\n### Behavior\n- [ ] **Real-time Update**: Charts/reports update as checkboxes change (or Apply button)\n- [ ] **Count Display**: Show number of transactions matching current filter\n- [ ] **Visual Indicator**: Badge showing active filter count\n\n## \ud83d\udd17 References\n- Depends on #67 (Hierarchical Accounts & Categories) for sub-item support\n- Related to #59 (Reports & Data Export)\n- Feature ID: `REPORT-02`\n\n## \ud83c\udfd7\ufe0f Technical Notes\n- Use bitmasking or array-based filtering on transaction queries\n- Consider performance with large transaction sets (pagination/lazy load)"
 }
 
 GIT CONTEXT:
 COMMITS:
-c50c14c feat: [Feature] Transaction Linking & Transfers...
-4029c35 ✨ feat(transactions): implement transfer linking feature
-8511921 ✨ feat(transactions): add transaction linking feature for transfers
-8a95ed3 ✨ feat(transactions): add transaction linking and transfer functionality
-1fd04d8 ✨ feat(transactions): add transaction linking and transfer feature
-b74985f ✨ feat(migration): Implement Money Manager data migration
+74de2d0 feat: [Feature] Report Filter: Multi-Select Categories &...
+a56fa9f chore(release): version 0.8.0 with multi-select report filter feature
+f5d1c14 docs(roadmap): mark #68 complete and add Phase 4 draft review
+242a9d4 Update code review report
+43ce2e4 Document manual verification steps
+471ee9d Update multi-select report docs
+84dc632 ✨ feat(filters): Implement multi-select report filters
+61f2a69 Review JarWise roadmap tasks
 
 STATS:
 CHANGELOG.md                                       |   9 +
+ FEATURES.md                                        |  13 +-
+ RELEASES.md                                        |   9 +-
  VERSION                                            |   2 +-
- docs/ROADMAP.md                                    |   2 +-
- .../14-issue-71_transaction_linking/analysis.md    | 264 +++++++++++
- .../android/implementation_plan.md                 |  72 +++
- .../android/task.md                                |  21 +
- .../android/walkthrough.md                         |  59 +++
- .../14-issue-71_transaction_linking/code_review.md |  15 +
- .../14-issue-71_transaction_linking/plan.md        | 217 +++++++++
- .../14-issue-71_transaction_linking/spec.md        | 166 +++++++
- .../specs/sbe_issue-71.md                          |  53 +++
- .../unified-transfer-row.md                        |  77 ++++
- docs/features/issue-71_transaction_linking/spec.md |  37 --
- draft_pr_body.md                                   | 199 ++++++---
- draft_pr_prompt.md                                 | 484 +++++++++++----------
- prompt_android.txt                                 | 238 ++++++++++
- prompt_backend.txt                                 | 238 ++++++++++
- prompt_frontend.txt                                | 296 +++++++++++++
- 18 files changed, 2136 insertions(+), 313 deletions(-)
+ agent_android_patch.xml                            | 591 ++++++++++++++++++
+ agent_backend_patch.xml                            | 664 +++++++++++++++++++++
+ agent_frontend_patch.xml                           | 489 +++++++++++++++
+ code_review.md                                     |  31 -
+ code_review_summary.md                             |  39 ++
+ docs/GLOSSARY.md                                   |   1 +
+ docs/ROADMAP.md                                    |  28 +-
+ .../analysis.md                                    | 264 ++++++++
+ .../code_review.md                                 |  17 +
+ .../plan.md                                        |  98 +++
+ .../spec.md                                        | 103 ++++
+ .../specs/sbe_issue-68.md                          |  50 ++
+ scripts/sync_mock_data.js                          |  16 +
+ shared-spec/data/mockData.json                     |  20 +
+ 18 files changed, 2396 insertions(+), 48 deletions(-)
 
 KEY FILE DIFFS:
-diff --git a/CHANGELOG.md b/CHANGELOG.md
-index 382df7c..9077615 100644
---- a/CHANGELOG.md
-+++ b/CHANGELOG.md
-@@ -1,5 +1,14 @@
- # Changelog
- 
-+## [0.7.0] - 2026-02-11
-+
-+### Added
-+- **[Feature] Transaction Linking for Transfers:** Implemented a system to link the debit and credit transactions when transferring funds between user-owned accounts (e.g., from a Wallet to a Jar). This provides a clearer financial overview by treating internal transfers as a single, unified event, preventing them from being incorrectly counted in income or expense reports.
-+- **[Docs]** Added extensive new planning, analysis, and specification documents for the transaction linking feature.
-+
-+### Changed
-+- **[Docs]** Updated the project `ROADMAP.md` to reflect the completion of new features.
-+
- ## [0.6.0] - 2026-02-04
- 
- ### Added
-diff --git a/VERSION b/VERSION
-index a918a2a..faef31a 100644
---- a/VERSION
-+++ b/VERSION
-@@ -1 +1 @@
--0.6.0
-+0.7.0
-diff --git a/docs/ROADMAP.md b/docs/ROADMAP.md
-index dc4f665..c2e4171 100644
---- a/docs/ROADMAP.md
-+++ b/docs/ROADMAP.md
-@@ -23,7 +23,7 @@ This document outlines the strategic direction and priority of features for JarW
-     - ✅ **Done** (v1.7.0) - Implemented Google Login & Drive Backup.
- - **#65 Legacy Data Migration**
-     - Import/Migrate data from "Money Manager" or legacy formats to new schema.
--    - **Status:** 🟢 **Ready**
-+    - ✅ **Done** (v1.8.0) - Android Implementation Complete.
- 
- ## 🔴 Phase 3: Usability & Advanced Features
- *Enhancing user experience and reporting.*
-diff --git a/docs/features/14-issue-71_transaction_linking/analysis.md b/docs/features/14-issue-71_transaction_linking/analysis.md
+diff --git a/agent_android_patch.xml b/agent_android_patch.xml
 new file mode 100644
-index 0000000..884f3ae
+index 0000000..e61a9c5
 --- /dev/null
-+++ b/docs/features/14-issue-71_transaction_linking/analysis.md
-@@ -0,0 +1,264 @@
-+# Analysis Template
++++ b/agent_android_patch.xml
+@@ -0,0 +1,591 @@
++Answering for Issue #68: [Feature] Report Filter: Multi-Select Categories & Accounts.
 +
-+> 📋 Template สำหรับการวิเคราะห์ก่อนเริ่มพัฒนา Feature
++Here are the Android components implemented in Kotlin and Jetpack Compose, covering the ViewModel with its unit tests, and the mobile UI. The solution follows modern Android development practices, including a clean architecture and test-driven development for the ViewModel logic.
 +
-+---
++### Core Domain and Data Layer
 +
-+## 📌 Feature Information
++These files define the basic data models and repository interfaces.
 +
-+| รายการ | รายละเอียด |
-+|--------|-----------|
-+| **Feature Name** | Transaction Linking & Transfers |
-+| **Issue URL** | [#71](https://github.com/owner/repo/issues/71) |
-+| **Date** | 2023-10-27 |
-+| **Analyst** | Luma AI (Senior Technical Analyst) |
-+| **Priority** | 🔴 High |
-+| **Status** | 📝 Draft |
++<file path="app/src/main/java/com/example/myapp/core/model/Category.kt">
++```kotlin
++package com.example.myapp.core.model
 +
-+---
-+
-+## 1. Requirement Analysis
-+
-+### 1.1 Problem Statement
-+
-+> อธิบายปัญหาที่ต้องการแก้ไข
-+
++data class Category(val id: String, val name: String)
 +```
-+Currently, users lack a proper way to record fund transfers between their own accounts (e.g., moving money from a checking account to a savings account). Such transfers are often recorded as a separate expense and a separate income, which incorrectly inflates the total income/expense figures in reports. This makes it difficult for users to get an accurate overview of their financial health, as internal money movements are treated the same as external spending or earning.
++</file>
++<file path="app/src/main/java/com/example/myapp/core/model/Account.kt">
++```kotlin
++package com.example.myapp.core.model
++
++data class Account(val id: String, val name: String)
 +```
++</file>
++<file path="app/src/main/java/com/example/myapp/core/data/CategoryRepository.kt">
++```kotlin
++package com.example.myapp.core.data
 +
-+### 1.2 User Stories
++import com.example.myapp.core.model.Category
 +
-+| # | As a | I want to | So that |
-+|---|------|-----------|---------|
-+| 1 | User | link an expense from one account to an income in another account | I can accurately represent a transfer of my own funds. |
-+| 2 | User | have a simple "Create Transfer" option | I can quickly record transfers without manually creating two separate transactions. |
-+| 3 | User | see that two transactions are linked when viewing their details | I can easily navigate between the two sides of a transfer and understand the flow of money. |
-+| 4 | User | have transfers excluded from my main income and expense reports | my financial summaries reflect actual gains and losses, not internal fund movements. |
-+
-+### 1.3 Acceptance Criteria
-+
-+- [ ] **AC1:** The `Transaction` data model is updated with a new nullable field, `relatedTransactionId`.
-+- [ ] **AC2:** A new "Transfer" option in the UI allows a user to specify a "From" account, a "To" account, and an amount.
-+- [ ] **AC3:** Submitting a transfer creates two `Transaction` records: one negative (expense) from the "From" account and one positive (income) to the "To" account, with the same absolute amount.
-+- [ ] **AC4:** The two created transactions are linked via their `relatedTransactionId` fields, pointing to each other. This creation process must be atomic.
-+- [ ] **AC5:** On the Transaction Detail screen, a linked transaction displays a clickable link to its counterpart.
-+- [ ] **AC6:** Deleting one transaction in a linked pair automatically unlinks the other (its `relatedTransactionId` is set to null), but does not delete it.
-+- [ ] **AC7:** Reporting features (e.g., Income vs Expense chart) provide an option to include or exclude transactions identified as transfers.
-+
-+---
-+
-+## 2. Feature Analysis
-+
-+### 2.1 User Flow
-+
-+```mermaid
-+flowchart TD
-+    A[User opens Add Transaction screen] --> B{Selects Transaction Type}
-+    B -->|Expense/Income| C[Fills standard form]
-+    B -->|Transfer| D[Selects 'Transfer' tab]
-+    D --> E[Fills 'From Account', 'To Account', 'Amount', 'Date']
-+    E --> F[Clicks 'Save']
-+    F --> G[System creates two linked transactions in a single DB transaction]
-+    G --> H[Redirects to transaction list and shows success message]
-+    H --> I[End]
-+    C --> F
++/**
++ * Interface for fetching category data.
++ */
++interface CategoryRepository {
++    suspend fun getCategories(): List<Category>
++}
 +```
++</file>
++<file path="app/src/main/java/com/example/myapp/core/data/AccountRepository.kt">
++```kotlin
++package com.example.myapp.core.data
 +
-+### 2.2 Screen/Page Requirements
++import com.example.myapp.core.model.Account
 +
-+| หน้าจอ | Actions | Components |
-+|--------|---------|------------|
-+| **Add/Edit Transaction Screen** | - Select transaction type (Income, Expense, Transfer)<br>- Create a transfer by selecting from/to accounts<br>- Edit details of a transaction | - Tabs: `Expense`, `Income`, `Transfer`<br>- Dropdowns: `From Account`, `To Account`<br>- Inputs: `Amount`, `Date`, `Notes`<br>- Button: `Save Transaction` |
-+| **Transaction Detail Screen** | - View all transaction details<br>- Navigate to the linked transaction if one exists | - Standard detail fields (Amount, Account, Date, etc.)<br>- New Section: `Linked Transaction`<br>- Hyperlink: `View linked expense/income from [Account Name]` |
-+
-+### 2.3 Input/Output Specification
-+
-+#### Inputs
-+
-+*API Endpoint: `POST /api/transfers`*
-+
-+| Field | Type | Required | Validation |
-+|-------|------|----------|------------|
-+| `fromAccountId` | string (UUID) | ✅ | Must be a valid account ID belonging to the user. |
-+| `toAccountId` | string (UUID) | ✅ | Must be a valid account ID belonging to the user, different from `fromAccountId`. |
-+| `amount` | number | ✅ | Must be a positive number. |
-+| `transactionDate` | string (ISO 8601) | ✅ | Must be a valid date. |
-+| `notes` | string | ❌ | Max 500 characters. |
-+
-+#### Outputs
-+
-+*API Response: `201 Created`*
-+
-+| Field | Type | Description |
-+|-------|------|-------------|
-+| `expenseTransaction` | object | The newly created expense transaction object. |
-+| `incomeTransaction` | object | The newly created income transaction object. |
-+
-+---
-+
-+## 3. Impact Analysis
-+
-+### 3.1 Affected Components
-+
-+| Component | Impact Level | Description |
-+|-----------|--------------|-------------|
-+| **Database (Transaction Table)** | 🔴 High | Requires a schema migration to add the `relatedTransactionId` column and a foreign key constraint/index. |
-+| **Backend API (Transaction Service)** | 🔴 High | Requires a new endpoint for creating transfers and modifications to existing CUD logic to handle linking/unlinking. |
-+| **Frontend (Add Transaction Page)** | 🔴 High | Significant UI changes are needed to introduce the "Transfer" flow, which is different from standard income/expense entry. |
-+| **Frontend (Reporting Module)** | 🟡 Medium | Reporting logic must be updated to correctly filter and aggregate data, with the ability to exclude transfers. |
-+| **Frontend (Transaction Detail Page)** | 🟡 Medium | UI needs to be updated to display the link to the related transaction. |
-+| **Data Access Layer (Repository)** | 🔴 High | New methods are required to perform the atomic creation of two linked transactions. |
-+
-+### 3.2 Breaking Changes
-+
-+- [ ] **BC1:** The `Transaction` object returned from all transaction-related API endpoints will now include the `relatedTransactionId` field. Mobile and web clients must be updated to handle this new field, even if just to ignore it, to prevent deserialization errors.
-+
-+### 3.3 Backward Compatibility Plan
-+
++/**
++ * Interface for fetching account data.
++ */
++interface AccountRepository {
++    suspend fun getAccounts(): List<Account>
++}
 +```
-+The new `relatedTransactionId` field will be nullable in the database, ensuring that existing records are not affected. The API will be versioned (e.g., /v2/transactions) if the change is deemed too disruptive. However, the current plan is to coordinate frontend and backend releases. Older clients will ignore the new field. The core create/update/delete endpoints for single transactions will remain unchanged in their function.
++</file>
++
++### Feature: Report Filter (ViewModel and UI)
++
++This section contains the UI state definition, the ViewModel responsible for the screen's logic, and the Jetpack Compose UI.
++
++<file path="app/src/main/java/com/example/myapp/feature/reports/filter/ui/ReportFilterUiState.kt">
++```kotlin
++package com.example.myapp.feature.reports.filter.ui
++
++/**
++ * Represents an item in the multi-select list.
++ * @param id The unique identifier for the item.
++ * @param name The display name of the item.
++ * @param isSelected Whether the item is currently selected.
++ */
++data class SelectableItem(
++    val id: String,
++    val name: String,
++    val isSelected: Boolean
++)
++
++/**
++ * Represents the entire UI state for the ReportFilterScreen.
++ * @param isLoading True if initial data is being loaded.
++ * @param categories The list of selectable categories.
++ * @param accounts The list of selectable accounts.
++ */
++data class ReportFilterUiState(
++    val isLoading: Boolean = true,
++    val categories: List<SelectableItem> = emptyList(),
++    val accounts: List<SelectableItem> = emptyList()
++)
 +```
++</file>
++<file path="app/src/main/java/com/example/myapp/feature/reports/filter/viewmodel/ReportFilterViewModel.kt">
++```kotlin
++package com.example.myapp.feature.reports.filter.viewmodel
 +
-+---
++import androidx.lifecycle.ViewModel
++import androidx.lifecycle.viewModelScope
++import com.example.myapp.core.data.AccountRepository
++import com.example.myapp.core.data.CategoryRepository
++import com.example.myapp.core.model.Account
++import com.example.myapp.core.model.Category
++import com.example.myapp.feature.reports.filter.ui.ReportFilterUiState
++import com.example.myapp.feature.reports.filter.ui.SelectableItem
++import dagger.hilt.android.lifecycle.HiltViewModel
++import kotlinx.coroutines.flow.MutableStateFlow
++import kotlinx.coroutines.flow.StateFlow
++import kotlinx.coroutines.flow.asStateFlow
++import kotlinx.coroutines.launch
++import javax.inject.Inject
 +
-+## 4. Feasibility Analysis
++@HiltViewModel
++class ReportFilterViewModel @Inject constructor(
++    private val categoryRepository: CategoryRepository,
++    private val accountRepository: AccountRepository
++) : ViewModel() {
 +
-+### 4.1 Technical Feasibility
++    private val _uiState = MutableStateFlow(ReportFilterUiState())
++    val uiState: StateFlow<ReportFilterUiState> = _uiState.asStateFlow()
 +
-+| คำถาม | คำตอบ | หมายเหตุ |
-+|-------|-------|----------|
-+| เทคโนโลยีรองรับหรือไม่? | ✅ | Standard feature for RDBMS and backend frameworks. Requires database transaction support. |
-+| ทีมมี Skills เพียงพอหรือไม่? | ✅ | The required skills (SQL, API development, frontend development) are present in the team. |
-+| Infrastructure รองรับหรือไม่? | ✅ | No new infrastructure is required. |
++    private var allCategories: List<Category> = emptyList()
++    private var allAccounts: List<Account> = emptyList()
 +
-+### 4.2 Time Feasibility
++    private val selectedCategoryIds = mutableSetOf<String>()
++    private val selectedAccountIds = mutableSetOf<String>()
 +
-+| ประเด็น | รายละเอียด |
-+|--------|-----------|
-+| **Estimated Effort** | 15 person-days (Backend: 5, Frontend: 7, QA: 3) |
-+| **Deadline** | N/A (To be determined by project manager) |
-+| **Buffer Time** | 3 days |
-+| **Feasible?** | ✅ | The effort is manageable within a standard 2-3 week sprint. |
++    init {
++        loadInitialData()
++    }
 +
-+### 4.3 Budget Feasibility
++    private fun loadInitialData() {
++        viewModelScope.launch {
++            _uiState.value = ReportFilterUiState(isLoading = true)
++            // In a real app, these could be fetched concurrently
++            allCategories = categoryRepository.getCategories()
++            allAccounts = accountRepository.getAccounts()
++            updateUiState()
++        }
++    }
 +
-+| รายการ | ค่าใช้จ่าย | หมายเหตุ |
-+|--------|-----------|----------|
-+| Development Hours | N/A | Internal resource allocation. No direct external cost. |
-+| **Total** | **0** | |
++    private fun updateUiState() {
++        _uiState.value = ReportFilterUiState(
++            isLoading = false,
++            categories = allCategories.map {
++                SelectableItem(it.id, it.name, it.id in selectedCategoryIds)
++            },
++            accounts = allAccounts.map {
++                SelectableItem(it.id, it.name, it.id in selectedAccountIds)
++            }
++        )
++    }
 +
-+---
++    fun toggleCategorySelection(categoryId: String) {
++        if (!selectedCategoryIds.remove(categoryId)) {
++            selectedCategoryIds.add(categoryId)
++        }
++        updateUiState()
++    }
 +
-+## 5. Security Analysis
++    fun toggleAccountSelection(accountId: String) {
++        if (!selectedAccountIds.remove(accountId)) {
++            selectedAccountIds.add(accountId)
++        }
++        updateUiState()
++    }
 +
-+### 5.1 Sensitive Data
++    fun clearSelections() {
++        selectedCategoryIds.clear()
++        selectedAccountIds.clear()
++        updateUiState()
++    }
 +
-+| ข้อมูล | Sensitivity Level | Protection Method |
-+|--------|------------------|-------------------|
-+| Transaction Details (amount, date) | 🟡 Sensitive | Standard TLS encryption, access control based on user ownership. |
-+| Account/Wallet IDs | 🟡 Sensitive | Access control to ensure users can only interact with their own accounts. |
-+| `relatedTransactionId` | 🟢 Normal | No direct sensitive information, but access should be controlled as part of the transaction record. |
-+
-+### 5.2 Attack Vectors
-+
-+| Vector | Risk Level | Mitigation |
-+|--------|-----------|------------|
-+| **Cross-User Data Manipulation** | 🔴 High | Backend logic must strictly validate that both `fromAccountId` and `toAccountId` belong to the authenticated user making the request. |
-+| **Data Integrity Violation** | 🟡 Medium | The creation of the two linked transactions must be wrapped in a single database transaction to ensure atomicity. If one part fails, the entire operation must be rolled back. |
-+
-+### 5.3 Authentication & Authorization
-+
++    fun getSelectedFilterIds(): Pair<Set<String>, Set<String>> {
++        return Pair(selectedCategoryIds.toSet(), selectedAccountIds.toSet())
++    }
++}
 +```
-+All API endpoints related to this feature (`POST /api/transfers`, updates to `PUT /api/transactions/:id`, etc.) must be protected and require a valid user authentication token (e.g., JWT). The business logic layer must contain authorization checks to verify that the user owns all resources (accounts, transactions) they are attempting to modify.
++</file>
++<file path="app/src/main/java/com/example/myapp/feature/reports/filter/ui/ReportFilterScreen.kt">
++```kotlin
++package com.example.myapp.feature.reports.filter.ui
++
++import androidx.compose.foundation.clickable
++import androidx.compose.foundation.layout.Arrangement
++import androidx.compose.foundation.layout.Box
++import androidx.compose.foundation.layout.Row
++import androidx.compose.foundation.layout.Spacer
++import androidx.compose.foundation.layout.fillMaxSize
++import androidx.compose.foundation.layout.fillMaxWidth
++import androidx.compose.foundation.layout.height
++import androidx.compose.foundation.layout.padding
++import androidx.compose.foundation.layout.width
++import androidx.compose.foundation.lazy.LazyColumn
++import androidx.compose.foundation.lazy.items
++import androidx.compose.material.icons.Icons
++import androidx.compose.material.icons.filled.ArrowBack
++import androidx.compose.material3.Button
++import androidx.compose.material3.Checkbox
++import androidx.compose.material3.CircularProgressIndicator
++import androidx.compose.material3.Divider
++import androidx.compose.material3.ExperimentalMaterial3Api
++import androidx.compose.material3.Icon
++import androidx.compose.material3.IconButton
++import androidx.compose.material3.MaterialTheme
++import androidx.compose.material3.Scaffold
++import androidx.compose.material3.Surface
++import androidx.compose.material3.Text
++import androidx.compose.material3.TextButton
++import androidx.compose.material3.TopAppBar
++import androidx.compose.runtime.Composable
++import androidx.compose.runtime.collectAsState
++import androidx.compose.runtime.getValue
++import androidx.compose.ui.Alignment
++import androidx.compose.ui.Modifier
++import androidx.compose.ui.tooling.preview.Preview
++import androidx.compose.ui.unit.dp
++import androidx.lifecycle.viewmodel.compose.viewModel
++import com.example.myapp.feature.reports.filter.viewmodel.ReportFilterViewModel
++
++@OptIn(ExperimentalMaterial3Api::class)
++@Composable
++fun ReportFilterScreen(
++    viewModel: ReportFilterViewModel = viewModel(),
++    onApplyFilters: (selectedCategories: Set<String>, selectedAccounts: Set<String>) -> Unit,
++    onNavigateUp: () -> Unit
++) {
++    val uiState by viewModel.uiState.collectAsState()
++
++    Scaffold(
++        topBar = {
++            TopAppBar(
++                title = { Text("Filter Report") }, // TODO: Use string resource
++                navigationIcon = {
++                    IconButton(onClick = onNavigateUp) {
++                        Icon(
++                            imageVector = Icons.Filled.ArrowBack,
++                            contentDescription = "Back" // TODO: Use string resource
++                        )
++                    }
++                }
++            )
++        },
++        bottomBar = {
++            FilterBottomBar(
++                onClearClick = { viewModel.clearSelections() },
++                onApplyClick = {
++                    val (categories, accounts) = viewModel.getSelectedFilterIds()
++                    onApplyFilters(categories, accounts)
++                }
++            )
++        }
++    ) { paddingValues ->
++        Box(
++            modifier = Modifier
++                .fillMaxSize()
++                .padding(paddingValues),
++            contentAlignment = Alignment.Center
++        ) {
++            if (uiState.isLoading) {
++                CircularProgressIndicator()
++            } else {
++                FilterContent(
++                    uiState = uiState,
++                    onCategorySelected = { viewModel.toggleCategorySelection(it) },
++                    onAccountSelected = { viewModel.toggleAccountSelection(it) }
++                )
++            }
++        }
++    }
++}
++
++@Composable
++private fun FilterContent(
++    uiState: ReportFilterUiState,
++    onCategorySelected: (String) -> Unit,
++    onAccountSelected: (String) -> Unit,
++    modifier: Modifier = Modifier
++) {
++    LazyColumn(
++        modifier = modifier
++            .fillMaxSize()
++            .padding(horizontal = 16.dp)
++    ) {
++        item {
++            Text(
++                text = "Categories", // TODO: Use string resource
++                style = MaterialTheme.typography.titleMedium,
++                modifier = Modifier.padding(top = 16.dp, bottom = 8.dp)
++            )
++        }
++        items(uiState.categories, key = { "cat_${it.id}" }) { item ->
++            SelectableRow(
++                item = item,
++                onClick = { onCategorySelected(item.id) }
++            )
++        }
++
++        item {
++            Spacer(Modifier.height(8.dp))
++            Divider()
++        }
++
++        item {
++            Text(
++                text = "Accounts", // TODO: Use string resource
++                style = MaterialTheme.typography.titleMedium,
++                modifier = Modifier.padding(top = 16.dp, bottom = 8.dp)
++            )
++        }
++        items(uiState.accounts, key = { "acc_${it.id}" }) { item ->
++            SelectableRow(
++                item = item,
++                onClick = { onAccountSelected(item.id) }
++            )
++        }
++    }
++}
++
++@Composable
++private fun SelectableRow(
++    item: SelectableItem,
++    onClick: () -> Unit,
++    modifier: Modifier = Modifier
++) {
++    Row(
++        modifier = modifier
++            .fillMaxWidth()
++            .clickable(onClick = onClick)
++            .padding(vertical = 8.dp),
++        verticalAlignment = Alignment.CenterVertically
++    ) {
++        Checkbox(
++            checked = item.isSelected,
++            onCheckedChange = null // Handled by Row click
++        )
++        Spacer(modifier = Modifier.width(16.dp))
++        Text(text = item.name, style = MaterialTheme.typography.bodyLarge)
++    }
++}
++
++@Composable
++private fun FilterBottomBar(
++    onClearClick: () -> Unit,
++    onApplyClick: () -> Unit,
++    modifier: Modifier = Modifier
++) {
++    Surface(
++        modifier = modifier.fillMaxWidth(),
++        shadowElevation = 8.dp
++    ) {
++        Row(
++            modifier = Modifier
++                .fillMaxWidth()
++                .padding(horizontal = 16.dp, vertical = 8.dp),
++            horizontalArrangement = Arrangement.SpaceBetween,
++            verticalAlignment = Alignment.CenterVertically
++        ) {
++            TextButton(onClick = onClearClick) {
++                Text("Clear") // TODO: Use string resource
++            }
++            Button(onClick = onApplyClick) {
++                Text("Apply") // TODO: Use string resource
++            }
++        }
++    }
++}
++
++
++@Preview(showBackground = true)
++@Composable
++private fun ReportFilterScreenPreview() {
++    MaterialTheme {
++        val previewState = ReportFilterUiState(
++            isLoading = false,
++            categories = listOf(
++                SelectableItem("1", "Groceries", true),
++                SelectableItem("2", "Transport", false)
++            ),
++            accounts = listOf(
++                SelectableItem("a1", "Checking", false),
++                SelectableItem("a2", "Savings", true)
++            )
++        )
++        Scaffold(
++            topBar = {
++                TopAppBar(
++                    title = { Text("Filter Report") },
++                    navigationIcon = {
++                        IconButton(onClick = {}) {
++                            Icon(Icons.Filled.ArrowBack, contentDescription = "Back")
++                        }
++                    }
++                )
++            },
++            bottomBar = {
++                FilterBottomBar(onClearClick = {}, onApplyClick = {})
++            }
++        ) { paddingValues ->
++            FilterContent(
++                uiState = previewState,
++                onCategorySelected = {},
++                onAccountSelected = {},
++                modifier = Modifier.padding(paddingValues)
++            )
++        }
++    }
++}
 +```
++</file>
 +
-+---
++### Testing
 +
-+## 6. Performance & Scalability Analysis
++This section includes unit tests for the `ReportFilterViewModel` and the necessary testing utilities.
 +
-+### 6.1 Performance Targets
++<file path="app/src/test/java/com/example/myapp/util/MainDispatcherRule.kt">
++```kotlin
++package com.example.myapp.util
 +
-+| Metric | Target | Current |
-+|--------|--------|---------|
-+| Response Time (Create Transfer) | < 300ms | N/A |
-+| DB Query Time (Find linked tx) | < 50ms | N/A |
-+| Error Rate | < 0.1% | N/A |
++import kotlinx.coroutines.Dispatchers
++import kotlinx.coroutines.ExperimentalCoroutinesApi
++import kotlinx.coroutines.test.TestDispatcher
++import kotlinx.coroutines.test.UnconfinedTestDispatcher
++import kotlinx.coroutines.test.resetMain
++import kotlinx.coroutines.test.setMain
++import org.junit.rules.TestWatcher
++import org.junit.runner.Description
 +
-+### 6.2 Scalability Plan
++/**
++ * A JUnit rule to set the Main dispatcher to a test dispatcher for unit tests.
++ */
++@ExperimentalCoroutinesApi
++class MainDispatcherRule(
++    private val testDispatcher: TestDispatcher = UnconfinedTestDispatcher()
++) : TestWatcher() {
++    override fun starting(description: Description) {
++        Dispatchers.setMain(testDispatcher)
++    }
 +
-+| Scenario | Expected Users | Scaling Strategy |
-+|----------|---------------|------------------|
-+| Normal | 10k | A database index should be added to the `relatedTransactionId` column to ensure efficient lookups. |
-+| Peak | 50k | The current architecture (standard web app stack) is sufficient. No special scaling is needed for this feature. |
-+| Growth (1yr) | 100k+ | Monitor query performance on the Transaction table. If it becomes a bottleneck, consider read replicas. |
++    override fun finished(description: Description) {
++        Dispatchers.resetMain()
++    }
++}
++```
++</file>
++<file path="app/src/test/java/com/example/myapp/feature/reports/filter/viewmodel/FakeCategoryRepository.kt">
++```kotlin
++package com.example.myapp.feature.reports.filter.viewmodel
 +
-+---
++import com.example.myapp.core.data.CategoryRepository
++import com.example.myapp.core.model.Category
 +
-+## 7. Gap Analysis
++class FakeCategoryRepository : CategoryRepository {
++    private val categories = listOf(
++        Category("cat1", "Groceries"),
++        Category("cat2", "Utilities"),
++        Category("cat3", "Entertainment")
++    )
 +
-+| ด้าน | As-Is (ปัจจุบัน) | To-Be (ต้องการ) | Gap |
-+|------|-----------------|-----------------|-----|
-+| **Data Model** | `Transaction` table has no field for linking. | `Transaction` table has a `relatedTransactionId` field. | A database migration script is required to alter the table schema. |
-+| **Business Logic** | Transactions are treated as independent events. | A "Transfer" is a special, atomic operation creating two linked transactions. | New service-layer logic is needed to handle the atomic creation, linking, and unlinking of transactions. |
-+| **User Interface** | Users must manually create two separate transactions to simulate a transfer. | A streamlined, dedicated UI for creating transfers. | A new "Transfer" tab/view must be designed and implemented on the "Add Transaction" screen. |
++    override suspend fun getCategories(): List<Category> {
++        return categories
++    }
++}
++```
++</file>
++<file path="app/src/test/java/com/example/myapp/feature/reports/filter/viewmodel/FakeAccountRepository.kt">
++```kotlin
++package com.example.myapp.feature.reports.filter.viewmodel
 +
-+---
++import com.example.myapp.core.data.AccountRepository
++import com.example.myapp.core.model.Account
 +
-+## 8. Risk Analysis
++class FakeAccountRepository : AccountRepository {
++    private val accounts = listOf(
++        Account("acc1", "Checking"),
++        Account("acc2", "Savings"),
++        Account("acc3", "Credit Card")
++    )
 +
-+| Risk | Probability | Impact | Score | Mitigation Plan |
-+|------|-------------|--------|-------|-----------------|
-+| **Data Inconsistency** (e.g., only one side of a transfer is created) | 🟡 Medium | 🔴 High | 6 | Enforce the creation of the transaction pair within a single, atomic database transaction in the backend service. |
-+| **Confusing User Experience** | 🟡 Medium | 🟡 Medium | 4 | Create clear UI mockups and conduct a design review before implementation. Use clear labels like "From" and "To". |
-+| **Incorrect Reporting** (Transfers are not excluded correctly) | 🟡 Medium | 🟡 Medium | 4 | Implement specific unit and integration tests for the reporting module to verify the filtering logic for transfers. |
++    override suspend fun getAccounts(): List<Account> {
++        return accounts
++    }
++}
++```
++</file>
++<file path="app/src/test/java/com/example/myapp/feature/reports/filter/viewmodel/ReportFilterViewModelTest.kt">
++```kotlin
++package com.example.myapp.feature.reports.filter.viewmodel
 +
-+> **Risk Score:** Probability × Impact (High=3, Medium=2, Low=1)
++import com.example.myapp.util.MainDispatcherRule
++import kotlinx.coroutines.ExperimentalCoroutinesApi
++import kotlinx.coroutines.flow.first
++import kotlinx.coroutines.test.runTest
++import org.junit.Assert.assertEquals
++import org.junit.Assert.assertFalse
++import org.junit.Assert.assertTrue
++import org.junit.Before
++import org.junit.Rule
++import org.junit.Test
 +
-+---
++@ExperimentalCoroutinesApi
++class ReportFilterViewModelTest {
 +
-+## 9. Summary & Recommendations
++    @get:Rule
++    val mainDispatcherRule = MainDispatcherRule()
 +
-+### 9.1 Analysis Summary
++    private lateinit var viewModel: ReportFilterViewModel
++    private lateinit var fakeCategoryRepository: FakeCategoryRepository
++    private lateinit var fakeAccountRepository: FakeAccountRepository
 +
-+| หมวด | Status | Key Findings |
-+|------|--------|--------------|
-+| Requirement | ✅ Clear | The goal and user needs are well-defined. |
-+| Feature | ✅ Defined | The technical requirements for the data model, logic, and UI are specified. |
-+| Impact | 🔴 High | This feature requires changes across the entire stack: database, backend, and frontend. |
-+| Feasibility | ✅ Feasible | The feature is technically feasible with the current team and technology stack. |
-+| Security | ⚠️ Needs Review | Authorization checks are critical to prevent users from manipulating others' data. |
-+| Performance | ✅ Acceptable | A database index on the new column is required to maintain performance. |
-+| Risk | ⚠️ Some Risks | The primary risk is data inconsistency, which can be mitigated with atomic database transactions. |
++    @Before
++    fun setUp() {
++        fakeCategoryRepository = FakeCategoryRepository()
++        fakeAccountRepository = FakeAccountRepository()
++        viewModel = ReportFilterViewModel(fakeCategoryRepository, fakeAccountRepository)
++    }
 +
-+### 9.2 Recommendations
++    @Test
++    fun `init loads data and updates uiState`() = runTest {
++        val uiState = viewModel.uiState.first { !it.isLoading }
 +
-+1.  **Implement with Atomicity:** The backend logic for creating a transfer MUST use a database transaction to ensure that either both linked transactions are created successfully or none are.
-+2.  **Add Database Index:** A database index must be created on the `relatedTransactionId` column to prevent performance degradation on transaction lookups.
-+3.  **Prioritize Clear UX:** Design a dedicated and intuitive UI for the "Transfer" flow. Avoid retrofitting the existing income/expense forms, as this could lead to user confusion.
++        assertFalse(uiState.isLoading)
++        assertEquals(3, uiState.categories.size)
++        assertEquals("Groceries", uiState.categories[0].name)
++        assertEquals(3, uiState.accounts.size)
++        assertEquals("Checking", uiState.accounts[0].name)
++        assertTrue(uiState.categories.all { !it.isSelected })
++        assertTrue(uiState.accounts.all { !it.isSelected })
++    }
 +
-+### 9.3 Next Steps
++    @Test
++    fun `toggleCategorySelection adds category to selection`() = runTest {
++        viewModel.uiState.first { !it.isLoading }
 +
-+- [ ] Create and review the database migration script.
-+- [ ] Define the final API contract for the `POST /api/transfers` endpoint.
-+- [ ] Develop UI/UX mockups for the "Add Transfer" screen and the updated "Transaction Detail" screen.
-+- [ ] Create backend tasks for API endpoint and service logic.
-+- [ ] Create frontend tasks for UI implementation.
++        viewModel.toggleCategorySelection("cat1")
 +
-+---
++        val uiState = viewModel.uiState.value
++        assertTrue(uiState.categories.first { it.id == "cat1" }.isSelected)
++        assertFalse(uiState.categories.first { it.id == "cat2" }.isSelected)
 +
-+## 📎 Appendix
++        val selectedIds = viewModel.getSelectedFilterIds()
++        assertTrue(selectedIds.first.contains("cat1"))
++    }
 +
-+### Related Documents
++    @Test
++    fun `toggleCategorySelection removes category from selection`() = runTest {
++        viewModel.uiState.first { !it.isLoading }
 +
-+- [Link to PRD]
-+- [Link to Design Docs]
-+- [Link to API Specs]
++        // Add
++        viewModel.toggleCategorySelection("cat1")
++        assertTrue(viewModel.uiState.value.categories.first { it.id == "cat1" }.isSelected)
 +
-+### Sign-off
++        // Remove
++        viewModel.toggleCategorySelection("cat1")
++        assertFalse(viewModel.uiState.value.categories.first { it.id == "cat1" }.isSelected)
 +
-+| Role | Name | Date | Signature |
-+|------|------|------|-----------|
-+| Analyst | Luma AI | 2023-10-27 | ✅ |
-+| Tech Lead | [Name] | [Date] | ⬜ |
-+| PM | [Name] | [Date] | ⬜ |
-\ No newline at end of file
-diff --git a/docs/features/14-issue-71_transaction_linking/android/implementation_plan.md b/docs/features/14-issue-71_transaction_linking/android/implementation_plan.md
-new file mode 100644
-index 0000000..549285d
---- /dev/null
-+++ b/docs/features/14-issue-71_transaction_linking/android/implementation_plan.md
-@@ -0,0 +1,72 @@
-+# Implementation Plan - Issue #71: Transaction Linking & Transfers
++        val selectedIds = viewModel.getSelectedFilterIds()
++        assertFalse(selectedIds.first.contains("cat1"))
++    }
 +
-+This plan outlines the steps to implement transaction linking, specifically for the "Transfer" feature.
++    @Test
++    fun `toggleAccountSelection adds account to selection`() = runTest {
++        viewModel.uiState.first { !it.isLoading }
 +
-+## User Review Required
++        viewModel.toggleAccountSelection("acc2")
 +
-+> [!IMPORTANT]
-+> **Database Migration**: A destructive migration is NOT planned, but we will be adding a column `linkedTransactionId`. Ensure strict testing of the migration script.
++        val uiState = viewModel.uiState.value
++        assertTrue(uiState.accounts.first { it.id == "acc2" }.isSelected)
++        assertFalse(uiState.accounts.first { it.id == "acc1" }.isSelected)
 +
-+> [!WARNING]
-+> **Architecture**: We are introducing new Use Cases (`CreateTransferUseCase`) and modifying the Repository. If `TransactionRepository` does not exist, it will be created to abstract the DAO.
++        val selectedIds = viewModel.getSelectedFilterIds()
++        assertTrue(selectedIds.second.contains("acc2"))
++    }
 +
-+## Proposed Changes
++    @Test
++    fun `clearSelections resets all selections`() = runTest {
++        viewModel.uiState.first { !it.isLoading }
 +
-+### Data Layer
++        viewModel.toggleCategorySelection("cat1")
++        viewModel.toggleCategorySelection("cat3")
++        viewModel.toggleAccountSelection("acc2")
 +
-+#### [MODIFY] [Transaction.kt](file:///Users/oatrice/Software-projects/JarWise/Android/app/src/main/java/com/oatrice/jarwise/data/Transaction.kt)
-+- Add `linkedTransactionId: String? = null` to the data class.
++        var uiState = viewModel.uiState.value
++        assertTrue(uiState.categories.first { it.id == "cat1" }.isSelected)
++        assertTrue(uiState.accounts.first { it.id == "cat3" }.isSelected)
++        assertTrue(uiState.accounts.first { it.id == "acc2" }.isSelected)
 +
-+#### [NEW] [TransactionRepository.kt](file:///Users/oatrice/Software-projects/JarWise/Android/app/src/main/java/com/oatrice/jarwise/data/repository/TransactionRepository.kt)
-+- Create interface and implementation if missing, or update existing.
-+- Add `createTransfer(fromTransaction: Transaction, toTransaction: Transaction)` method.
-+- Ensure this method executes in a database transaction (using `@Transaction` in DAO or `withTransaction` block).
++        viewModel.clearSelections()
 +
-+#### [MODIFY] [TransactionDao.kt](file:///Users/oatrice/Software-projects/JarWise/Android/app/src/main/java/com/oatrice/jarwise/data/TransactionDao.kt)
-+- Functionality for inserting multiple transactions will be handled here or in the Repository via `RoomDatabase.withTransaction`.
++        uiState = viewModel.uiState.value
++        assertTrue(uiState.categories.all { !it.isSelected })
++        assertTrue(uiState.accounts.all { !it.isSelected })
 +
-+### Domain Layer
-+
-+#### [NEW] [CreateTransferUseCase.kt](file:///Users/oatrice/Software-projects/JarWise/Android/app/src/main/java/com/oatrice/jarwise/domain/use_case/CreateTransferUseCase.kt)
-+- Encapsulate the logic for creating two linked transactions (Expense + Income).
-+- Validate inputs (Same amount, different wallets).
-+
-+#### [NEW] [UnlinkTransactionsUseCase.kt](file:///Users/oatrice/Software-projects/JarWise/Android/app/src/main/java/com/oatrice/jarwise/domain/use_case/UnlinkTransactionsUseCase.kt)
-+- handle unlinking logic.
-+
-+### UI Layer
-+
-+#### [MODIFY] [AddTransactionScreen.kt](file:///Users/oatrice/Software-projects/JarWise/Android/app/src/main/java/com/oatrice/jarwise/ui/AddTransactionScreen.kt)
-+- Add "Transfer" Tab (alongside Income/Expense).
-+- When "Transfer" is selected:
-+    - Show `From Wallet` and `To Wallet` dropdowns/cards.
-+    - Hide `Jar` selection (or auto-select "Transfer" jar if applicable).
-+- Update logic to call `CreateTransferUseCase` (via ViewModel).
-+
-+#### [MODIFY] [TransactionHistoryScreen.kt](file:///Users/oatrice/Software-projects/JarWise/Android/app/src/main/java/com/oatrice/jarwise/ui/TransactionHistoryScreen.kt) / Detail Screen
-+- Show "Linked to" indicator.
-+
-+## Verification Plan
-+
-+### Automated Tests
-+- **Unit Tests**:
-+    - `CreateTransferUseCaseTest`: Verify it creates two transactions with correct IDs linked.
-+    - `TransactionRepositoryTest`: Verify database insertion and rollback on failure.
-+    - `TransactionTest`: Verify model integrity.
-+- **Migration Test**:
-+    - Verify schema upgrade works without data loss.
-+
-+### Manual Verification
-+1.  **Create Transfer**:
-+    - Open Add Transaction > Select "Transfer" tab.
-+    - Select From: Wallet A, To: Wallet B, Amount: 100.
-+    - Save.
-+    - **Expect**: Two transactions appear in history. -100 in Wallet A, +100 in Wallet B.
-+2.  **Verify Link**:
-+    - Click on the -100 transaction.
-+    - **Expect**: See "Linked to: +100 (Wallet B)".
-+    - Click the link.
-+    - **Expect**: Navigate to the +100 transaction details.
-+3.  **Delete Transfer**:
-+    - Delete the -100 transaction.
-+    - **Expect**: The +100 transaction remains but is now unlinked (standalone income).
-diff --git a/docs/features/14-issue-71_transaction_linking/android/task.md b/docs/features/14-issue-71_transaction_linking/android/task.md
-new file mode 100644
-index 0000000..0645093
---- /dev/null
-+++ b/docs/features/14-issue-71_transaction_li
++        val selectedIds = viewModel.getSelectedFilterIds
 ... (Diff truncated for size) ...
 
 PR TEMPLATE:
