@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.8.0] - 2026-02-18
+
+### Added
+- **[Feature] Multi-Select Report Filters:** Implemented the ability for users to select multiple categories and accounts simultaneously when generating financial reports. This provides greater flexibility and allows for more powerful, customized data analysis.
+- **[Docs]** Added extensive new planning, analysis, and specification documents for the multi-select filter feature.
+
+### Changed
+- **[Docs]** Updated the project `ROADMAP.md` to reflect the completion of the multi-select filter feature and to add a draft review for the next development phase.
+
 ## [0.7.0] - 2026-02-11
 
 ### Added

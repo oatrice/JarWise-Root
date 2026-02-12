@@ -1,0 +1,591 @@
+Answering for Issue #68: [Feature] Report Filter: Multi-Select Categories & Accounts.
+
+Here are the Android components implemented in Kotlin and Jetpack Compose, covering the ViewModel with its unit tests, and the mobile UI. The solution follows modern Android development practices, including a clean architecture and test-driven development for the ViewModel logic.
+
+### Core Domain and Data Layer
+
+These files define the basic data models and repository interfaces.
+
+<file path="app/src/main/java/com/example/myapp/core/model/Category.kt">
+```kotlin
+package com.example.myapp.core.model
+
+data class Category(val id: String, val name: String)
+```
+</file>
+<file path="app/src/main/java/com/example/myapp/core/model/Account.kt">
+```kotlin
+package com.example.myapp.core.model
+
+data class Account(val id: String, val name: String)
+```
+</file>
+<file path="app/src/main/java/com/example/myapp/core/data/CategoryRepository.kt">
+```kotlin
+package com.example.myapp.core.data
+
+import com.example.myapp.core.model.Category
+
+/**
+ * Interface for fetching category data.
+ */
+interface CategoryRepository {
+    suspend fun getCategories(): List<Category>
+}
+```
+</file>
+<file path="app/src/main/java/com/example/myapp/core/data/AccountRepository.kt">
+```kotlin
+package com.example.myapp.core.data
+
+import com.example.myapp.core.model.Account
+
+/**
+ * Interface for fetching account data.
+ */
+interface AccountRepository {
+    suspend fun getAccounts(): List<Account>
+}
+```
+</file>
+
+### Feature: Report Filter (ViewModel and UI)
+
+This section contains the UI state definition, the ViewModel responsible for the screen's logic, and the Jetpack Compose UI.
+
+<file path="app/src/main/java/com/example/myapp/feature/reports/filter/ui/ReportFilterUiState.kt">
+```kotlin
+package com.example.myapp.feature.reports.filter.ui
+
+/**
+ * Represents an item in the multi-select list.
+ * @param id The unique identifier for the item.
+ * @param name The display name of the item.
+ * @param isSelected Whether the item is currently selected.
+ */
+data class SelectableItem(
+    val id: String,
+    val name: String,
+    val isSelected: Boolean
+)
+
+/**
+ * Represents the entire UI state for the ReportFilterScreen.
+ * @param isLoading True if initial data is being loaded.
+ * @param categories The list of selectable categories.
+ * @param accounts The list of selectable accounts.
+ */
+data class ReportFilterUiState(
+    val isLoading: Boolean = true,
+    val categories: List<SelectableItem> = emptyList(),
+    val accounts: List<SelectableItem> = emptyList()
+)
+```
+</file>
+<file path="app/src/main/java/com/example/myapp/feature/reports/filter/viewmodel/ReportFilterViewModel.kt">
+```kotlin
+package com.example.myapp.feature.reports.filter.viewmodel
+
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.example.myapp.core.data.AccountRepository
+import com.example.myapp.core.data.CategoryRepository
+import com.example.myapp.core.model.Account
+import com.example.myapp.core.model.Category
+import com.example.myapp.feature.reports.filter.ui.ReportFilterUiState
+import com.example.myapp.feature.reports.filter.ui.SelectableItem
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
+import javax.inject.Inject
+
+@HiltViewModel
+class ReportFilterViewModel @Inject constructor(
+    private val categoryRepository: CategoryRepository,
+    private val accountRepository: AccountRepository
+) : ViewModel() {
+
+    private val _uiState = MutableStateFlow(ReportFilterUiState())
+    val uiState: StateFlow<ReportFilterUiState> = _uiState.asStateFlow()
+
+    private var allCategories: List<Category> = emptyList()
+    private var allAccounts: List<Account> = emptyList()
+
+    private val selectedCategoryIds = mutableSetOf<String>()
+    private val selectedAccountIds = mutableSetOf<String>()
+
+    init {
+        loadInitialData()
+    }
+
+    private fun loadInitialData() {
+        viewModelScope.launch {
+            _uiState.value = ReportFilterUiState(isLoading = true)
+            // In a real app, these could be fetched concurrently
+            allCategories = categoryRepository.getCategories()
+            allAccounts = accountRepository.getAccounts()
+            updateUiState()
+        }
+    }
+
+    private fun updateUiState() {
+        _uiState.value = ReportFilterUiState(
+            isLoading = false,
+            categories = allCategories.map {
+                SelectableItem(it.id, it.name, it.id in selectedCategoryIds)
+            },
+            accounts = allAccounts.map {
+                SelectableItem(it.id, it.name, it.id in selectedAccountIds)
+            }
+        )
+    }
+
+    fun toggleCategorySelection(categoryId: String) {
+        if (!selectedCategoryIds.remove(categoryId)) {
+            selectedCategoryIds.add(categoryId)
+        }
+        updateUiState()
+    }
+
+    fun toggleAccountSelection(accountId: String) {
+        if (!selectedAccountIds.remove(accountId)) {
+            selectedAccountIds.add(accountId)
+        }
+        updateUiState()
+    }
+
+    fun clearSelections() {
+        selectedCategoryIds.clear()
+        selectedAccountIds.clear()
+        updateUiState()
+    }
+
+    fun getSelectedFilterIds(): Pair<Set<String>, Set<String>> {
+        return Pair(selectedCategoryIds.toSet(), selectedAccountIds.toSet())
+    }
+}
+```
+</file>
+<file path="app/src/main/java/com/example/myapp/feature/reports/filter/ui/ReportFilterScreen.kt">
+```kotlin
+package com.example.myapp.feature.reports.filter.ui
+
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material3.Button
+import androidx.compose.material3.Checkbox
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Divider
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.TopAppBar
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.myapp.feature.reports.filter.viewmodel.ReportFilterViewModel
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun ReportFilterScreen(
+    viewModel: ReportFilterViewModel = viewModel(),
+    onApplyFilters: (selectedCategories: Set<String>, selectedAccounts: Set<String>) -> Unit,
+    onNavigateUp: () -> Unit
+) {
+    val uiState by viewModel.uiState.collectAsState()
+
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text("Filter Report") }, // TODO: Use string resource
+                navigationIcon = {
+                    IconButton(onClick = onNavigateUp) {
+                        Icon(
+                            imageVector = Icons.Filled.ArrowBack,
+                            contentDescription = "Back" // TODO: Use string resource
+                        )
+                    }
+                }
+            )
+        },
+        bottomBar = {
+            FilterBottomBar(
+                onClearClick = { viewModel.clearSelections() },
+                onApplyClick = {
+                    val (categories, accounts) = viewModel.getSelectedFilterIds()
+                    onApplyFilters(categories, accounts)
+                }
+            )
+        }
+    ) { paddingValues ->
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues),
+            contentAlignment = Alignment.Center
+        ) {
+            if (uiState.isLoading) {
+                CircularProgressIndicator()
+            } else {
+                FilterContent(
+                    uiState = uiState,
+                    onCategorySelected = { viewModel.toggleCategorySelection(it) },
+                    onAccountSelected = { viewModel.toggleAccountSelection(it) }
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun FilterContent(
+    uiState: ReportFilterUiState,
+    onCategorySelected: (String) -> Unit,
+    onAccountSelected: (String) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    LazyColumn(
+        modifier = modifier
+            .fillMaxSize()
+            .padding(horizontal = 16.dp)
+    ) {
+        item {
+            Text(
+                text = "Categories", // TODO: Use string resource
+                style = MaterialTheme.typography.titleMedium,
+                modifier = Modifier.padding(top = 16.dp, bottom = 8.dp)
+            )
+        }
+        items(uiState.categories, key = { "cat_${it.id}" }) { item ->
+            SelectableRow(
+                item = item,
+                onClick = { onCategorySelected(item.id) }
+            )
+        }
+
+        item {
+            Spacer(Modifier.height(8.dp))
+            Divider()
+        }
+
+        item {
+            Text(
+                text = "Accounts", // TODO: Use string resource
+                style = MaterialTheme.typography.titleMedium,
+                modifier = Modifier.padding(top = 16.dp, bottom = 8.dp)
+            )
+        }
+        items(uiState.accounts, key = { "acc_${it.id}" }) { item ->
+            SelectableRow(
+                item = item,
+                onClick = { onAccountSelected(item.id) }
+            )
+        }
+    }
+}
+
+@Composable
+private fun SelectableRow(
+    item: SelectableItem,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .clickable(onClick = onClick)
+            .padding(vertical = 8.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Checkbox(
+            checked = item.isSelected,
+            onCheckedChange = null // Handled by Row click
+        )
+        Spacer(modifier = Modifier.width(16.dp))
+        Text(text = item.name, style = MaterialTheme.typography.bodyLarge)
+    }
+}
+
+@Composable
+private fun FilterBottomBar(
+    onClearClick: () -> Unit,
+    onApplyClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Surface(
+        modifier = modifier.fillMaxWidth(),
+        shadowElevation = 8.dp
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 8.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            TextButton(onClick = onClearClick) {
+                Text("Clear") // TODO: Use string resource
+            }
+            Button(onClick = onApplyClick) {
+                Text("Apply") // TODO: Use string resource
+            }
+        }
+    }
+}
+
+
+@Preview(showBackground = true)
+@Composable
+private fun ReportFilterScreenPreview() {
+    MaterialTheme {
+        val previewState = ReportFilterUiState(
+            isLoading = false,
+            categories = listOf(
+                SelectableItem("1", "Groceries", true),
+                SelectableItem("2", "Transport", false)
+            ),
+            accounts = listOf(
+                SelectableItem("a1", "Checking", false),
+                SelectableItem("a2", "Savings", true)
+            )
+        )
+        Scaffold(
+            topBar = {
+                TopAppBar(
+                    title = { Text("Filter Report") },
+                    navigationIcon = {
+                        IconButton(onClick = {}) {
+                            Icon(Icons.Filled.ArrowBack, contentDescription = "Back")
+                        }
+                    }
+                )
+            },
+            bottomBar = {
+                FilterBottomBar(onClearClick = {}, onApplyClick = {})
+            }
+        ) { paddingValues ->
+            FilterContent(
+                uiState = previewState,
+                onCategorySelected = {},
+                onAccountSelected = {},
+                modifier = Modifier.padding(paddingValues)
+            )
+        }
+    }
+}
+```
+</file>
+
+### Testing
+
+This section includes unit tests for the `ReportFilterViewModel` and the necessary testing utilities.
+
+<file path="app/src/test/java/com/example/myapp/util/MainDispatcherRule.kt">
+```kotlin
+package com.example.myapp.util
+
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.TestDispatcher
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.test.resetMain
+import kotlinx.coroutines.test.setMain
+import org.junit.rules.TestWatcher
+import org.junit.runner.Description
+
+/**
+ * A JUnit rule to set the Main dispatcher to a test dispatcher for unit tests.
+ */
+@ExperimentalCoroutinesApi
+class MainDispatcherRule(
+    private val testDispatcher: TestDispatcher = UnconfinedTestDispatcher()
+) : TestWatcher() {
+    override fun starting(description: Description) {
+        Dispatchers.setMain(testDispatcher)
+    }
+
+    override fun finished(description: Description) {
+        Dispatchers.resetMain()
+    }
+}
+```
+</file>
+<file path="app/src/test/java/com/example/myapp/feature/reports/filter/viewmodel/FakeCategoryRepository.kt">
+```kotlin
+package com.example.myapp.feature.reports.filter.viewmodel
+
+import com.example.myapp.core.data.CategoryRepository
+import com.example.myapp.core.model.Category
+
+class FakeCategoryRepository : CategoryRepository {
+    private val categories = listOf(
+        Category("cat1", "Groceries"),
+        Category("cat2", "Utilities"),
+        Category("cat3", "Entertainment")
+    )
+
+    override suspend fun getCategories(): List<Category> {
+        return categories
+    }
+}
+```
+</file>
+<file path="app/src/test/java/com/example/myapp/feature/reports/filter/viewmodel/FakeAccountRepository.kt">
+```kotlin
+package com.example.myapp.feature.reports.filter.viewmodel
+
+import com.example.myapp.core.data.AccountRepository
+import com.example.myapp.core.model.Account
+
+class FakeAccountRepository : AccountRepository {
+    private val accounts = listOf(
+        Account("acc1", "Checking"),
+        Account("acc2", "Savings"),
+        Account("acc3", "Credit Card")
+    )
+
+    override suspend fun getAccounts(): List<Account> {
+        return accounts
+    }
+}
+```
+</file>
+<file path="app/src/test/java/com/example/myapp/feature/reports/filter/viewmodel/ReportFilterViewModelTest.kt">
+```kotlin
+package com.example.myapp.feature.reports.filter.viewmodel
+
+import com.example.myapp.util.MainDispatcherRule
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.test.runTest
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertTrue
+import org.junit.Before
+import org.junit.Rule
+import org.junit.Test
+
+@ExperimentalCoroutinesApi
+class ReportFilterViewModelTest {
+
+    @get:Rule
+    val mainDispatcherRule = MainDispatcherRule()
+
+    private lateinit var viewModel: ReportFilterViewModel
+    private lateinit var fakeCategoryRepository: FakeCategoryRepository
+    private lateinit var fakeAccountRepository: FakeAccountRepository
+
+    @Before
+    fun setUp() {
+        fakeCategoryRepository = FakeCategoryRepository()
+        fakeAccountRepository = FakeAccountRepository()
+        viewModel = ReportFilterViewModel(fakeCategoryRepository, fakeAccountRepository)
+    }
+
+    @Test
+    fun `init loads data and updates uiState`() = runTest {
+        val uiState = viewModel.uiState.first { !it.isLoading }
+
+        assertFalse(uiState.isLoading)
+        assertEquals(3, uiState.categories.size)
+        assertEquals("Groceries", uiState.categories[0].name)
+        assertEquals(3, uiState.accounts.size)
+        assertEquals("Checking", uiState.accounts[0].name)
+        assertTrue(uiState.categories.all { !it.isSelected })
+        assertTrue(uiState.accounts.all { !it.isSelected })
+    }
+
+    @Test
+    fun `toggleCategorySelection adds category to selection`() = runTest {
+        viewModel.uiState.first { !it.isLoading }
+
+        viewModel.toggleCategorySelection("cat1")
+
+        val uiState = viewModel.uiState.value
+        assertTrue(uiState.categories.first { it.id == "cat1" }.isSelected)
+        assertFalse(uiState.categories.first { it.id == "cat2" }.isSelected)
+
+        val selectedIds = viewModel.getSelectedFilterIds()
+        assertTrue(selectedIds.first.contains("cat1"))
+    }
+
+    @Test
+    fun `toggleCategorySelection removes category from selection`() = runTest {
+        viewModel.uiState.first { !it.isLoading }
+
+        // Add
+        viewModel.toggleCategorySelection("cat1")
+        assertTrue(viewModel.uiState.value.categories.first { it.id == "cat1" }.isSelected)
+
+        // Remove
+        viewModel.toggleCategorySelection("cat1")
+        assertFalse(viewModel.uiState.value.categories.first { it.id == "cat1" }.isSelected)
+
+        val selectedIds = viewModel.getSelectedFilterIds()
+        assertFalse(selectedIds.first.contains("cat1"))
+    }
+
+    @Test
+    fun `toggleAccountSelection adds account to selection`() = runTest {
+        viewModel.uiState.first { !it.isLoading }
+
+        viewModel.toggleAccountSelection("acc2")
+
+        val uiState = viewModel.uiState.value
+        assertTrue(uiState.accounts.first { it.id == "acc2" }.isSelected)
+        assertFalse(uiState.accounts.first { it.id == "acc1" }.isSelected)
+
+        val selectedIds = viewModel.getSelectedFilterIds()
+        assertTrue(selectedIds.second.contains("acc2"))
+    }
+
+    @Test
+    fun `clearSelections resets all selections`() = runTest {
+        viewModel.uiState.first { !it.isLoading }
+
+        viewModel.toggleCategorySelection("cat1")
+        viewModel.toggleCategorySelection("cat3")
+        viewModel.toggleAccountSelection("acc2")
+
+        var uiState = viewModel.uiState.value
+        assertTrue(uiState.categories.first { it.id == "cat1" }.isSelected)
+        assertTrue(uiState.accounts.first { it.id == "cat3" }.isSelected)
+        assertTrue(uiState.accounts.first { it.id == "acc2" }.isSelected)
+
+        viewModel.clearSelections()
+
+        uiState = viewModel.uiState.value
+        assertTrue(uiState.categories.all { !it.isSelected })
+        assertTrue(uiState.accounts.all { !it.isSelected })
+
+        val selectedIds = viewModel.getSelectedFilterIds()
+        assertTrue(selectedIds.first.isEmpty())
+        assertTrue(selectedIds.second.isEmpty())
+    }
+}
+```
+</file>
