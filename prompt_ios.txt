@@ -1,70 +1,64 @@
-# Role: Senior Ios Developer
-# Task: Implement ios components for Issue #48: [Android | Web]:  แสดงกราฟใน jar cat, jar sub cat ที่เลือกได้ว่าแต่ละเดือน/สัปดา/ปี ใช้ไปเท่าไหร่ Use Swift/SwiftUI. Implement iOS UI + MVVM. Use XCTest.
+# Role: Senior iOS Developer
+# Task: Implement iOS components for Issue #59: Financial Reports & Charts. Use Swift/SwiftUI. Implement iOS UI + MVVM. Use XCTest.
 
 Please write the code for the following requirements.
 
 ## Context
 Project: JarWise-Root
-Issue: #48 [Android | Web]:  แสดงกราฟใน jar cat, jar sub cat ที่เลือกได้ว่าแต่ละเดือน/สัปดา/ปี ใช้ไปเท่าไหร่
+Issue:                                                                                                           #59 [Android | Web | iOS]: Financial Reports & Charts
 Body:
 ## 🚀 Getting Started
 - [ ] Moved issue to **In Progress** in Project Board (or use `scripts/move_issue_to_inprogress.sh <issue_url>`)
 
 ## 🎯 Objective
 
-[Briefly describe the goal of this feature/issue.]
+Implement comprehensive financial reporting with interactive charts to allow users to analyze their spending habits.
+
+> **Note:** Export features (Excel, CSV, PDF) are tracked separately: #89, #90.
 
 ---
 
 ## 📝 Specifications
 
-### [Component/Area 1]
-
-- [ ] **Requirement 1:**
-  - Detail A
-  - Detail B
-- [ ] **Requirement 2:**
-  - Detail A
-
-### [Component/Area 2]
-
-- [ ] **Requirement 1:**
-  - Detail A
+### Reports View
+- [ ] **Summary Cards:** Display Income, Expense, and Net Balance for the selected period.
+- [ ] **Charts:** Implement charts using **SwiftCharts** (iOS 16+):
+- **Spending Trends:** Line chart showing spending over time.
+- **Category Breakdown:** Bar chart showing expenses by category.
+- **Jar Distribution:** Pie/Donut chart showing allocation per jar.
+- **Comparison:** Bar chart comparing current vs previous period.
+- [ ] **Filters:** Implement Date Range Picker and Picker for Jar/Wallet.
 
 ---
 
 ## 🏗️ Technical Considerations
 
 ### 📦 State Management
-- [ ] **Web:** [e.g., localStorage, Redux, React Query]
-- [ ] **Android:** [e.g., SharedPreferences, Room, StateFlow]
+- [ ] **iOS:** Use `ObservableObject` or `@State` with `ViewModel` to manage report data.
 
 ### 🔄 Invalidation/Refresh (Critical!)
-- [ ] **On save success:** [Describe how to refresh data]
-- [ ] **UX Goal:** [Describe expected behavior]
+- [ ] **On filter change:** Fetch new data.
+- [ ] **On appear:** Ensure data is up-to-date.
 
 ### ⚠️ Error Handling
-- [ ] **Scenario 1:** [Error message/behavior]
-- [ ] **Scenario 2:** [Error message/behavior]
+- [ ] **Data Fetching:** Handle network errors with Alert or Error View.
 
 ### 🔲 Edge Cases
-- [ ] **Case 1:** [Detail]
-- [ ] **Case 2:** [Detail]
+- [ ] **No Data:** Show friendly Empty View implementation (e.g., ContentUnavailableView in iOS 17+ or custom view).
 
 ---
 
 ## 📐 UI/UX Guidelines
 
-- **Guideline 1:** [Detail]
-- **Guideline 2:** [Detail]
+- **Native Feel:** Use standard iOS components and SwiftCharts for a native look and feel.
+- **Accessibility:** Ensure charts are accessible (using `.accessibilityLabel`, etc.).
 
 ---
 
 ## 🔗 References
 
-- **Feature ID:** [ID]
-- **Parent Issue:** #
-- **Design Reference:** [Link or description]
+- **Feature ID:** FEAT-059
+- **Parent Issue:**        #59
 
 ---
 
@@ -72,13 +66,11 @@ Body:
 
 - [ ] All requirements implemented
 - [ ] Unit tests passed
-- [ ] Manual QA performed on Web and Android
+- [ ] Manual QA performed on iOS
 - [ ] PR reviewed and merged
-
 
 ## Architecture & Plans (AUTHORITATIVE)
 The following content is from the approved design documents. **You MUST follow this design.**
-
 
 ## Reference: analysis.md
 # Analysis Template
@@ -91,10 +83,10 @@ The following content is from the approved design documents. **You MUST follow t
 
 | รายการ | รายละเอียด |
 |--------|-----------|
-| **Feature Name** | แสดงกราฟค่าใช้จ่ายในหมวดหมู่ (Jar Category Expense Graph) |
-| **Issue URL** | [#48](https://github.com/placeholder/repo/issues/48) |
-| **Date** | 2023-10-27 |
-| **Analyst** | Luma AI (Senior Technical Analyst) |
+| **Feature Name** | Financial Reports & Data Export |
+| **Issue URL** | [                                     #59](https://github.com/oatrice/JarWise-Root/issues/59) |
+| **Date** | 2026-02-12 |
+| **Analyst** | AI Assistant |
 | **Priority** | 🟡 Medium |
 | **Status** | 📝 Draft |
 
@@ -107,26 +99,24 @@ The following content is from the approved design documents. **You MUST follow t
 > อธิบายปัญหาที่ต้องการแก้ไข
 
 ```
-Currently, users can track their expenses by categorizing them into "Jars" and "Sub-Jars". However, they lack a visual tool to analyze their spending habits over time within these categories. This makes it difficult to quickly understand spending patterns, compare expenses across different periods (week, month, year), and make informed financial decisions.
+Currently, users lack a comprehensive view of their financial health. While they can see individual transactions and Jar totals, they cannot easily analyze trends, category breakdowns, or export data for external use. This limits their ability to make informed long-term financial decisions.
 ```
 
 ### 1.2 User Stories
 
-| # | As a | I want to | So that |
+|                                                                                                                             # | As a | I want to | So that |
 |---|------|-----------|---------|
-| 1 | User | see a visual graph of my expenses for a selected Jar category or sub-category | I can quickly understand my spending patterns over time. |
-| 2 | User | filter the expense graph by different time periods (Weekly, Monthly, Yearly) | I can analyze my spending on different time scales. |
-| 3 | User | view this graph on both the Web and Android platforms | I can have a consistent experience and access my financial insights from any device. |
+| 1 | User | view monthly and yearly summary reports | I can see my income vs. expenses at a glance. |
+| 2 | User | see visual charts (Line, Bar, Pie) of my spending | I can easily identify trends and major expense categories. |
+| 3 | User | export my transaction data to Excel or CSV | I can perform custom analysis or backup my data. |
 
 ### 1.3 Acceptance Criteria
 
-- [ ] **AC1:** A graph (bar chart recommended) is displayed on the Jar Category and Jar Sub-Category detail screens.
-- [ ] **AC2:** The graph visualizes the total amount of money spent within that category for a given time period.
-- [ ] **AC3:** The user can select a time period filter with options: "Weekly", "Monthly", and "Yearly".
-- [ ] **AC4:** The graph's X-axis and data points update correctly based on the selected filter (e.g., showing days for 'Weekly', months for 'Monthly').
-- [ ] **AC5:** The Y-axis of the graph represents the total expense amount.
-- [ ] **AC6:** If no transaction data exists for the selected category and time period, the graph area displays a user-friendly message like "No spending data available for this period."
-- [ ] **AC7:** The feature is implemented and functions consistently on both Web and Android platforms.
+- [ ] **AC1:** Reports Dashboard displays key metrics (Total Income, Expenses, Balance) for selected period.
+- [ ] **AC2:** Charts (Trend Line, Category Bar, Jar Pie) render correctly with real data.
+- [ ] **AC3:** Date range selector allows filtering by Month, Year, or Custom Range.
+- [ ] **AC4:** Export function generates valid .xlsx and .csv files containing filtered transaction data.
+- [ ] **AC5:** Backend provides optimized endpoints for aggregated report data.
 
 ---
 
@@ -136,44 +126,44 @@ Currently, users can track their expenses by categorizing them into "Jars" and "
 
 ```mermaid
 flowchart TD
-    A[User opens the app] --> B[Navigates to Jars/Categories screen]
-    B --> C[Selects a specific Jar Category or Sub-Category]
-    C --> D[Views Category Detail Screen]
-    D --> E{Expense graph is displayed with default filter (e.g., Monthly)}
-    E --> F[User interacts with time period filter (Tabs: Week/Month/Year)]
-    F --> G[Graph data and axes are updated to reflect the new filter]
-    G --> F
-    D --> H[End]
+A[User navigates to Reports] --> B[View Dashboard (Summary Cards & Charts)]
+B --> C{Interact with Filters}
+C -->|Select Date Range| D[Dashboard updates data]
+C -->|Select Jar/Wallet| D
+B --> E[Click 'Export Data']
+E --> F[Select Format (Excel/CSV)]
+F --> G[Download/Share File]
 ```
 
 ### 2.2 Screen/Page Requirements
 
 | หน้าจอ | Actions | Components |
 |--------|---------|------------|
-| **Jar Category Detail Screen** | - View expense graph<br>- Select time period filter | - **Graph Component:** A bar chart to display expense data.<br>- **Filter Component:** Tabs or a dropdown menu for "Weekly", "Monthly", "Yearly" selection.<br>- **Loading State:** A spinner or skeleton loader while data is being fetched.<br>- **Empty State:** A message and/or illustration for when there is no data. |
+| **Reports Dashboard** | - View Summary Cards<br>- View Charts<br>- Filter Date/Jar<br>- Export Data | - **Summary Cards:** Income, Expense, Net.<br>- **Charts:** Line (Trend), Bar (Category), Pie (Jar).<br>- **Filter Bar:** Date Range Picker, Dropdowns.<br>- **Export Button:** Triggers export dialog. |
 
 ### 2.3 Input/Output Specification
 
 #### Inputs
 
-(For the new backend API endpoint)
+(For Backend API)
 
-| Field | Type | Required | Validation |
-|-------|------|----------|------------|
-| `categoryId` | string (UUID) | ✅ | Must be a valid category ID belonging to the user. |
-| `period` | string (enum) | ✅ | Must be one of `WEEKLY`, `MONTHLY`, `YEARLY`. |
-| `endDate` | string (date) | ✅ | The end date for the period query (e.g., `2023-10-27`). The backend will calculate the start date based on the period. |
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `startDate` | string (date) | ✅ | Start of reporting period. |
+| `endDate` | string (date) | ✅ | End of reporting period. |
+| `walletId` | string (uuid) | ❌ | Filter by specific wallet (optional). |
+| `jarId` | string (uuid) | ❌ | Filter by specific jar (optional). |
 
 #### Outputs
 
-(API Response Body)
+(API Response Body - Aggregated Data)
 
 | Field | Type | Description |
 |-------|------|-------------|
-| `dataPoints` | array[object] | An array of objects, each representing a point on the graph. |
-| `dataPoints.label` | string | The label for the X-axis (e.g., "Mon", "Jan", "2023"). |
-| `dataPoints.value` | number | The total expense amount for that label (Y-axis value). |
-| `total` | number | The total sum of expenses for the entire period. |
+| `summary` | object | `{ income: 1000, expense: 500, net: 500 }` |
+| `trend` | array | `[{ date: "2023-01", income: 500, expense: 200 }, ...]` |
+| `byCategory` | array | `[{ categoryId: "c1", name: "Food", amount: 300 }, ...]` |
+| `byJar` | array | `[{ jarId: "j1", name: "Necessary", amount: 400 }, ...]` |
 
 ---
 
@@ -183,14 +173,12 @@ flowchart TD
 
 | Component | Impact Level | Description |
 |-----------|--------------|-------------|
-| **Backend API (Python/Go)** | 🔴 High | A new endpoint must be created to perform data aggregation (SUM, GROUP BY) on the transactions table. This query needs to be performant and secure. |
-| **Database** | 🟡 Medium | The new aggregation query may require adding indexes on `transaction_date`, `user_id`, and `category_id` columns to ensure fast response times, especially for users with large transaction histories. |
-| **Web App (React/Next.js)** | 🟡 Medium | A new reusable graph component needs to be built or integrated using a library (e.g., Recharts, Chart.js). Stat
-(truncated if too long)
-
+| **Backend API** | 🔴 High | New endpoints for aggregated data and export generation. |
+| **Web/Android/iOS UI** | 🟡 Medium | New screens and chart library integration. |
+| **Database** | 🟢 Low | Read-heavy operations                                          ; may need indexing on `transaction_date`. |
 
 ## Reference: plan.md
-# Implementation Plan: Expense Graph for Jar Categories and Sub-categories with Time Period Selection
+# Implementation Plan: Financial Reports & Data Export
 
 > **Refers to**: [Spec Link](./spec.md)
 > **Status**: Draft
@@ -198,72 +186,33 @@ flowchart TD
 ## 1. Architecture & Design
 *High-level technical approach.*
 
-The implementation will introduce a new, reusable UI component for displaying expense graphs. Data will be fetched from a new, dedicated backend endpoint that provides pre-aggregated expense data based on a category/sub-category ID and a selected time period (`weekly`, `monthly`, `yearly`). This approach centralizes the complex data aggregation logic on the backend, simplifying the clients and ensuring consistent calculations.
-
-State management on Android will be handled within the existing `CategoryDetailViewModel` and `SubCategoryDetailViewModel`, which will be updated to manage the graph's state, including the selected time period, loading status, and fetched data.
+The implementation will focus on a centralized backend for data aggregation to ensure consistency across platforms. The frontend implementation involves new charting libraries and export functionalities.
 
 ### Component View
 > [!IMPORTANT]
 > **Platform Scope Policy:**
-> - **Android**: Full implementation with production-ready code and tests.
-> - **Web**: Mock UI only for this phase.
->
-> **Development Order:** Web Mock UI FIRST → Android Full Implementation SECOND.
+> - **Android**: Full implementation with charts (Vico) and export.
+> - **Web**: Full implementation with charts (Chart.js/Recharts) and export.
+> - **iOS**: Full implementation with charts (SwiftCharts).
 
 - **Modified Components**:
-    - **Web**: `src/pages/CategoryDetail.tsx`, `src/pages/SubCategoryDetail.tsx` (to include the new mock component).
-    - **Android**: `CategoryDetailViewModel.kt`, `SubCategoryDetailViewModel.kt` (to add state management and data fetching logic), `CategoryDetailScreen.kt`, `SubCategoryDetailScreen.kt` (to integrate the new graph composable).
-
+- **All Platforms**: Navigation to include a "Reports" section.
 - **New Components**:
-    - **Web**: `src/components/graphs/ExpenseGraphMock.tsx` (A static/hardcoded representation of the graph UI for visual prototyping).
-    - **Android**:
-        - `data/model/GraphDataPointDto.kt` (Data Transfer Object for API response).
-        - `data/api/GraphApiService.kt` (Retrofit service definition for the new endpoint).
-        - `domain/usecase/GetExpenseGraphDataUseCase.kt` (Business logic to fetch and prepare graph data).
-        - `ui/components/ExpenseGraph.kt` (A reusable Jetpack Compose component for the graph, handling states like loading, error, no data, and displaying the chart).
-
-- **Dependencies**:
-    - **Android**: We will introduce a new charting library, **Vico**, for its native Jetpack Compose support and flexibility.
-      - `com.patrykandpatrick.vico:compose-m3:<latest_version>`
-      - `com.patrykandpatrick.vico:core:<latest_version>`
+- **Backend**: `ReportHandler` endpoint `/api/reports/...`
+- **Web**: `src/pages/Reports.tsx`
+- **Android**: `ui/reports/ReportsScreen.kt`
+- **iOS**: `Views/Reports/ReportsView.swift`
 
 ### Data Model Changes
 
-A new API endpoint `/api/graph/expenses` is assumed to be created by the backend team. The client will send a `categoryId` (or `subCategoryId`) and a `period` (`weekly`, `monthly`, `yearly`).
-
-The expected JSON response structure will be:
+New API endpoint `/api/reports` will return aggregated data:
 
 ```json
 {
-  "data": [
-    {
-      "label": "September 2023",
-      "amount": 2050.50
-    },
-    {
-      "label": "October 2023",
-      "amount": 2195.00
-    },
-    {
-      "label": "November 2023",
-      "amount": 1500.00
-    }
-  ]
+"summary": { "income": 1000, "expense": 500 },
+"trend": [ ... ],
+"byCategory": [ ... ]
 }
-```
-
-This will be mapped to the following Kotlin data class on Android:
-
-```kotlin
-// File: data/model/GraphDataPointDto.kt
-data class GraphDataResponse(
-    val data: List<GraphDataPointDto>
-)
-
-data class GraphDataPointDto(
-    val label: String, // e.g., "October 2023", "Week of Oct 23"
-    val amount: Double
-)
 ```
 
 ---
@@ -272,144 +221,99 @@ data class GraphDataPointDto(
 
 ### Prerequisite: Backend API Endpoint
 
-- **Action**: This plan assumes the backend team will create a new endpoint: `GET /api/graph/expenses`.
-- **Params**: `id: String`, `type: ('category'|'subcategory')`, `period: ('weekly'|'monthly'|'yearly')`.
-- **Response**: A JSON object as defined in the `Data Model Changes` section.
-- **Verification**: The endpoint is deployed and accessible by the mobile client.
+- **Action**: Create `GET /api/reports` endpoint.
+- **Query Params**: `from`, `to`, `wallet_id` (optional), `jar_id` (optional).
+- **Response**: Aggregated JSON data.
 
-### Step 1: Web - Mock UI Implementation
+### Step 1: Web - UI Implementation
 
-- **Goal**: Create a static, non-functional UI mock of the expense graph on the Web platform to align on visuals.
-- **Files to Create**:
-    - `src/components/graphs/ExpenseGraphMock.tsx`
-- **Files to Modify**:
-    - `src/pages/CategoryDetail.tsx`
-    - `src/pages/SubCategoryDetail.tsx`
-- **Code**:
-    1. In `ExpenseGraphMock.tsx`, create a component that displays a hardcoded bar chart (can be an SVG or composed of divs) and the "Weekly", "Monthly", "Yearly" tabs. The "Monthly" tab will be active by default.
-    2. Include a "No data available" message view within the component, which can be toggled with a prop for testing different states.
-    3. Import and render `<ExpenseGraphMock />` within the detail pages for categories and sub-categories.
-- **Verification**:
-    - The mock graph component appears correctly on both the category and sub-category detail pages on the web app.
-    - The tabs for time period selection are visible.
+- **Goal**: Create Reports page with date filter and charts.
+- **Files**: `src/pages/Reports.tsx`
+- **Libs**: `recharts` or similar.
+- **Export**: Generate .csv/.xlsx client-side or trigger backend download.
 
-### Step 2: Android - Data Layer Setup
+### Step 2: Android - UI Implementation
 
-- **Goal**: Set up the necessary data models, API service, and repository methods to fetch graph data.
-- **Files to Create**:
-    - `app/src/main/java/com/jarwise/data/model/GraphDataPointDto.kt`
-- **Files to Modify**:
-    - `app/build.gradle.kts` (to add Vico
-(truncated if too long)
+- **Goal**: Create Reports screen.
+- **Files**: `ui/reports/ReportsScreen.kt`
+- **Libs**: `com.patrykandpatrick.vico`
+- **Export**: Share Intent for generated file.
 
+### Step 3: iOS - UI Implementation
+
+- **Goal**: Create Reports view.
+- **Files**: `Views/Reports/ReportsView.swift`
+- **Libs**: pure SwiftCharts (iOS 16+).
+
+---
 
 ## Reference: spec.md
 # Specification
 
-**Feature ID:** `FEAT-048`
-**Title:** Expense Graph for Jar Categories and Sub-categories with Time Period Selection
-**Platforms:** Android, Web
-**Related Issue:** [#48](https://github.com/oatrice/JarWise-Root/issues/48)
+**Feature ID:** `FEAT-059`
+**Title:** Financial Reports & Data Export
+**Platforms:** Android, Web, iOS
+**Related Issue:** [                       #59](https://github.com/oatrice/JarWise-Root/issues/59)
 
 ---
 
 ## 1. User Story
 
 **As a** user,
-**I want to** view a graph of my expenses within a specific Jar Category or Sub-category,
-**so that I can** visually analyze my spending patterns over different time periods (week, month, year) and make better financial decisions.
+**I want to** view comprehensive financial reports and export my transaction data,
+**so that I can** analyze my spending habits in detail, back up my data, and use it in other tools like Excel.
 
 ---
 
 ## 2. Acceptance Criteria
 
-- **AC1: Graph Display:** A bar chart component MUST be displayed on the details screen for both Jar Categories and Jar Sub-categories.
-- **AC2: Time Period Selection:** The user MUST be able to select the time period for the graph. The available options are "Weekly", "Monthly", and "Yearly".
-- **AC3: Data Accuracy:** The graph MUST accurately represent the sum of all expenses for the selected Jar Category/Sub-category within each time interval (e.g., each bar for "Monthly" view represents the total spending for that month).
-- **AC4: Axis Representation:**
-    - The X-axis MUST represent the time intervals (e.g., Week 1, Week 2; Jan, Feb; 2023, 2024).
-    - The Y-axis MUST represent the total expense amount.
-- **AC5: Tooltips:** When a user hovers over (Web) or taps on (Android) a bar in the graph, a tooltip MUST appear showing the exact time period and the total amount spent.
-- **AC6: No Data State:** If there are no transactions for the selected category/sub-category in the given time frame, the graph area MUST display a user-friendly message (e.g., "No spending data available for this period.").
-- **AC7: Default View:** The default view for the graph SHOULD be "Monthly".
-- **AC8: Cross-Platform Consistency:** The feature's core functionality and visual representation MUST be consistent across both Android and Web platforms.
+### Reports & Charts
+- **AC1: Monthly Report:** Provide a summary of income and expenses by category for a selected month.
+- **AC2: Yearly Report:** Provide an annual overview with income/expense trends.
+- **AC3: Jar Distribution:** Display a Pie or Donut chart showing the distribution of expenses across different Jars.
+- **AC4: Spending Trends:** Display a Line chart showing spending trends over time (daily/weekly/monthly).
+- **AC5: Category Breakdown:** Display a Bar chart showing expenses broken down by category.
+- **AC6: Comparison:** Allow users to compare financial data between different months or years side-by-side.
+
+### Export Features
+- **AC7: Export to Excel (.xlsx):** Allow exporting full transaction history with proper formatting.
+- **AC8: Export to CSV:** Allow exporting simple transaction data in CSV format.
+- **AC9: Database Backup:** specific for Android - allow exporting the raw SQLite database or a JSON dump.
+- **AC10: PDF Report:** Generate a formatted PDF report for monthly or yearly summaries.
+
+### Filters & Options
+- **AC11: Date Range:** Users must be able to select a custom date range for reports and exports.
+- **AC12: Filter by Jar/Wallet:** Users can filter identifying specific Jars or Wallets to include in the report.
+- **AC13: Filter by Category:** Users can filter by specific categories.
 
 ---
 
 ## 3. User Journey
 
-1.  The user opens the application and navigates to the "Jars" screen.
-2.  The user taps on a specific Jar Category (e.g., "🍔 Food").
-3.  The application navigates to the "Food" category details screen.
-4.  Below the category details, the user sees a new section containing a bar chart visualizing their spending.
-5.  By default, the graph shows monthly spending totals for the "Food" category.
-6.  The user sees and interacts with a time period selector (e.g., tabs labeled "Weekly", "Monthly", "Yearly").
-7.  The user taps on "Weekly".
-8.  The graph updates instantly to show the total spending for each of the recent weeks. A tooltip on a bar shows "Week of Oct 23-29: ฿1,250.50".
-9.  The user then taps on a Sub-category within "Food", such as "☕ Coffee".
-10. The application navigates to the "Coffee" sub-category details screen, which also displays a similar graph, but now showing data only for "Coffee" expenses.
+1. **Navigation:** User navigates to a "Reports" or "Analysis" tab in the app.
+2. **Dashboard:** User sees a dashboard of key charts (Spending Trend, Category Breakdown).
+3. **Detailed Reports:** User taps on a specific chart to see a detailed report (e.g., Monthly Report).
+4. **Filtering:** User applies filters (e.g., change date range to "Last 3 Months", select specific Jar).
+5. **Exporting:** User taps an "Export" button, selects the format (Excel, CSV, PDF), and shares or saves the file.
 
 ---
 
 ## 4. Specification by Example (SBE)
 
-### Scenario 1: Viewing Monthly Expenses for "Food" Category
+### Scenario 1: Exporting Monthly Transaction History
+**Given** the user is on the Reports screen
+**And** has selected "October 2023" as the date range
+**When** the user taps "Export" and selects "Excel"
+**Then** the app generates an `.xlsx` file containing all transactions from Oct 1-31, 2023
+**And** the file includes columns for Date, Category, Jar, Amount, and Note.
 
-**Given** the user has the following transactions in the "🍔 Food" category:
-
-| Date       | Sub-category | Amount (฿) |
-| :--------- | :----------- | :--------- |
-| 2023-09-05 | Groceries    | 1,200.00   |
-| 2023-09-20 | Dining Out   | 850.50     |
-| 2023-10-11 | Groceries    | 975.00     |
-| 2023-10-25 | Dining Out   | 1,100.00   |
-| 2023-10-28 | Coffee       | 120.00     |
-| 2023-11-02 | Groceries    | 1,500.00   |
-
-**When** the user navigates to the "🍔 Food" category details screen and selects the "Monthly" view.
-
-**Then** the system should display a bar chart with the following aggregated data points:
-
-| X-Axis (Month) | Y-Axis (Total Amount ฿) |
-| :------------- | :---------------------- |
-| September 2023 | 2,050.50                |
-| October 2023   | 2,195.00                |
-| November 2023  | 1,500.00                |
+### Scenario 2: Viewing Spending Trends
+**Given** the user has transaction data for the last 6 months
+**When** the user views the "Spending Trends" chart
+**Then** a line chart is displayed showing total expenses for each of the last 6 months
+**And** hovering/tapping a data point shows the exact total for that month.
 
 ---
-
-### Scenario 2: Viewing Weekly Expenses for "Groceries" Sub-category with a Zero-Spend Week
-
-**Given** the user has the following transactions in the "Groceries" sub-category:
-
-| Date       | Sub-category | Amount (฿) |
-| :--------- | :----------- | :--------- |
-| 2023-10-16 | Groceries    | 450.00     |
-| 2023-10-18 | Groceries    | 300.00     |
-| 2023-11-02 | Groceries    | 800.00     |
-| 2023-11-04 | Groceries    | 700.00     |
-
-*(Note: Assume the week of Oct 23 - Oct 29 has zero spending in this sub-category)*
-
-**When** the user navigates to the "Groceries" sub-category details screen and selects the "Weekly" view.
-
-**Then** the system should display a bar chart with the following aggregated data points, including a zero value for the week with no spending.
-
-| X-Axis (Week Of) | Y-Axis (Total Amount ฿) |
-| :--------------- | :---------------------- |
-| Oct 16, 2023     | 750.00                  |
-| Oct 23, 2023     | 0.00                    |
-| Oct 30, 2023     | 1,500.00                |
-
----
-
-## 5. Out of Scope
-
--   Custom date range selection for the graph.
--   Comparing data across different periods (e.g., This Month vs. Last Month).
--   Alternative graph types (e.g., pie charts, line 
-(truncated if too long)
-
 
 ## Default Guidance (Use only if not specified in Plans)
 - Tech Stack: Swift/SwiftUI. Implement iOS UI + MVVM. Use XCTest.

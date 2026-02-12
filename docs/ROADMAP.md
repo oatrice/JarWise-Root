@@ -42,6 +42,10 @@ This document outlines the strategic direction and priority of features for JarW
 ## 🔵 Phase 4: Refinement & Validation (Upcoming)
 *Polishing the user experience and validating core flows.*
 
+- **#59 Financial Reports & Data Export**
+    - Enable comprehensive financial reporting and data export capabilities.
+    - **Status:** 📝 Planned
+
 - **#46 Draft Transaction Review (Android)**
     - Save transactions as "Draft" for later review.
     - **Status:** 📝 Planned
@@ -67,8 +71,12 @@ graph TD
     subgraph Phase 3: Usability
         I68[✅ #68 Report Filter]
         I71[✅ #71 Transaction Linking]
+    end
+
+    subgraph Phase 4: Refinement
         I46[#46 Draft Review]
         I47[#47 Web/Mock UI]
+        I59[#59 Reports]
     end
 
     I69 --> I67
@@ -79,4 +87,5 @@ graph TD
     I32 --> I65
     I65 --> I68
     I65 --> I71
+    I68 --> I59
 ```
