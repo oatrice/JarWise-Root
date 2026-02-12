@@ -1,59 +1,206 @@
 # Role: Senior Android Developer
-# Task: Implement android components for Issue #71: [Feature] Transaction Linking & Transfers Use Kotlin/Jetpack Compose. Implement Mobile UI and ViewModel.
+# Task: Implement android components for Issue #48: [Android | Web]:  แสดงกราฟใน jar cat, jar sub cat ที่เลือกได้ว่าแต่ละเดือน/สัปดา/ปี ใช้ไปเท่าไหร่ Use Kotlin/Jetpack Compose. Implement Mobile UI and ViewModel. You can use ./gradlew directly.
 
 Please write the code for the following requirements.
 
 ## Context
 Project: JarWise-Root
-Issue: #71 [Feature] Transaction Linking & Transfers
+Issue: #48 [Android | Web]:  แสดงกราฟใน jar cat, jar sub cat ที่เลือกได้ว่าแต่ละเดือน/สัปดา/ปี ใช้ไปเท่าไหร่
 Body:
-# Goal
-Implement 2-way linking between Income/Expense transactions to represent Transfers, Debt Repayments, or Refund scenarios.
+## 🚀 Getting Started
+- [ ] Moved issue to **In Progress** in Project Board (or use `scripts/move_issue_to_inprogress.sh <issue_url>`)
 
-## 📝 Description
-Users need to link two separate transactions to show they are related. The most common use case is a **Transfer** (money leaving one Jar/Wallet and entering another).
+## 🎯 Objective
 
-### Use Cases
-1.  **Transfer:** -100 from Wallet A (Expense) linked to +100 to Wallet B (Income).
-    *   System should recognize this pair as a Transfer and potentially exclude it from Total Expense/Income reports.
-2.  **Debt Repayment:** Payment to credit card linked to the original expense (advanced).
-3.  **Refund:** Income linked to a previous Expense.
+[Briefly describe the goal of this feature/issue.]
 
-## 🛠️ Requirements
+---
 
-### 1. Data Model
-*   Add `relatedTransactionId` (String, nullable) to `Transaction` entity.
-*   Ensure referential integrity (if possible, or handle via app logic).
+## 📝 Specifications
 
-### 2. Logic (2-Way Linking)
-*   **Linking:** When Transaction A links to Transaction B, Transaction B must automatically link back to Transaction A.
-*   **Unlinking:** Deleting or unlinking A must update B to remove the link.
+### [Component/Area 1]
 
-### 3. UI/UX
-*   **Transaction Detail:** Show "Linked to: [Transaction B]" with a clickable link.
-*   **Add/Edit Screen:** Option to "Create Transfer" which automatically creates two transactions and links them.
+- [ ] **Requirement 1:**
+  - Detail A
+  - Detail B
+- [ ] **Requirement 2:**
+  - Detail A
 
-## 🔗 Related Issues
-*   #69 Hierarchical Wallets (Completed)
-*   #56 Enhance Add Transaction
+### [Component/Area 2]
 
-## 📅 Plan
-1.  **Database Migration:** Add `relatedTransactionId` column.
-2.  **Repository Logic:** Methods to `insertTransfer(from, to)` that handles the dual creation and linking.
-3.  **UI:** Transfer Tab in Add Transaction screen.
+- [ ] **Requirement 1:**
+  - Detail A
+
+---
+
+## 🏗️ Technical Considerations
+
+### 📦 State Management
+- [ ] **Web:** [e.g., localStorage, Redux, React Query]
+- [ ] **Android:** [e.g., SharedPreferences, Room, StateFlow]
+
+### 🔄 Invalidation/Refresh (Critical!)
+- [ ] **On save success:** [Describe how to refresh data]
+- [ ] **UX Goal:** [Describe expected behavior]
+
+### ⚠️ Error Handling
+- [ ] **Scenario 1:** [Error message/behavior]
+- [ ] **Scenario 2:** [Error message/behavior]
+
+### 🔲 Edge Cases
+- [ ] **Case 1:** [Detail]
+- [ ] **Case 2:** [Detail]
+
+---
+
+## 📐 UI/UX Guidelines
+
+- **Guideline 1:** [Detail]
+- **Guideline 2:** [Detail]
+
+---
+
+## 🔗 References
+
+- **Feature ID:** [ID]
+- **Parent Issue:** #
+- **Design Reference:** [Link or description]
+
+---
+
+## ✅ Definition of Done
+
+- [ ] All requirements implemented
+- [ ] Unit tests passed
+- [ ] Manual QA performed on Web and Android
+- [ ] PR reviewed and merged
+
 
 ## Architecture & Plans (AUTHORITATIVE)
 The following content is from the approved design documents. **You MUST follow this design.**
 
 
+## Reference: analysis.md
+# Analysis Template
+
+> 📋 Template สำหรับการวิเคราะห์ก่อนเริ่มพัฒนา Feature
+
+---
+
+## 📌 Feature Information
+
+| รายการ | รายละเอียด |
+|--------|-----------|
+| **Feature Name** | แสดงกราฟค่าใช้จ่ายในหมวดหมู่ (Jar Category Expense Graph) |
+| **Issue URL** | [#48](https://github.com/placeholder/repo/issues/48) |
+| **Date** | 2023-10-27 |
+| **Analyst** | Luma AI (Senior Technical Analyst) |
+| **Priority** | 🟡 Medium |
+| **Status** | 📝 Draft |
+
+---
+
+## 1. Requirement Analysis
+
+### 1.1 Problem Statement
+
+> อธิบายปัญหาที่ต้องการแก้ไข
+
+```
+Currently, users can track their expenses by categorizing them into "Jars" and "Sub-Jars". However, they lack a visual tool to analyze their spending habits over time within these categories. This makes it difficult to quickly understand spending patterns, compare expenses across different periods (week, month, year), and make informed financial decisions.
+```
+
+### 1.2 User Stories
+
+| # | As a | I want to | So that |
+|---|------|-----------|---------|
+| 1 | User | see a visual graph of my expenses for a selected Jar category or sub-category | I can quickly understand my spending patterns over time. |
+| 2 | User | filter the expense graph by different time periods (Weekly, Monthly, Yearly) | I can analyze my spending on different time scales. |
+| 3 | User | view this graph on both the Web and Android platforms | I can have a consistent experience and access my financial insights from any device. |
+
+### 1.3 Acceptance Criteria
+
+- [ ] **AC1:** A graph (bar chart recommended) is displayed on the Jar Category and Jar Sub-Category detail screens.
+- [ ] **AC2:** The graph visualizes the total amount of money spent within that category for a given time period.
+- [ ] **AC3:** The user can select a time period filter with options: "Weekly", "Monthly", and "Yearly".
+- [ ] **AC4:** The graph's X-axis and data points update correctly based on the selected filter (e.g., showing days for 'Weekly', months for 'Monthly').
+- [ ] **AC5:** The Y-axis of the graph represents the total expense amount.
+- [ ] **AC6:** If no transaction data exists for the selected category and time period, the graph area displays a user-friendly message like "No spending data available for this period."
+- [ ] **AC7:** The feature is implemented and functions consistently on both Web and Android platforms.
+
+---
+
+## 2. Feature Analysis
+
+### 2.1 User Flow
+
+```mermaid
+flowchart TD
+    A[User opens the app] --> B[Navigates to Jars/Categories screen]
+    B --> C[Selects a specific Jar Category or Sub-Category]
+    C --> D[Views Category Detail Screen]
+    D --> E{Expense graph is displayed with default filter (e.g., Monthly)}
+    E --> F[User interacts with time period filter (Tabs: Week/Month/Year)]
+    F --> G[Graph data and axes are updated to reflect the new filter]
+    G --> F
+    D --> H[End]
+```
+
+### 2.2 Screen/Page Requirements
+
+| หน้าจอ | Actions | Components |
+|--------|---------|------------|
+| **Jar Category Detail Screen** | - View expense graph<br>- Select time period filter | - **Graph Component:** A bar chart to display expense data.<br>- **Filter Component:** Tabs or a dropdown menu for "Weekly", "Monthly", "Yearly" selection.<br>- **Loading State:** A spinner or skeleton loader while data is being fetched.<br>- **Empty State:** A message and/or illustration for when there is no data. |
+
+### 2.3 Input/Output Specification
+
+#### Inputs
+
+(For the new backend API endpoint)
+
+| Field | Type | Required | Validation |
+|-------|------|----------|------------|
+| `categoryId` | string (UUID) | ✅ | Must be a valid category ID belonging to the user. |
+| `period` | string (enum) | ✅ | Must be one of `WEEKLY`, `MONTHLY`, `YEARLY`. |
+| `endDate` | string (date) | ✅ | The end date for the period query (e.g., `2023-10-27`). The backend will calculate the start date based on the period. |
+
+#### Outputs
+
+(API Response Body)
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `dataPoints` | array[object] | An array of objects, each representing a point on the graph. |
+| `dataPoints.label` | string | The label for the X-axis (e.g., "Mon", "Jan", "2023"). |
+| `dataPoints.value` | number | The total expense amount for that label (Y-axis value). |
+| `total` | number | The total sum of expenses for the entire period. |
+
+---
+
+## 3. Impact Analysis
+
+### 3.1 Affected Components
+
+| Component | Impact Level | Description |
+|-----------|--------------|-------------|
+| **Backend API (Python/Go)** | 🔴 High | A new endpoint must be created to perform data aggregation (SUM, GROUP BY) on the transactions table. This query needs to be performant and secure. |
+| **Database** | 🟡 Medium | The new aggregation query may require adding indexes on `transaction_date`, `user_id`, and `category_id` columns to ensure fast response times, especially for users with large transaction histories. |
+| **Web App (React/Next.js)** | 🟡 Medium | A new reusable graph component needs to be built or integrated using a library (e.g., Recharts, Chart.js). Stat
+(truncated if too long)
+
+
 ## Reference: plan.md
-# Implementation Plan: [Feature] Transaction Linking & Transfers
+# Implementation Plan: Expense Graph for Jar Categories and Sub-categories with Time Period Selection
 
 > **Refers to**: [Spec Link](./spec.md)
 > **Status**: Draft
 
 ## 1. Architecture & Design
-The implementation will focus on extending the existing `Transaction` data model and introducing new use cases to handle the lifecycle of linked transactions (transfers). The core logic will be encapsulated in the backend/domain layer to ensure consistency, with the Android UI being the primary client. The Web UI will be represented by static mockups in this phase.
+*High-level technical approach.*
+
+The implementation will introduce a new, reusable UI component for displaying expense graphs. Data will be fetched from a new, dedicated backend endpoint that provides pre-aggregated expense data based on a category/sub-category ID and a selected time period (`weekly`, `monthly`, `yearly`). This approach centralizes the complex data aggregation logic on the backend, simplifying the clients and ensuring consistent calculations.
+
+State management on Android will be handled within the existing `CategoryDetailViewModel` and `SubCategoryDetailViewModel`, which will be updated to manage the graph's state, including the selected time period, loading status, and fetched data.
 
 ### Component View
 > [!IMPORTANT]
@@ -64,164 +211,208 @@ The implementation will focus on extending the existing `Transaction` data model
 > **Development Order:** Web Mock UI FIRST → Android Full Implementation SECOND.
 
 - **Modified Components**:
-    - `data.model.Transaction`: Entity will be updated with a self-referencing link.
-    - `data.repository.TransactionRepository`: Will be updated to handle creation, deletion, and querying of linked transactions.
-    - `domain.use_case.DeleteTransactionUseCase`: Logic will be updated to handle unlinking before deletion.
-    - `feature_add_edit_transaction.AddEditTransactionViewModel`: Will be enhanced to manage three modes (Expense, Income, Transfer).
-    - `feature_add_edit_transaction.AddEditTransactionScreen`: UI will be updated with a mode selector and a new form for transfers.
-    - `feature_transaction_detail.TransactionDetailViewModel`: Will be updated to fetch and provide linked transaction data.
-    - `feature_transaction_detail.TransactionDetailScreen`: UI will be updated to display link information and provide navigation.
-    - `domain.use_case.reporting.*`: All reporting use cases will be updated to exclude transfers by default.
+    - **Web**: `src/pages/CategoryDetail.tsx`, `src/pages/SubCategoryDetail.tsx` (to include the new mock component).
+    - **Android**: `CategoryDetailViewModel.kt`, `SubCategoryDetailViewModel.kt` (to add state management and data fetching logic), `CategoryDetailScreen.kt`, `SubCategoryDetailScreen.kt` (to integrate the new graph composable).
 
 - **New Components**:
-    - `domain.use_case.CreateTransferUseCase`: A new use case to atomically create and link two transactions for a transfer.
-    - `domain.use_case.UnlinkTransactionsUseCase`: A new use case to sever the link between two transactions.
-    - `feature_add_edit_transaction.components.TransferForm`: A new composable for the transfer-specific input fields.
-    - `feature_transaction_detail.components.LinkedTransactionInfo`: A new composable to display the link on the detail screen.
+    - **Web**: `src/components/graphs/ExpenseGraphMock.tsx` (A static/hardcoded representation of the graph UI for visual prototyping).
+    - **Android**:
+        - `data/model/GraphDataPointDto.kt` (Data Transfer Object for API response).
+        - `data/api/GraphApiService.kt` (Retrofit service definition for the new endpoint).
+        - `domain/usecase/GetExpenseGraphDataUseCase.kt` (Business logic to fetch and prepare graph data).
+        - `ui/components/ExpenseGraph.kt` (A reusable Jetpack Compose component for the graph, handling states like loading, error, no data, and displaying the chart).
 
 - **Dependencies**:
-    - No new external libraries are anticipated. The implementation will use existing components from Jetpack Compose, Room, and Hilt/Koin for dependency injection.
+    - **Android**: We will introduce a new charting library, **Vico**, for its native Jetpack Compose support and flexibility.
+      - `com.patrykandpatrick.vico:compose-m3:<latest_version>`
+      - `com.patrykandpatrick.vico:core:<latest_version>`
 
 ### Data Model Changes
-The `Transaction` entity will be modified to include a nullable field that points to its linked counterpart. This self-referencing foreign key establishes the one-to-one relationship.
+
+A new API endpoint `/api/graph/expenses` is assumed to be created by the backend team. The client will send a `categoryId` (or `subCategoryId`) and a `period` (`weekly`, `monthly`, `yearly`).
+
+The expected JSON response structure will be:
+
+```json
+{
+  "data": [
+    {
+      "label": "September 2023",
+      "amount": 2050.50
+    },
+    {
+      "label": "October 2023",
+      "amount": 2195.00
+    },
+    {
+      "label": "November 2023",
+      "amount": 1500.00
+    }
+  ]
+}
+```
+
+This will be mapped to the following Kotlin data class on Android:
 
 ```kotlin
-// File: data/src/main/java/com/jarwise/data/model/Transaction.kt
+// File: data/model/GraphDataPointDto.kt
+data class GraphDataResponse(
+    val data: List<GraphDataPointDto>
+)
 
-@Entity(tableName = "transactions")
-data class Transaction(
-    @PrimaryKey val id: String = UUID.randomUUID().toString(),
-    val walletId: String,
-    val type: TransactionType, // ENUM: INCOME, EXPENSE
-    val amount: BigDecimal,
-    val date: Instant,
-    val notes: String?,
-    
-    // New field for FR1
-    val linkedTransactionId: String? = null 
+data class GraphDataPointDto(
+    val label: String, // e.g., "October 2023", "Week of Oct 23"
+    val amount: Double
 )
 ```
-A database migration will be required to add the `linkedTransactionId` column to the `transactions` table.
 
 ---
 
 ## 2. Step-by-Step Implementation
 
-### Step 0: Backend - Data Model and Repository Update
-This foundational step prepares the database and data access layer for the new feature.
+### Prerequisite: Backend API Endpoint
 
+- **Action**: This plan assumes the backend team will create a new endpoint: `GET /api/graph/expenses`.
+- **Params**: `id: String`, `type: ('category'|'subcategory')`, `period: ('weekly'|'monthly'|'yearly')`.
+- **Response**: A JSON object as defined in the `Data Model Changes` section.
+- **Verification**: The endpoint is deployed and accessible by the mobile client.
+
+### Step 1: Web - Mock UI Implementation
+
+- **Goal**: Create a static, non-functional UI mock of the expense graph on the Web platform to align on visuals.
+- **Files to Create**:
+    - `src/components/graphs/ExpenseGraphMock.tsx`
+- **Files to Modify**:
+    - `src/pages/CategoryDetail.tsx`
+    - `src/pages/SubCategoryDetail.tsx`
 - **Code**:
-    - **Modify `data/model/Transaction.kt`**: Add the `linkedTransactionId: String?` field.
-    - **Create a new Room Migration**: Write a migration script to add the `linkedTransactionId` column to the `transactions` table.
-    - **Update `data/dao/TransactionDao.kt`**: No immediate changes are needed for basic CRUD, but queries for reporting will be updated later.
-- **Tests**:
-    - **Update `data/TransactionDatabaseTest.kt`**: Add a test case to verify the migration runs successfully and the schema is correct.
+    1. In `ExpenseGraphMock.tsx`, create a component that displays a hardcoded bar chart (can be an SVG or composed of divs) and the "Weekly", "Monthly", "Yearly" tabs. The "Monthly" tab will be active by default.
+    2. Include a "No data available" message view within the component, which can be toggled with a prop for testing different states.
+    3. Import and render `<ExpenseGraphMock />` within the detail pages for categories and sub-categories.
 - **Verification**:
-    - The new migration script successfully applies to the database schema.
-    - Existing unit tests for the repository and DAO continue to pass.
+    - The mock graph component appears correctly on both the category and sub-category detail pages on the web app.
+    - The tabs for time period selection are visible.
 
-### Step 1: Web - UI Mockups
-Create static mockups for the web interface to guide the Android implementation and gather early feedback.
+### Step 2: Android - Data Layer Setup
 
-- **Docs**:
-    - Create Figma/PNG mockups for the following screens:
-        1.  **Add Transaction Screen**: Showing the "Expense", "Income", and selected "Transfer" tabs. The "Transfer" form should display "From", "To", "Amount", "Date", and "Notes" fields.
-        2.  **Transaction Detail Screen**: Showing a transaction that is part of a transfer, with a clear "Linked Transaction" section and a "View Transaction" button/link.
-- **Code**: No code implementation. This step is purely for design and alignment.
-- **Verification**:
-    - Mockups are reviewed and approved by the project lead.
-    - Mockups align with the UI/UX requirements in the specification.
-
-### Step 2: Backend - Core Use Cases (Create, Unlink, Delete)
-Implement the core business logic
+- **Goal**: Set up the necessary data models, API service, and repository methods to fetch graph data.
+- **Files to Create**:
+    - `app/src/main/java/com/jarwise/data/model/GraphDataPointDto.kt`
+- **Files to Modify**:
+    - `app/build.gradle.kts` (to add Vico
 (truncated if too long)
 
 
 ## Reference: spec.md
 # Specification
 
-| **Title** | [Feature] Transaction Linking & Transfers |
-| --- | --- |
-| **Status** | `Draft` |
-| **Version** | `1.0` |
-| **Issue URL** | https://github.com/oatrice/JarWise-Root/issues/71 |
+**Feature ID:** `FEAT-048`
+**Title:** Expense Graph for Jar Categories and Sub-categories with Time Period Selection
+**Platforms:** Android, Web
+**Related Issue:** [#48](https://github.com/oatrice/JarWise-Root/issues/48)
 
 ---
 
-## 1. Overview
+## 1. User Story
 
-This document specifies the requirements for a Transaction Linking feature. The primary goal is to allow users to represent the movement of funds between their own accounts (e.g., Wallets, Jars) as a "Transfer". This prevents such movements from being incorrectly counted as net income or expense in financial reports. The feature will also support linking other related transactions, such as refunds to original expenses.
+**As a** user,
+**I want to** view a graph of my expenses within a specific Jar Category or Sub-category,
+**so that I can** visually analyze my spending patterns over different time periods (week, month, year) and make better financial decisions.
 
-The core of this feature is the ability to create a two-way link between two transactions. A streamlined user interface will be introduced to simplify the creation of transfer pairs.
+---
 
-## 2. Goal
+## 2. Acceptance Criteria
 
-As a user, I want to link two transactions together to represent a single financial event, such as a transfer between my accounts, a refund, or a debt repayment. This will ensure my financial reports are accurate by not double-counting money movement as both an expense and an income.
+- **AC1: Graph Display:** A bar chart component MUST be displayed on the details screen for both Jar Categories and Jar Sub-categories.
+- **AC2: Time Period Selection:** The user MUST be able to select the time period for the graph. The available options are "Weekly", "Monthly", and "Yearly".
+- **AC3: Data Accuracy:** The graph MUST accurately represent the sum of all expenses for the selected Jar Category/Sub-category within each time interval (e.g., each bar for "Monthly" view represents the total spending for that month).
+- **AC4: Axis Representation:**
+    - The X-axis MUST represent the time intervals (e.g., Week 1, Week 2; Jan, Feb; 2023, 2024).
+    - The Y-axis MUST represent the total expense amount.
+- **AC5: Tooltips:** When a user hovers over (Web) or taps on (Android) a bar in the graph, a tooltip MUST appear showing the exact time period and the total amount spent.
+- **AC6: No Data State:** If there are no transactions for the selected category/sub-category in the given time frame, the graph area MUST display a user-friendly message (e.g., "No spending data available for this period.").
+- **AC7: Default View:** The default view for the graph SHOULD be "Monthly".
+- **AC8: Cross-Platform Consistency:** The feature's core functionality and visual representation MUST be consistent across both Android and Web platforms.
 
-## 3. User Stories
+---
 
-*   **As a user managing multiple accounts,** I want to create a "Transfer" from my Savings Wallet to my Checking Wallet, so that the movement of funds is recorded accurately without affecting my overall income or expense totals.
-*   **As a user reviewing my transaction history,** I want to see if a transaction is linked to another and be able to navigate directly to the linked transaction, so that I can easily understand the context of my financial activity.
-*   **As a user correcting a mistake,** I want to unlink two transactions or delete one part of a transfer, so that the remaining transaction becomes a standalone income/expense and my records remain correct.
-*   **As a user viewing my financial reports,** I want transfers to be excluded from my main expense and income summaries, so I can get a clear picture of my net financial gain or loss.
+## 3. User Journey
 
-## 4. Functional Requirements
+1.  The user opens the application and navigates to the "Jars" screen.
+2.  The user taps on a specific Jar Category (e.g., "🍔 Food").
+3.  The application navigates to the "Food" category details screen.
+4.  Below the category details, the user sees a new section containing a bar chart visualizing their spending.
+5.  By default, the graph shows monthly spending totals for the "Food" category.
+6.  The user sees and interacts with a time period selector (e.g., tabs labeled "Weekly", "Monthly", "Yearly").
+7.  The user taps on "Weekly".
+8.  The graph updates instantly to show the total spending for each of the recent weeks. A tooltip on a bar shows "Week of Oct 23-29: ฿1,250.50".
+9.  The user then taps on a Sub-category within "Food", such as "☕ Coffee".
+10. The application navigates to the "Coffee" sub-category details screen, which also displays a similar graph, but now showing data only for "Coffee" expenses.
 
-### FR1: Transaction Relationship
-- The system must support a one-to-one relationship between two `Transaction` entities.
-- A transaction can be linked to at most one other transaction.
+---
 
-### FR2: Two-Way Linking
-- When Transaction A is linked to Transaction B, the system must automatically and immediately establish a reciprocal link from Transaction B back to Transaction A.
-- This link must be maintained atomically; either both transactions are linked, or neither is.
+## 4. Specification by Example (SBE)
 
-### FR3: Unlinking Logic
-- The system must provide a mechanism for a user to unlink a pair of transactions.
-- When the link from Transaction A to Transaction B is removed, the reciprocal link from B to A must also be removed automatically.
-- The two transactions will then revert to being independent income/expense transactions.
+### Scenario 1: Viewing Monthly Expenses for "Food" Category
 
-### FR4: Deletion Integrity
-- If a linked Transaction A is deleted, its corresponding Transaction B must be automatically unlinked.
-- Transaction B will remain in the system as a standalone transaction. It will not be deleted.
+**Given** the user has the following transactions in the "🍔 Food" category:
 
-### FR5: "Create Transfer" Workflow
-- The user interface must provide a dedicated workflow, separate from a standard transaction entry, to "Create a Transfer".
-- This workflow shall require the user to specify:
-    - `From Wallet` (Source of funds)
-    - `To Wallet` (Destination of funds)
-    - `Amount`
-    - `Date`
-    - `Notes` (Optional)
-- Upon submission, the system will create two transactions simultaneously:
-    1.  An **Expense** transaction for the specified `Amount` from the `From Wallet`.
-    2.  An **Income** transaction for the same `Amount` into the `To Wallet`.
-- These two newly created transactions must be automatically linked to each other.
+| Date       | Sub-category | Amount (฿) |
+| :--------- | :----------- | :--------- |
+| 2023-09-05 | Groceries    | 1,200.00   |
+| 2023-09-20 | Dining Out   | 850.50     |
+| 2023-10-11 | Groceries    | 975.00     |
+| 2023-10-25 | Dining Out   | 1,100.00   |
+| 2023-10-28 | Coffee       | 120.00     |
+| 2023-11-02 | Groceries    | 1,500.00   |
 
-### FR6: Display of Linked Transactions
-- On the "Transaction Detail" view, if a transaction is linked, the system must display an indicator.
-- The indicator must clearly state which transaction it is linked to (e.g., "Linked to: +$100.00 in Checking Wallet on Jan 15").
-- This indicator must be a clickable link that navigates the user directly to the detail view of the related transaction.
+**When** the user navigates to the "🍔 Food" category details screen and selects the "Monthly" view.
 
-### FR7: Reporting
-- The system must be able to identify a pair of linked transactions as a "Transfer".
-- In summary reports (e.g., "Total Income vs. Total Expense"), transfers should be excluded by default to avoid inflating the totals.
-- Reports should offer an option to include or view transfers separately.
+**Then** the system should display a bar chart with the following aggregated data points:
 
-## 5. User Interface & User Experience (UI/UX)
+| X-Axis (Month) | Y-Axis (Total Amount ฿) |
+| :------------- | :---------------------- |
+| September 2023 | 2,050.50                |
+| October 2023   | 2,195.00                |
+| November 2023  | 1,500.00                |
 
-### 5.1. Add/Edit Transaction Screen
-- The "Add Transaction" screen will feature three primary modes, selectable via tabs or a segmented control: **Expense**, **Income**, and **Transfer**.
-- When the **"Transfer"** mode is selected, the form fields will change to:
-    - **From:** A dropdown to select the source Wallet/Jar.
-    - **To:** A dropdown to select the destination Wallet/Jar.
-    - **Amount:** A numeric input for the transfer amount.
-    - **Date:** A date picker.
-    - **Notes:** An op
+---
+
+### Scenario 2: Viewing Weekly Expenses for "Groceries" Sub-category with a Zero-Spend Week
+
+**Given** the user has the following transactions in the "Groceries" sub-category:
+
+| Date       | Sub-category | Amount (฿) |
+| :--------- | :----------- | :--------- |
+| 2023-10-16 | Groceries    | 450.00     |
+| 2023-10-18 | Groceries    | 300.00     |
+| 2023-11-02 | Groceries    | 800.00     |
+| 2023-11-04 | Groceries    | 700.00     |
+
+*(Note: Assume the week of Oct 23 - Oct 29 has zero spending in this sub-category)*
+
+**When** the user navigates to the "Groceries" sub-category details screen and selects the "Weekly" view.
+
+**Then** the system should display a bar chart with the following aggregated data points, including a zero value for the week with no spending.
+
+| X-Axis (Week Of) | Y-Axis (Total Amount ฿) |
+| :--------------- | :---------------------- |
+| Oct 16, 2023     | 750.00                  |
+| Oct 23, 2023     | 0.00                    |
+| Oct 30, 2023     | 1,500.00                |
+
+---
+
+## 5. Out of Scope
+
+-   Custom date range selection for the graph.
+-   Comparing data across different periods (e.g., This Month vs. Last Month).
+-   Alternative graph types (e.g., pie charts, line 
 (truncated if too long)
 
 
 ## Default Guidance (Use only if not specified in Plans)
-- Tech Stack: Kotlin/Jetpack Compose. Implement Mobile UI and ViewModel.
+- Tech Stack: Kotlin/Jetpack Compose. Implement Mobile UI and ViewModel. You can use ./gradlew directly.
 - Follow Clean Architecture
 - Ensure TDD (Test Driven Development)
 

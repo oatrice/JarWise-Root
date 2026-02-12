@@ -1,5 +1,5 @@
-# Role: Senior Backend Developer
-# Task: Implement backend components for Issue #48: [Android | Web]:  แสดงกราฟใน jar cat, jar sub cat ที่เลือกได้ว่าแต่ละเดือน/สัปดา/ปี ใช้ไปเท่าไหร่ Use Go. Implement API endpoints and business logic.
+# Role: Senior Ios Developer
+# Task: Implement ios components for Issue #48: [Android | Web]:  แสดงกราฟใน jar cat, jar sub cat ที่เลือกได้ว่าแต่ละเดือน/สัปดา/ปี ใช้ไปเท่าไหร่ Use Swift/SwiftUI. Implement iOS UI + MVVM. Use XCTest.
 
 Please write the code for the following requirements.
 
@@ -412,7 +412,7 @@ data class GraphDataPointDto(
 
 
 ## Default Guidance (Use only if not specified in Plans)
-- Tech Stack: Go. Implement API endpoints and business logic.
+- Tech Stack: Swift/SwiftUI. Implement iOS UI + MVVM. Use XCTest.
 - Follow Clean Architecture
 - Ensure TDD (Test Driven Development)
 
