@@ -83,8 +83,9 @@ The following content is from the approved design documents. **You MUST follow t
 
 | รายการ | รายละเอียด |
 |--------|-----------|
-| **Feature Name** | Financial Reports & Data Export |
-| **Issue URL** | [                                     #59](https://github.com/oatrice/JarWise-Root/issues/59) |
+| **Feature Name** | Financial Reports & Charts |
+| **Note** | Data Export features (CSV/XLSX) have been split into separate issues (#89, #90, #91) and are out of scope for #59. |
+| **Issue URL** | [#59](https://github.com/oatrice/JarWise-Root/issues/59) |
 | **Date** | 2026-02-12 |
 | **Analyst** | AI Assistant |
 | **Priority** | 🟡 Medium |
@@ -99,7 +100,7 @@ The following content is from the approved design documents. **You MUST follow t
 > อธิบายปัญหาที่ต้องการแก้ไข
 
 ```
-Currently, users lack a comprehensive view of their financial health. While they can see individual transactions and Jar totals, they cannot easily analyze trends, category breakdowns, or export data for external use. This limits their ability to make informed long-term financial decisions.
+Currently, users lack a comprehensive view of their financial health. While they can see individual transactions and Jar totals, they cannot easily analyze trends or category breakdowns. This limits their ability to make informed long-term financial decisions.
 ```
 
 ### 1.2 User Stories
@@ -108,15 +109,13 @@ Currently, users lack a comprehensive view of their financial health. While they
 |---|------|-----------|---------|
 | 1 | User | view monthly and yearly summary reports | I can see my income vs. expenses at a glance. |
 | 2 | User | see visual charts (Line, Bar, Pie) of my spending | I can easily identify trends and major expense categories. |
-| 3 | User | export my transaction data to Excel or CSV | I can perform custom analysis or backup my data. |
 
 ### 1.3 Acceptance Criteria
 
 - [ ] **AC1:** Reports Dashboard displays key metrics (Total Income, Expenses, Balance) for selected period.
 - [ ] **AC2:** Charts (Trend Line, Category Bar, Jar Pie) render correctly with real data.
 - [ ] **AC3:** Date range selector allows filtering by Month, Year, or Custom Range.
-- [ ] **AC4:** Export function generates valid .xlsx and .csv files containing filtered transaction data.
-- [ ] **AC5:** Backend provides optimized endpoints for aggregated report data.
+- [ ] **AC4:** Backend provides optimized endpoints for aggregated report data.
 
 ---
 
@@ -130,16 +129,13 @@ A[User navigates to Reports] --> B[View Dashboard (Summary Cards & Charts)]
 B --> C{Interact with Filters}
 C -->|Select Date Range| D[Dashboard updates data]
 C -->|Select Jar/Wallet| D
-B --> E[Click 'Export Data']
-E --> F[Select Format (Excel/CSV)]
-F --> G[Download/Share File]
 ```
 
 ### 2.2 Screen/Page Requirements
 
 | หน้าจอ | Actions | Components |
 |--------|---------|------------|
-| **Reports Dashboard** | - View Summary Cards<br>- View Charts<br>- Filter Date/Jar<br>- Export Data | - **Summary Cards:** Income, Expense, Net.<br>- **Charts:** Line (Trend), Bar (Category), Pie (Jar).<br>- **Filter Bar:** Date Range Picker, Dropdowns.<br>- **Export Button:** Triggers export dialog. |
+| **Reports Dashboard** | - View Summary Cards<br>- View Charts<br>- Filter Date/Jar | - **Summary Cards:** Income, Expense, Net.<br>- **Charts:** Line (Trend), Bar (Category), Pie (Jar).<br>- **Filter Bar:** Date Range Picker, Dropdowns. |
 
 ### 2.3 Input/Output Specification
 
@@ -173,12 +169,12 @@ F --> G[Download/Share File]
 
 | Component | Impact Level | Description |
 |-----------|--------------|-------------|
-| **Backend API** | 🔴 High | New endpoints for aggregated data and export generation. |
+| **Backend API** | 🔴 High | New endpoints for aggregated data. |
 | **Web/Android/iOS UI** | 🟡 Medium | New screens and chart library integration. |
 | **Database** | 🟢 Low | Read-heavy operations                                          ; may need indexing on `transaction_date`. |
 
 ## Reference: plan.md
-# Implementation Plan: Financial Reports & Data Export
+# Implementation Plan: Financial Reports & Charts
 
 > **Refers to**: [Spec Link](./spec.md)
 > **Status**: Draft
@@ -186,13 +182,13 @@ F --> G[Download/Share File]
 ## 1. Architecture & Design
 *High-level technical approach.*
 
-The implementation will focus on a centralized backend for data aggregation to ensure consistency across platforms. The frontend implementation involves new charting libraries and export functionalities.
+The implementation will focus on a centralized backend for data aggregation to ensure consistency across platforms. The frontend implementation involves new charting libraries.
 
 ### Component View
 > [!IMPORTANT]
 > **Platform Scope Policy:**
-> - **Android**: Full implementation with charts (Vico) and export.
-> - **Web**: Full implementation with charts (Chart.js/Recharts) and export.
+> - **Android**: Full implementation with charts (Vico).
+> - **Web**: Full implementation with charts (Chart.js/Recharts).
 > - **iOS**: Full implementation with charts (SwiftCharts).
 
 - **Modified Components**:
@@ -230,14 +226,12 @@ New API endpoint `/api/reports` will return aggregated data:
 - **Goal**: Create Reports page with date filter and charts.
 - **Files**: `src/pages/Reports.tsx`
 - **Libs**: `recharts` or similar.
-- **Export**: Generate .csv/.xlsx client-side or trigger backend download.
 
 ### Step 2: Android - UI Implementation
 
 - **Goal**: Create Reports screen.
 - **Files**: `ui/reports/ReportsScreen.kt`
 - **Libs**: `com.patrykandpatrick.vico`
-- **Export**: Share Intent for generated file.
 
 ### Step 3: iOS - UI Implementation
 
@@ -251,7 +245,7 @@ New API endpoint `/api/reports` will return aggregated data:
 # Specification
 
 **Feature ID:** `FEAT-059`
-**Title:** Financial Reports & Data Export
+**Title:** Financial Reports & Charts
 **Platforms:** Android, Web, iOS
 **Related Issue:** [                       #59](https://github.com/oatrice/JarWise-Root/issues/59)
 
@@ -260,8 +254,8 @@ New API endpoint `/api/reports` will return aggregated data:
 ## 1. User Story
 
 **As a** user,
-**I want to** view comprehensive financial reports and export my transaction data,
-**so that I can** analyze my spending habits in detail, back up my data, and use it in other tools like Excel.
+**I want to** view comprehensive financial reports,
+**so that I can** analyze my spending habits in detail.
 
 ---
 
@@ -275,16 +269,10 @@ New API endpoint `/api/reports` will return aggregated data:
 - **AC5: Category Breakdown:** Display a Bar chart showing expenses broken down by category.
 - **AC6: Comparison:** Allow users to compare financial data between different months or years side-by-side.
 
-### Export Features
-- **AC7: Export to Excel (.xlsx):** Allow exporting full transaction history with proper formatting.
-- **AC8: Export to CSV:** Allow exporting simple transaction data in CSV format.
-- **AC9: Database Backup:** specific for Android - allow exporting the raw SQLite database or a JSON dump.
-- **AC10: PDF Report:** Generate a formatted PDF report for monthly or yearly summaries.
-
 ### Filters & Options
-- **AC11: Date Range:** Users must be able to select a custom date range for reports and exports.
-- **AC12: Filter by Jar/Wallet:** Users can filter identifying specific Jars or Wallets to include in the report.
-- **AC13: Filter by Category:** Users can filter by specific categories.
+- **AC7: Date Range:** Users must be able to select a custom date range for reports.
+- **AC8: Filter by Jar/Wallet:** Users can filter identifying specific Jars or Wallets to include in the report.
+- **AC9: Filter by Category:** Users can filter by specific categories.
 
 ---
 
@@ -294,20 +282,12 @@ New API endpoint `/api/reports` will return aggregated data:
 2. **Dashboard:** User sees a dashboard of key charts (Spending Trend, Category Breakdown).
 3. **Detailed Reports:** User taps on a specific chart to see a detailed report (e.g., Monthly Report).
 4. **Filtering:** User applies filters (e.g., change date range to "Last 3 Months", select specific Jar).
-5. **Exporting:** User taps an "Export" button, selects the format (Excel, CSV, PDF), and shares or saves the file.
 
 ---
 
 ## 4. Specification by Example (SBE)
 
-### Scenario 1: Exporting Monthly Transaction History
-**Given** the user is on the Reports screen
-**And** has selected "October 2023" as the date range
-**When** the user taps "Export" and selects "Excel"
-**Then** the app generates an `.xlsx` file containing all transactions from Oct 1-31, 2023
-**And** the file includes columns for Date, Category, Jar, Amount, and Note.
-
-### Scenario 2: Viewing Spending Trends
+### Scenario 1: Viewing Spending Trends
 **Given** the user has transaction data for the last 6 months
 **When** the user views the "Spending Trends" chart
 **Then** a line chart is displayed showing total expenses for each of the last 6 months

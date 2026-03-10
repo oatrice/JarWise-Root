@@ -8,12 +8,13 @@
 
 | รายการ | รายละเอียด |
 |--------|-----------|
-| **Feature Name** | Financial Reports & Data Export |
+| **Feature Name** | Financial Reports & Charts |
 | **Issue URL** | [#59](https://github.com/oatrice/JarWise-Root/issues/59) |
-| **Date** | 2026-02-12 |
+| **Date** | 2026-03-10 (Updated) |
 | **Analyst** | AI Assistant |
 | **Priority** | 🟡 Medium |
 | **Status** | 📝 Draft |
+| **Note** | **Data Export features (CSV/XLSX) have been split into separate issues (#89, #90, #91) and are out of scope for #59.** |
 
 ---
 
@@ -24,7 +25,7 @@
 > อธิบายปัญหาที่ต้องการแก้ไข
 
 ```
-Currently, users lack a comprehensive view of their financial health. While they can see individual transactions and Jar totals, they cannot easily analyze trends, category breakdowns, or export data for external use. This limits their ability to make informed long-term financial decisions.
+Currently, users lack a comprehensive view of their financial health. While they can see individual transactions and Jar totals, they cannot easily analyze trends or category breakdowns. This limits their ability to make informed long-term financial decisions.
 ```
 
 ### 1.2 User Stories
@@ -33,15 +34,13 @@ Currently, users lack a comprehensive view of their financial health. While they
 |---|------|-----------|---------|
 | 1 | User | view monthly and yearly summary reports | I can see my income vs. expenses at a glance. |
 | 2 | User | see visual charts (Line, Bar, Pie) of my spending | I can easily identify trends and major expense categories. |
-| 3 | User | export my transaction data to Excel or CSV | I can perform custom analysis or backup my data. |
 
 ### 1.3 Acceptance Criteria
 
 - [ ] **AC1:** Reports Dashboard displays key metrics (Total Income, Expenses, Balance) for selected period.
 - [ ] **AC2:** Charts (Trend Line, Category Bar, Jar Pie) render correctly with real data.
 - [ ] **AC3:** Date range selector allows filtering by Month, Year, or Custom Range.
-- [ ] **AC4:** Export function generates valid .xlsx and .csv files containing filtered transaction data.
-- [ ] **AC5:** Backend provides optimized endpoints for aggregated report data.
+- [ ] **AC4:** Backend provides optimized endpoints for aggregated report data.
 
 ---
 
@@ -55,16 +54,13 @@ flowchart TD
     B --> C{Interact with Filters}
     C -->|Select Date Range| D[Dashboard updates data]
     C -->|Select Jar/Wallet| D
-    B --> E[Click 'Export Data']
-    E --> F[Select Format (Excel/CSV)]
-    F --> G[Download/Share File]
 ```
 
 ### 2.2 Screen/Page Requirements
 
 | หน้าจอ | Actions | Components |
 |--------|---------|------------|
-| **Reports Dashboard** | - View Summary Cards<br>- View Charts<br>- Filter Date/Jar<br>- Export Data | - **Summary Cards:** Income, Expense, Net.<br>- **Charts:** Line (Trend), Bar (Category), Pie (Jar).<br>- **Filter Bar:** Date Range Picker, Dropdowns.<br>- **Export Button:** Triggers export dialog. |
+| **Reports Dashboard** | - View Summary Cards<br>- View Charts<br>- Filter Date/Jar | - **Summary Cards:** Income, Expense, Net.<br>- **Charts:** Line (Trend), Bar (Category), Pie (Jar).<br>- **Filter Bar:** Date Range Picker, Dropdowns. |
 
 ### 2.3 Input/Output Specification
 
@@ -103,7 +99,9 @@ flowchart TD
 
 | Component | Impact Level | Description |
 |-----------|--------------|-------------|
-| **Backend API** | 🔴 High | New endpoints for aggregated data and export generation. |
+| **Backend API** | 🔴 High | New endpoints for aggregated data. |
 | **Web/Android/iOS UI** | 🟡 Medium | New screens and chart library integration. |
 | **Database** | 🟢 Low | Read-heavy operations; may need indexing on `transaction_date`. |
 
+---
+*Note: Data Export has been moved to Issues #89, #90, #91.*
