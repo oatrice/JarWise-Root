@@ -1,0 +1,313 @@
+# Role: Senior iOS Developer
+# Task: Implement iOS components for Issue #59: Financial Reports & Charts. Use Swift/SwiftUI. Implement iOS UI + MVVM. Use XCTest.
+
+Please write the code for the following requirements.
+
+## Context
+Project: JarWise-Root
+Issue:                                                                                                           #59 [Android | Web | iOS]: Financial Reports & Charts
+Body:
+## 🚀 Getting Started
+- [ ] Moved issue to **In Progress** in Project Board (or use `scripts/move_issue_to_inprogress.sh <issue_url>`)
+
+## 🎯 Objective
+
+Implement comprehensive financial reporting with interactive charts to allow users to analyze their spending habits.
+
+> **Note:** Export features (Excel, CSV, PDF) are tracked separately: #89, #90.
+
+---
+
+## 📝 Specifications
+
+### Reports View
+- [ ] **Summary Cards:** Display Income, Expense, and Net Balance for the selected period.
+- [ ] **Charts:** Implement charts using **SwiftCharts** (iOS 16+):
+- **Spending Trends:** Line chart showing spending over time.
+- **Category Breakdown:** Bar chart showing expenses by category.
+- **Jar Distribution:** Pie/Donut chart showing allocation per jar.
+- **Comparison:** Bar chart comparing current vs previous period.
+- [ ] **Filters:** Implement Date Range Picker and Picker for Jar/Wallet.
+
+---
+
+## 🏗️ Technical Considerations
+
+### 📦 State Management
+- [ ] **iOS:** Use `ObservableObject` or `@State` with `ViewModel` to manage report data.
+
+### 🔄 Invalidation/Refresh (Critical!)
+- [ ] **On filter change:** Fetch new data.
+- [ ] **On appear:** Ensure data is up-to-date.
+
+### ⚠️ Error Handling
+- [ ] **Data Fetching:** Handle network errors with Alert or Error View.
+
+### 🔲 Edge Cases
+- [ ] **No Data:** Show friendly Empty View implementation (e.g., ContentUnavailableView in iOS 17+ or custom view).
+
+---
+
+## 📐 UI/UX Guidelines
+
+- **Native Feel:** Use standard iOS components and SwiftCharts for a native look and feel.
+- **Accessibility:** Ensure charts are accessible (using `.accessibilityLabel`, etc.).
+
+---
+
+## 🔗 References
+
+- **Feature ID:** FEAT-059
+- **Parent Issue:**        #59
+
+---
+
+## ✅ Definition of Done
+
+- [ ] All requirements implemented
+- [ ] Unit tests passed
+- [ ] Manual QA performed on iOS
+- [ ] PR reviewed and merged
+
+## Architecture & Plans (AUTHORITATIVE)
+The following content is from the approved design documents. **You MUST follow this design.**
+
+## Reference: analysis.md
+# Analysis Template
+
+> 📋 Template สำหรับการวิเคราะห์ก่อนเริ่มพัฒนา Feature
+
+---
+
+## 📌 Feature Information
+
+| รายการ | รายละเอียด |
+|--------|-----------|
+| **Feature Name** | Financial Reports & Charts |
+| **Note** | Data Export features (CSV/XLSX) have been split into separate issues (#89, #90, #91) and are out of scope for #59. |
+| **Issue URL** | [#59](https://github.com/oatrice/JarWise-Root/issues/59) |
+| **Date** | 2026-02-12 |
+| **Analyst** | AI Assistant |
+| **Priority** | 🟡 Medium |
+| **Status** | 📝 Draft |
+
+---
+
+## 1. Requirement Analysis
+
+### 1.1 Problem Statement
+
+> อธิบายปัญหาที่ต้องการแก้ไข
+
+```
+Currently, users lack a comprehensive view of their financial health. While they can see individual transactions and Jar totals, they cannot easily analyze trends or category breakdowns. This limits their ability to make informed long-term financial decisions.
+```
+
+### 1.2 User Stories
+
+|                                                                                                                             # | As a | I want to | So that |
+|---|------|-----------|---------|
+| 1 | User | view monthly and yearly summary reports | I can see my income vs. expenses at a glance. |
+| 2 | User | see visual charts (Line, Bar, Pie) of my spending | I can easily identify trends and major expense categories. |
+
+### 1.3 Acceptance Criteria
+
+- [ ] **AC1:** Reports Dashboard displays key metrics (Total Income, Expenses, Balance) for selected period.
+- [ ] **AC2:** Charts (Trend Line, Category Bar, Jar Pie) render correctly with real data.
+- [ ] **AC3:** Date range selector allows filtering by Month, Year, or Custom Range.
+- [ ] **AC4:** Backend provides optimized endpoints for aggregated report data.
+
+---
+
+## 2. Feature Analysis
+
+### 2.1 User Flow
+
+```mermaid
+flowchart TD
+A[User navigates to Reports] --> B[View Dashboard (Summary Cards & Charts)]
+B --> C{Interact with Filters}
+C -->|Select Date Range| D[Dashboard updates data]
+C -->|Select Jar/Wallet| D
+```
+
+### 2.2 Screen/Page Requirements
+
+| หน้าจอ | Actions | Components |
+|--------|---------|------------|
+| **Reports Dashboard** | - View Summary Cards<br>- View Charts<br>- Filter Date/Jar | - **Summary Cards:** Income, Expense, Net.<br>- **Charts:** Line (Trend), Bar (Category), Pie (Jar).<br>- **Filter Bar:** Date Range Picker, Dropdowns. |
+
+### 2.3 Input/Output Specification
+
+#### Inputs
+
+(For Backend API)
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `startDate` | string (date) | ✅ | Start of reporting period. |
+| `endDate` | string (date) | ✅ | End of reporting period. |
+| `walletId` | string (uuid) | ❌ | Filter by specific wallet (optional). |
+| `jarId` | string (uuid) | ❌ | Filter by specific jar (optional). |
+
+#### Outputs
+
+(API Response Body - Aggregated Data)
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `summary` | object | `{ income: 1000, expense: 500, net: 500 }` |
+| `trend` | array | `[{ date: "2023-01", income: 500, expense: 200 }, ...]` |
+| `byCategory` | array | `[{ categoryId: "c1", name: "Food", amount: 300 }, ...]` |
+| `byJar` | array | `[{ jarId: "j1", name: "Necessary", amount: 400 }, ...]` |
+
+---
+
+## 3. Impact Analysis
+
+### 3.1 Affected Components
+
+| Component | Impact Level | Description |
+|-----------|--------------|-------------|
+| **Backend API** | 🔴 High | New endpoints for aggregated data. |
+| **Web/Android/iOS UI** | 🟡 Medium | New screens and chart library integration. |
+| **Database** | 🟢 Low | Read-heavy operations                                          ; may need indexing on `transaction_date`. |
+
+## Reference: plan.md
+# Implementation Plan: Financial Reports & Charts
+
+> **Refers to**: [Spec Link](./spec.md)
+> **Status**: Draft
+
+## 1. Architecture & Design
+*High-level technical approach.*
+
+The implementation will focus on a centralized backend for data aggregation to ensure consistency across platforms. The frontend implementation involves new charting libraries.
+
+### Component View
+> [!IMPORTANT]
+> **Platform Scope Policy:**
+> - **Android**: Full implementation with charts (Vico).
+> - **Web**: Full implementation with charts (Chart.js/Recharts).
+> - **iOS**: Full implementation with charts (SwiftCharts).
+
+- **Modified Components**:
+- **All Platforms**: Navigation to include a "Reports" section.
+- **New Components**:
+- **Backend**: `ReportHandler` endpoint `/api/reports/...`
+- **Web**: `src/pages/Reports.tsx`
+- **Android**: `ui/reports/ReportsScreen.kt`
+- **iOS**: `Views/Reports/ReportsView.swift`
+
+### Data Model Changes
+
+New API endpoint `/api/reports` will return aggregated data:
+
+```json
+{
+"summary": { "income": 1000, "expense": 500 },
+"trend": [ ... ],
+"byCategory": [ ... ]
+}
+```
+
+---
+
+## 2. Step-by-Step Implementation
+
+### Prerequisite: Backend API Endpoint
+
+- **Action**: Create `GET /api/reports` endpoint.
+- **Query Params**: `from`, `to`, `wallet_id` (optional), `jar_id` (optional).
+- **Response**: Aggregated JSON data.
+
+### Step 1: Web - UI Implementation
+
+- **Goal**: Create Reports page with date filter and charts.
+- **Files**: `src/pages/Reports.tsx`
+- **Libs**: `recharts` or similar.
+
+### Step 2: Android - UI Implementation
+
+- **Goal**: Create Reports screen.
+- **Files**: `ui/reports/ReportsScreen.kt`
+- **Libs**: `com.patrykandpatrick.vico`
+
+### Step 3: iOS - UI Implementation
+
+- **Goal**: Create Reports view.
+- **Files**: `Views/Reports/ReportsView.swift`
+- **Libs**: pure SwiftCharts (iOS 16+).
+
+---
+
+## Reference: spec.md
+# Specification
+
+**Feature ID:** `FEAT-059`
+**Title:** Financial Reports & Charts
+**Platforms:** Android, Web, iOS
+**Related Issue:** [                       #59](https://github.com/oatrice/JarWise-Root/issues/59)
+
+---
+
+## 1. User Story
+
+**As a** user,
+**I want to** view comprehensive financial reports,
+**so that I can** analyze my spending habits in detail.
+
+---
+
+## 2. Acceptance Criteria
+
+### Reports & Charts
+- **AC1: Monthly Report:** Provide a summary of income and expenses by category for a selected month.
+- **AC2: Yearly Report:** Provide an annual overview with income/expense trends.
+- **AC3: Jar Distribution:** Display a Pie or Donut chart showing the distribution of expenses across different Jars.
+- **AC4: Spending Trends:** Display a Line chart showing spending trends over time (daily/weekly/monthly).
+- **AC5: Category Breakdown:** Display a Bar chart showing expenses broken down by category.
+- **AC6: Comparison:** Allow users to compare financial data between different months or years side-by-side.
+
+### Filters & Options
+- **AC7: Date Range:** Users must be able to select a custom date range for reports.
+- **AC8: Filter by Jar/Wallet:** Users can filter identifying specific Jars or Wallets to include in the report.
+- **AC9: Filter by Category:** Users can filter by specific categories.
+
+---
+
+## 3. User Journey
+
+1. **Navigation:** User navigates to a "Reports" or "Analysis" tab in the app.
+2. **Dashboard:** User sees a dashboard of key charts (Spending Trend, Category Breakdown).
+3. **Detailed Reports:** User taps on a specific chart to see a detailed report (e.g., Monthly Report).
+4. **Filtering:** User applies filters (e.g., change date range to "Last 3 Months", select specific Jar).
+
+---
+
+## 4. Specification by Example (SBE)
+
+### Scenario 1: Viewing Spending Trends
+**Given** the user has transaction data for the last 6 months
+**When** the user views the "Spending Trends" chart
+**Then** a line chart is displayed showing total expenses for each of the last 6 months
+**And** hovering/tapping a data point shows the exact total for that month.
+
+---
+
+## Default Guidance (Use only if not specified in Plans)
+- Tech Stack: Swift/SwiftUI. Implement iOS UI + MVVM. Use XCTest.
+- Follow Clean Architecture
+- Ensure TDD (Test Driven Development)
+
+**IMPORTANT CONFLICT RESOLUTION:**
+If the 'Architecture & Plans' section conflicts with the 'Default Guidance', **FOLLOW THE PLANS**.
+
+## Output Format
+Please provide the full code files wrapped in XML tags:
+<file path="path/to/file.ext">
+... code ...
+</file>
+
+## Language
+Please explain your solution and comments in Thai only.

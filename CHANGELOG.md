@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.9.0] - 2026-03-10
+
+### Added
+- **[Docs]** Added extensive new planning, analysis, and specification documents for two upcoming features: Financial Reports/Data Export (#59) and Jar/Category Expense Graphs (#48).
+
+### Changed
+- **[Docs]** Updated the project `ROADMAP.md` to reflect planning for new features.
+
 ## [0.8.0] - 2026-02-18
 
 ### Added

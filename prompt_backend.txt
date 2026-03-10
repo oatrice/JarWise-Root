@@ -1,227 +1,291 @@
 # Role: Senior Backend Developer
-# Task: Implement backend components for Issue #71: [Feature] Transaction Linking & Transfers Use Go/Python. Implement API endpoints and business logic.
+# Task: Implement backend components for Issue #59: Financial Reports & Charts. Use Go. Implement API endpoints and business logic for report data aggregation.
 
 Please write the code for the following requirements.
 
 ## Context
 Project: JarWise-Root
-Issue: #71 [Feature] Transaction Linking & Transfers
+Issue:                                                                                                           #59 [Android | Web]: Financial Reports & Charts
 Body:
-# Goal
-Implement 2-way linking between Income/Expense transactions to represent Transfers, Debt Repayments, or Refund scenarios.
+## 🚀 Getting Started
+- [ ] Moved issue to **In Progress** in Project Board (or use `scripts/move_issue_to_inprogress.sh <issue_url>`)
 
-## 📝 Description
-Users need to link two separate transactions to show they are related. The most common use case is a **Transfer** (money leaving one Jar/Wallet and entering another).
+## 🎯 Objective
 
-### Use Cases
-1.  **Transfer:** -100 from Wallet A (Expense) linked to +100 to Wallet B (Income).
-    *   System should recognize this pair as a Transfer and potentially exclude it from Total Expense/Income reports.
-2.  **Debt Repayment:** Payment to credit card linked to the original expense (advanced).
-3.  **Refund:** Income linked to a previous Expense.
+Implement backend API for financial report data aggregation, providing chart-ready data to all platforms.
 
-## 🛠️ Requirements
+> **Note:** Export features (Excel, CSV, PDF, DB Backup) are tracked separately: #89, #90, #91.
 
-### 1. Data Model
-*   Add `relatedTransactionId` (String, nullable) to `Transaction` entity.
-*   Ensure referential integrity (if possible, or handle via app logic).
+---
 
-### 2. Logic (2-Way Linking)
-*   **Linking:** When Transaction A links to Transaction B, Transaction B must automatically link back to Transaction A.
-*   **Unlinking:** Deleting or unlinking A must update B to remove the link.
+## 📝 Specifications
 
-### 3. UI/UX
-*   **Transaction Detail:** Show "Linked to: [Transaction B]" with a clickable link.
-*   **Add/Edit Screen:** Option to "Create Transfer" which automatically creates two transactions and links them.
+### Reports API
+- [ ] **Data Aggregation:** Implement logic to aggregate income, expenses, and trends based on date range, jar, and category.
+- **Monthly/Yearly Reports:** income/expense summary.
+- **Trends:** Daily/Weekly/Monthly spending.
+- **Breakdowns:** By Category and by Jar.
+- **Comparison:** Support comparing two periods.
+- [ ] **Endpoint:** Create `GET /api/reports` to fetch aggregated data.
+- [ ] **Performance:** Optimize queries to handle large transaction datasets efficiently (e.g., using database indexing).
 
-## 🔗 Related Issues
-*   #69 Hierarchical Wallets (Completed)
-*   #56 Enhance Add Transaction
+---
 
-## 📅 Plan
-1.  **Database Migration:** Add `relatedTransactionId` column.
-2.  **Repository Logic:** Methods to `insertTransfer(from, to)` that handles the dual creation and linking.
-3.  **UI:** Transfer Tab in Add Transaction screen.
+## 🏗️ Technical Considerations
+
+### 📦 State Management
+- [ ] **Backend:** Stateless API.
+
+### ⚠️ Error Handling
+- [ ] **Validation:** Validate date ranges and filter parameters.
+
+### 🔲 Edge Cases
+- [ ] **Empty Data:** Return appropriate empty structures if no transactions match filters.
+
+---
+
+## 🔗 References
+
+- **Feature ID:** FEAT-059
+- **Parent Issue:**        #59
+
+---
+
+## ✅ Definition of Done
+
+- [ ] All requirements implemented
+- [ ] Unit tests passed
+- [ ] Manual QA performed on API
+- [ ] PR reviewed and merged
 
 ## Architecture & Plans (AUTHORITATIVE)
 The following content is from the approved design documents. **You MUST follow this design.**
 
+## Reference: analysis.md
+# Analysis Template
+
+> 📋 Template สำหรับการวิเคราะห์ก่อนเริ่มพัฒนา Feature
+
+---
+
+## 📌 Feature Information
+
+| รายการ | รายละเอียด |
+|--------|-----------|
+| **Feature Name** | Financial Reports & Charts |
+| **Note** | Data Export features (CSV/XLSX) have been split into separate issues (#89, #90, #91) and are out of scope for #59. |
+| **Issue URL** | [#59](https://github.com/oatrice/JarWise-Root/issues/59) |
+| **Date** | 2026-02-12 |
+| **Analyst** | AI Assistant |
+| **Priority** | 🟡 Medium |
+| **Status** | 📝 Draft |
+
+---
+
+## 1. Requirement Analysis
+
+### 1.1 Problem Statement
+
+> อธิบายปัญหาที่ต้องการแก้ไข
+
+```
+Currently, users lack a comprehensive view of their financial health. While they can see individual transactions and Jar totals, they cannot easily analyze trends or category breakdowns. This limits their ability to make informed long-term financial decisions.
+```
+
+### 1.2 User Stories
+
+|                                                                                                                             # | As a | I want to | So that |
+|---|------|-----------|---------|
+| 1 | User | view monthly and yearly summary reports | I can see my income vs. expenses at a glance. |
+| 2 | User | see visual charts (Line, Bar, Pie) of my spending | I can easily identify trends and major expense categories. |
+
+### 1.3 Acceptance Criteria
+
+- [ ] **AC1:** Reports Dashboard displays key metrics (Total Income, Expenses, Balance) for selected period.
+- [ ] **AC2:** Charts (Trend Line, Category Bar, Jar Pie) render correctly with real data.
+- [ ] **AC3:** Date range selector allows filtering by Month, Year, or Custom Range.
+- [ ] **AC4:** Backend provides optimized endpoints for aggregated report data.
+
+---
+
+## 2. Feature Analysis
+
+### 2.1 User Flow
+
+```mermaid
+flowchart TD
+A[User navigates to Reports] --> B[View Dashboard (Summary Cards & Charts)]
+B --> C{Interact with Filters}
+C -->|Select Date Range| D[Dashboard updates data]
+C -->|Select Jar/Wallet| D
+```
+
+### 2.2 Screen/Page Requirements
+
+| หน้าจอ | Actions | Components |
+|--------|---------|------------|
+| **Reports Dashboard** | - View Summary Cards<br>- View Charts<br>- Filter Date/Jar | - **Summary Cards:** Income, Expense, Net.<br>- **Charts:** Line (Trend), Bar (Category), Pie (Jar).<br>- **Filter Bar:** Date Range Picker, Dropdowns. |
+
+### 2.3 Input/Output Specification
+
+#### Inputs
+
+(For Backend API)
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `startDate` | string (date) | ✅ | Start of reporting period. |
+| `endDate` | string (date) | ✅ | End of reporting period. |
+| `walletId` | string (uuid) | ❌ | Filter by specific wallet (optional). |
+| `jarId` | string (uuid) | ❌ | Filter by specific jar (optional). |
+
+#### Outputs
+
+(API Response Body - Aggregated Data)
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `summary` | object | `{ income: 1000, expense: 500, net: 500 }` |
+| `trend` | array | `[{ date: "2023-01", income: 500, expense: 200 }, ...]` |
+| `byCategory` | array | `[{ categoryId: "c1", name: "Food", amount: 300 }, ...]` |
+| `byJar` | array | `[{ jarId: "j1", name: "Necessary", amount: 400 }, ...]` |
+
+---
+
+## 3. Impact Analysis
+
+### 3.1 Affected Components
+
+| Component | Impact Level | Description |
+|-----------|--------------|-------------|
+| **Backend API** | 🔴 High | New endpoints for aggregated data. |
+| **Web/Android/iOS UI** | 🟡 Medium | New screens and chart library integration. |
+| **Database** | 🟢 Low | Read-heavy operations                                          ; may need indexing on `transaction_date`. |
 
 ## Reference: plan.md
-# Implementation Plan: [Feature] Transaction Linking & Transfers
+# Implementation Plan: Financial Reports & Charts
 
 > **Refers to**: [Spec Link](./spec.md)
 > **Status**: Draft
 
 ## 1. Architecture & Design
-The implementation will focus on extending the existing `Transaction` data model and introducing new use cases to handle the lifecycle of linked transactions (transfers). The core logic will be encapsulated in the backend/domain layer to ensure consistency, with the Android UI being the primary client. The Web UI will be represented by static mockups in this phase.
+*High-level technical approach.*
+
+The implementation will focus on a centralized backend for data aggregation to ensure consistency across platforms. The frontend implementation involves new charting libraries.
 
 ### Component View
 > [!IMPORTANT]
 > **Platform Scope Policy:**
-> - **Android**: Full implementation with production-ready code and tests.
-> - **Web**: Mock UI only for this phase.
->
-> **Development Order:** Web Mock UI FIRST → Android Full Implementation SECOND.
+> - **Android**: Full implementation with charts (Vico).
+> - **Web**: Full implementation with charts (Chart.js/Recharts).
+> - **iOS**: Full implementation with charts (SwiftCharts).
 
 - **Modified Components**:
-    - `data.model.Transaction`: Entity will be updated with a self-referencing link.
-    - `data.repository.TransactionRepository`: Will be updated to handle creation, deletion, and querying of linked transactions.
-    - `domain.use_case.DeleteTransactionUseCase`: Logic will be updated to handle unlinking before deletion.
-    - `feature_add_edit_transaction.AddEditTransactionViewModel`: Will be enhanced to manage three modes (Expense, Income, Transfer).
-    - `feature_add_edit_transaction.AddEditTransactionScreen`: UI will be updated with a mode selector and a new form for transfers.
-    - `feature_transaction_detail.TransactionDetailViewModel`: Will be updated to fetch and provide linked transaction data.
-    - `feature_transaction_detail.TransactionDetailScreen`: UI will be updated to display link information and provide navigation.
-    - `domain.use_case.reporting.*`: All reporting use cases will be updated to exclude transfers by default.
-
+- **All Platforms**: Navigation to include a "Reports" section.
 - **New Components**:
-    - `domain.use_case.CreateTransferUseCase`: A new use case to atomically create and link two transactions for a transfer.
-    - `domain.use_case.UnlinkTransactionsUseCase`: A new use case to sever the link between two transactions.
-    - `feature_add_edit_transaction.components.TransferForm`: A new composable for the transfer-specific input fields.
-    - `feature_transaction_detail.components.LinkedTransactionInfo`: A new composable to display the link on the detail screen.
-
-- **Dependencies**:
-    - No new external libraries are anticipated. The implementation will use existing components from Jetpack Compose, Room, and Hilt/Koin for dependency injection.
+- **Backend**: `ReportHandler` endpoint `/api/reports/...`
+- **Web**: `src/pages/Reports.tsx`
+- **Android**: `ui/reports/ReportsScreen.kt`
+- **iOS**: `Views/Reports/ReportsView.swift`
 
 ### Data Model Changes
-The `Transaction` entity will be modified to include a nullable field that points to its linked counterpart. This self-referencing foreign key establishes the one-to-one relationship.
 
-```kotlin
-// File: data/src/main/java/com/jarwise/data/model/Transaction.kt
+New API endpoint `/api/reports` will return aggregated data:
 
-@Entity(tableName = "transactions")
-data class Transaction(
-    @PrimaryKey val id: String = UUID.randomUUID().toString(),
-    val walletId: String,
-    val type: TransactionType, // ENUM: INCOME, EXPENSE
-    val amount: BigDecimal,
-    val date: Instant,
-    val notes: String?,
-    
-    // New field for FR1
-    val linkedTransactionId: String? = null 
-)
+```json
+{
+"summary": { "income": 1000, "expense": 500 },
+"trend": [ ... ],
+"byCategory": [ ... ]
+}
 ```
-A database migration will be required to add the `linkedTransactionId` column to the `transactions` table.
 
 ---
 
 ## 2. Step-by-Step Implementation
 
-### Step 0: Backend - Data Model and Repository Update
-This foundational step prepares the database and data access layer for the new feature.
+### Prerequisite: Backend API Endpoint
 
-- **Code**:
-    - **Modify `data/model/Transaction.kt`**: Add the `linkedTransactionId: String?` field.
-    - **Create a new Room Migration**: Write a migration script to add the `linkedTransactionId` column to the `transactions` table.
-    - **Update `data/dao/TransactionDao.kt`**: No immediate changes are needed for basic CRUD, but queries for reporting will be updated later.
-- **Tests**:
-    - **Update `data/TransactionDatabaseTest.kt`**: Add a test case to verify the migration runs successfully and the schema is correct.
-- **Verification**:
-    - The new migration script successfully applies to the database schema.
-    - Existing unit tests for the repository and DAO continue to pass.
+- **Action**: Create `GET /api/reports` endpoint.
+- **Query Params**: `from`, `to`, `wallet_id` (optional), `jar_id` (optional).
+- **Response**: Aggregated JSON data.
 
-### Step 1: Web - UI Mockups
-Create static mockups for the web interface to guide the Android implementation and gather early feedback.
+### Step 1: Web - UI Implementation
 
-- **Docs**:
-    - Create Figma/PNG mockups for the following screens:
-        1.  **Add Transaction Screen**: Showing the "Expense", "Income", and selected "Transfer" tabs. The "Transfer" form should display "From", "To", "Amount", "Date", and "Notes" fields.
-        2.  **Transaction Detail Screen**: Showing a transaction that is part of a transfer, with a clear "Linked Transaction" section and a "View Transaction" button/link.
-- **Code**: No code implementation. This step is purely for design and alignment.
-- **Verification**:
-    - Mockups are reviewed and approved by the project lead.
-    - Mockups align with the UI/UX requirements in the specification.
+- **Goal**: Create Reports page with date filter and charts.
+- **Files**: `src/pages/Reports.tsx`
+- **Libs**: `recharts` or similar.
 
-### Step 2: Backend - Core Use Cases (Create, Unlink, Delete)
-Implement the core business logic
-(truncated if too long)
+### Step 2: Android - UI Implementation
 
+- **Goal**: Create Reports screen.
+- **Files**: `ui/reports/ReportsScreen.kt`
+- **Libs**: `com.patrykandpatrick.vico`
+
+### Step 3: iOS - UI Implementation
+
+- **Goal**: Create Reports view.
+- **Files**: `Views/Reports/ReportsView.swift`
+- **Libs**: pure SwiftCharts (iOS 16+).
+
+---
 
 ## Reference: spec.md
 # Specification
 
-| **Title** | [Feature] Transaction Linking & Transfers |
-| --- | --- |
-| **Status** | `Draft` |
-| **Version** | `1.0` |
-| **Issue URL** | https://github.com/oatrice/JarWise-Root/issues/71 |
+**Feature ID:** `FEAT-059`
+**Title:** Financial Reports & Charts
+**Platforms:** Android, Web, iOS
+**Related Issue:** [                       #59](https://github.com/oatrice/JarWise-Root/issues/59)
 
 ---
 
-## 1. Overview
+## 1. User Story
 
-This document specifies the requirements for a Transaction Linking feature. The primary goal is to allow users to represent the movement of funds between their own accounts (e.g., Wallets, Jars) as a "Transfer". This prevents such movements from being incorrectly counted as net income or expense in financial reports. The feature will also support linking other related transactions, such as refunds to original expenses.
+**As a** user,
+**I want to** view comprehensive financial reports,
+**so that I can** analyze my spending habits in detail.
 
-The core of this feature is the ability to create a two-way link between two transactions. A streamlined user interface will be introduced to simplify the creation of transfer pairs.
+---
 
-## 2. Goal
+## 2. Acceptance Criteria
 
-As a user, I want to link two transactions together to represent a single financial event, such as a transfer between my accounts, a refund, or a debt repayment. This will ensure my financial reports are accurate by not double-counting money movement as both an expense and an income.
+### Reports & Charts
+- **AC1: Monthly Report:** Provide a summary of income and expenses by category for a selected month.
+- **AC2: Yearly Report:** Provide an annual overview with income/expense trends.
+- **AC3: Jar Distribution:** Display a Pie or Donut chart showing the distribution of expenses across different Jars.
+- **AC4: Spending Trends:** Display a Line chart showing spending trends over time (daily/weekly/monthly).
+- **AC5: Category Breakdown:** Display a Bar chart showing expenses broken down by category.
+- **AC6: Comparison:** Allow users to compare financial data between different months or years side-by-side.
 
-## 3. User Stories
+### Filters & Options
+- **AC7: Date Range:** Users must be able to select a custom date range for reports.
+- **AC8: Filter by Jar/Wallet:** Users can filter identifying specific Jars or Wallets to include in the report.
+- **AC9: Filter by Category:** Users can filter by specific categories.
 
-*   **As a user managing multiple accounts,** I want to create a "Transfer" from my Savings Wallet to my Checking Wallet, so that the movement of funds is recorded accurately without affecting my overall income or expense totals.
-*   **As a user reviewing my transaction history,** I want to see if a transaction is linked to another and be able to navigate directly to the linked transaction, so that I can easily understand the context of my financial activity.
-*   **As a user correcting a mistake,** I want to unlink two transactions or delete one part of a transfer, so that the remaining transaction becomes a standalone income/expense and my records remain correct.
-*   **As a user viewing my financial reports,** I want transfers to be excluded from my main expense and income summaries, so I can get a clear picture of my net financial gain or loss.
+---
 
-## 4. Functional Requirements
+## 3. User Journey
 
-### FR1: Transaction Relationship
-- The system must support a one-to-one relationship between two `Transaction` entities.
-- A transaction can be linked to at most one other transaction.
+1. **Navigation:** User navigates to a "Reports" or "Analysis" tab in the app.
+2. **Dashboard:** User sees a dashboard of key charts (Spending Trend, Category Breakdown).
+3. **Detailed Reports:** User taps on a specific chart to see a detailed report (e.g., Monthly Report).
+4. **Filtering:** User applies filters (e.g., change date range to "Last 3 Months", select specific Jar).
 
-### FR2: Two-Way Linking
-- When Transaction A is linked to Transaction B, the system must automatically and immediately establish a reciprocal link from Transaction B back to Transaction A.
-- This link must be maintained atomically; either both transactions are linked, or neither is.
+---
 
-### FR3: Unlinking Logic
-- The system must provide a mechanism for a user to unlink a pair of transactions.
-- When the link from Transaction A to Transaction B is removed, the reciprocal link from B to A must also be removed automatically.
-- The two transactions will then revert to being independent income/expense transactions.
+## 4. Specification by Example (SBE)
 
-### FR4: Deletion Integrity
-- If a linked Transaction A is deleted, its corresponding Transaction B must be automatically unlinked.
-- Transaction B will remain in the system as a standalone transaction. It will not be deleted.
+### Scenario 1: Viewing Spending Trends
+**Given** the user has transaction data for the last 6 months
+**When** the user views the "Spending Trends" chart
+**Then** a line chart is displayed showing total expenses for each of the last 6 months
+**And** hovering/tapping a data point shows the exact total for that month.
 
-### FR5: "Create Transfer" Workflow
-- The user interface must provide a dedicated workflow, separate from a standard transaction entry, to "Create a Transfer".
-- This workflow shall require the user to specify:
-    - `From Wallet` (Source of funds)
-    - `To Wallet` (Destination of funds)
-    - `Amount`
-    - `Date`
-    - `Notes` (Optional)
-- Upon submission, the system will create two transactions simultaneously:
-    1.  An **Expense** transaction for the specified `Amount` from the `From Wallet`.
-    2.  An **Income** transaction for the same `Amount` into the `To Wallet`.
-- These two newly created transactions must be automatically linked to each other.
-
-### FR6: Display of Linked Transactions
-- On the "Transaction Detail" view, if a transaction is linked, the system must display an indicator.
-- The indicator must clearly state which transaction it is linked to (e.g., "Linked to: +$100.00 in Checking Wallet on Jan 15").
-- This indicator must be a clickable link that navigates the user directly to the detail view of the related transaction.
-
-### FR7: Reporting
-- The system must be able to identify a pair of linked transactions as a "Transfer".
-- In summary reports (e.g., "Total Income vs. Total Expense"), transfers should be excluded by default to avoid inflating the totals.
-- Reports should offer an option to include or view transfers separately.
-
-## 5. User Interface & User Experience (UI/UX)
-
-### 5.1. Add/Edit Transaction Screen
-- The "Add Transaction" screen will feature three primary modes, selectable via tabs or a segmented control: **Expense**, **Income**, and **Transfer**.
-- When the **"Transfer"** mode is selected, the form fields will change to:
-    - **From:** A dropdown to select the source Wallet/Jar.
-    - **To:** A dropdown to select the destination Wallet/Jar.
-    - **Amount:** A numeric input for the transfer amount.
-    - **Date:** A date picker.
-    - **Notes:** An op
-(truncated if too long)
-
+---
 
 ## Default Guidance (Use only if not specified in Plans)
-- Tech Stack: Go/Python. Implement API endpoints and business logic.
+- Tech Stack: Go. Implement API endpoints and business logic.
 - Follow Clean Architecture
 - Ensure TDD (Test Driven Development)
 
