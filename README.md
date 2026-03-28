@@ -1,7 +1,7 @@
 # 🏰 JarWise Project Overview
 
 Welcome to the **JarWise** project landing page!
-![Version](https://img.shields.io/badge/version-0.0.1-blue.svg)
+![Version](https://img.shields.io/badge/version-0.9.1-blue.svg)
 
 
 
