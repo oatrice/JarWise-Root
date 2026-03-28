@@ -1,0 +1,10 @@
+- [x] 🟥 RED: Create failing test
+    - [x] `tests/test_sub_action_breakdown.py` (Verify breakdown logic)
+- [x] 🟢 GREEN: Implement fix
+    - [x] Update `summarize_usage_stats` to track per-sub-action timestamps and filter by branch.
+    - [x] Update `format_summary_message` to show the breakdown.
+    - [x] Update `workflow_actions.py` to pass `branch=state.active_branch`.
+- [x] ✨ Verify & Finalize
+    - [x] Ensure test passes
+    - [x] Manual simulation with real log data
+- [x] 🏁 Final Notification
