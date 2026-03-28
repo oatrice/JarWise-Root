@@ -1,6 +1,6 @@
 # Changelog
 
-## [0.9.1] - 2026-03-28
+## [0.10.0] - 2026-03-28
 
 ### Added
 - **[Feature] Financial Reporting & Charts (#59)**:

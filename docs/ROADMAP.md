@@ -44,7 +44,7 @@ This document outlines the strategic direction and priority of features for JarW
 
 - **#59 Financial Reports & Data Export**
     - Enable comprehensive financial reporting and data export capabilities.
-    - **Status:** 📝 Planned
+    - ✅ **Done** (v2.0.0)
 
 - **#46 Draft Transaction Review (Android)**
     - Save transactions as "Draft" for later review.
@@ -249,7 +249,7 @@ graph TD
 
 ### Issue #86 - Select date range export data to Excel/CSV
 - **GitHub:** [#86](https://github.com/oatrice/JarWise-Root/issues/86)
-- **Status:** 🔵 **Backlog**
+- **Status:** ✅ **Done**
 
 ### Issue #87 - Generate PDF Financial Reports
 - **GitHub:** [#87](https://github.com/oatrice/JarWise-Root/issues/87)
@@ -261,7 +261,7 @@ graph TD
 
 ### Issue #89 - [Android | Web | iOS]: Data Export - Excel & CSV
 - **GitHub:** [#89](https://github.com/oatrice/JarWise-Root/issues/89)
-- **Status:** 🔵 **Backlog**
+- **Status:** ✅ **Done**
 
 ### Issue #90 - [Android | Web | iOS]: PDF Report Generation
 - **GitHub:** [#90](https://github.com/oatrice/JarWise-Root/issues/90)
