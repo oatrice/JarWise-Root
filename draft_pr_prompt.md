@@ -2,638 +2,569 @@
 
 You are an AI assistant helping to create a Pull Request description.
     
-TASK: [Feature] Report Filter: Multi-Select Categories & Accounts
+TASK: [Web | Android] Financial Reports & Data Export
 ISSUE: {
-  "title": "[Feature] Report Filter: Multi-Select Categories & Accounts",
-  "number": 68,
-  "body": "# \ud83c\udfaf Objective\nEnable users to filter reports and charts by selecting specific categories (Jars) and accounts (Wallets) via multi-select checkboxes.\n\n## \ud83d\udcdd Specifications\n\n### UI Components\n- [ ] **Filter Panel**: Collapsible sidebar or modal with checkbox tree\n- [ ] **Category Checkboxes**: Select/deselect individual Jars (including sub-jars if HIER-01 is done)\n- [ ] **Account Checkboxes**: Select/deselect individual Wallets (including sub-wallets if HIER-01 is done)\n- [ ] **Select All / Clear All**: Quick actions\n- [ ] **Remember Selection**: Persist filter state per session or per report type\n\n### Behavior\n- [ ] **Real-time Update**: Charts/reports update as checkboxes change (or Apply button)\n- [ ] **Count Display**: Show number of transactions matching current filter\n- [ ] **Visual Indicator**: Badge showing active filter count\n\n## \ud83d\udd17 References\n- Depends on #67 (Hierarchical Accounts & Categories) for sub-item support\n- Related to #59 (Reports & Data Export)\n- Feature ID: `REPORT-02`\n\n## \ud83c\udfd7\ufe0f Technical Notes\n- Use bitmasking or array-based filtering on transaction queries\n- Consider performance with large transaction sets (pagination/lazy load)"
+  "title": "[Web | Android] Financial Reports & Data Export",
+  "number": 59,
+  "body": "# \ud83c\udfaf Objective\nImplement comprehensive financial reporting with charts, graphs, and data export capabilities.\n\n## \ud83e\udde0 AI Brain Context\n- [task_v2.md](https://raw.githubusercontent.com/oatrice/JarWise-Root/feat/59-financial-reports-export/docs/features/17_issue-59_financial-reports-data-export/ai_brain/task_v2.md)\n- [walkthrough_v2.md](https://raw.githubusercontent.com/oatrice/JarWise-Root/feat/59-financial-reports-export/docs/features/17_issue-59_financial-reports-data-export/ai_brain/walkthrough_v2.md)\n- [implementation_plan_v2.md](https://raw.githubusercontent.com/oatrice/JarWise-Root/feat/59-financial-reports-export/docs/features/17_issue-59_financial-reports-data-export/ai_brain/implementation_plan_v2.md)\n\n\nCloses #59",
+  "url": "https://github.com/oatrice/JarWise-Root/issues/59"
 }
 
 GIT CONTEXT:
 COMMITS:
-74de2d0 feat: [Feature] Report Filter: Multi-Select Categories &...
-a56fa9f chore(release): version 0.8.0 with multi-select report filter feature
-f5d1c14 docs(roadmap): mark #68 complete and add Phase 4 draft review
-242a9d4 Update code review report
-43ce2e4 Document manual verification steps
-471ee9d Update multi-select report docs
-84dc632 ✨ feat(filters): Implement multi-select report filters
-61f2a69 Review JarWise roadmap tasks
+1ff2d09 docs: sync AI brain artifacts
+e9d7530 feat: exclude .luma_metrics.json from git tracking
+3db0b24 feat(reports): Release v0.10.0 with enhanced financial reporting
+b72d6a0 docs: add implementation plan for financial reports & data export (#59)
+b13dd8e chore(release): prepare v0.9.1 with financial reporting features
 
 STATS:
-CHANGELOG.md                                       |   9 +
- FEATURES.md                                        |  13 +-
- RELEASES.md                                        |   9 +-
- VERSION                                            |   2 +-
- agent_android_patch.xml                            | 591 ++++++++++++++++++
- agent_backend_patch.xml                            | 664 +++++++++++++++++++++
- agent_frontend_patch.xml                           | 489 +++++++++++++++
- code_review.md                                     |  31 -
- code_review_summary.md                             |  39 ++
- docs/GLOSSARY.md                                   |   1 +
- docs/ROADMAP.md                                    |  28 +-
- .../analysis.md                                    | 264 ++++++++
- .../code_review.md                                 |  17 +
- .../plan.md                                        |  98 +++
- .../spec.md                                        | 103 ++++
- .../specs/sbe_issue-68.md                          |  50 ++
- scripts/sync_mock_data.js                          |  16 +
- shared-spec/data/mockData.json                     |  20 +
- 18 files changed, 2396 insertions(+), 48 deletions(-)
+.gitignore                                         |    2 +
+ .luma_metrics.json                                 | 1496 ++++++++++++++++++++
+ CHANGELOG.md                                       |   12 +
+ README.md                                          |    2 +-
+ VERSION                                            |    2 +-
+ docs/ROADMAP.md                                    |  260 +++-
+ .../ai_brain/android_reports_sync_plan.md          |   52 +
+ .../ai_brain/implementation_plan.md                |   26 +
+ .../ai_brain/implementation_plan2.md               |   51 +
+ .../ai_brain/implementation_plan_fix_income.md     |   25 +
+ .../implementation_plan_income_comparison.md       |   41 +
+ .../ai_brain/implementation_plan_refactor_viz.md   |   36 +
+ .../ai_brain/implementation_plan_styling_sync.md   |   41 +
+ .../ai_brain/implementation_plan_v2.md             |   44 +
+ .../ai_brain/task.md                               |    8 +
+ .../ai_brain/task2.md                              |   13 +
+ .../ai_brain/task_v2.md                            |   10 +
+ .../ai_brain/walkthrough.md                        |   37 +
+ .../ai_brain/walkthrough2.md                       |   42 +
+ .../ai_brain/walkthrough_android_sync.md           |   36 +
+ .../ai_brain/walkthrough_area_chart.md             |   27 +
+ .../ai_brain/walkthrough_income_chart.md           |   23 +
+ .../ai_brain/walkthrough_refactor_viz.md           |   33 +
+ .../ai_brain/walkthrough_reports_final.md          |   28 +
+ .../ai_brain/walkthrough_seeding.md                |   32 +
+ .../ai_brain/walkthrough_v2.md                     |   37 +
+ .../implementation_plan.md                         |   73 +
+ .../manual_verification_plan.md                    |   66 +
+ .../task.md                                        |   10 +
+ .../walkthrough.md                                 |   52 +
+ 30 files changed, 2614 insertions(+), 3 deletions(-)
 
 KEY FILE DIFFS:
-diff --git a/agent_android_patch.xml b/agent_android_patch.xml
+diff --git a/.gitignore b/.gitignore
+index e9d8525..2dd8e03 100644
+--- a/.gitignore
++++ b/.gitignore
+@@ -21,3 +21,5 @@ Backend/
+ project_items.json
+ .luma_state.json
+ .luma_dev.json
++# .luma_metrics.json
++luma_failed_prompt_*.md
+diff --git a/.luma_metrics.json b/.luma_metrics.json
 new file mode 100644
-index 0000000..e61a9c5
+index 0000000..3a67c6a
 --- /dev/null
-+++ b/agent_android_patch.xml
-@@ -0,0 +1,591 @@
-+Answering for Issue #68: [Feature] Report Filter: Multi-Select Categories & Accounts.
-+
-+Here are the Android components implemented in Kotlin and Jetpack Compose, covering the ViewModel with its unit tests, and the mobile UI. The solution follows modern Android development practices, including a clean architecture and test-driven development for the ViewModel logic.
-+
-+### Core Domain and Data Layer
-+
-+These files define the basic data models and repository interfaces.
-+
-+<file path="app/src/main/java/com/example/myapp/core/model/Category.kt">
-+```kotlin
-+package com.example.myapp.core.model
-+
-+data class Category(val id: String, val name: String)
-+```
-+</file>
-+<file path="app/src/main/java/com/example/myapp/core/model/Account.kt">
-+```kotlin
-+package com.example.myapp.core.model
-+
-+data class Account(val id: String, val name: String)
-+```
-+</file>
-+<file path="app/src/main/java/com/example/myapp/core/data/CategoryRepository.kt">
-+```kotlin
-+package com.example.myapp.core.data
-+
-+import com.example.myapp.core.model.Category
-+
-+/**
-+ * Interface for fetching category data.
-+ */
-+interface CategoryRepository {
-+    suspend fun getCategories(): List<Category>
-+}
-+```
-+</file>
-+<file path="app/src/main/java/com/example/myapp/core/data/AccountRepository.kt">
-+```kotlin
-+package com.example.myapp.core.data
-+
-+import com.example.myapp.core.model.Account
-+
-+/**
-+ * Interface for fetching account data.
-+ */
-+interface AccountRepository {
-+    suspend fun getAccounts(): List<Account>
-+}
-+```
-+</file>
-+
-+### Feature: Report Filter (ViewModel and UI)
-+
-+This section contains the UI state definition, the ViewModel responsible for the screen's logic, and the Jetpack Compose UI.
-+
-+<file path="app/src/main/java/com/example/myapp/feature/reports/filter/ui/ReportFilterUiState.kt">
-+```kotlin
-+package com.example.myapp.feature.reports.filter.ui
-+
-+/**
-+ * Represents an item in the multi-select list.
-+ * @param id The unique identifier for the item.
-+ * @param name The display name of the item.
-+ * @param isSelected Whether the item is currently selected.
-+ */
-+data class SelectableItem(
-+    val id: String,
-+    val name: String,
-+    val isSelected: Boolean
-+)
-+
-+/**
-+ * Represents the entire UI state for the ReportFilterScreen.
-+ * @param isLoading True if initial data is being loaded.
-+ * @param categories The list of selectable categories.
-+ * @param accounts The list of selectable accounts.
-+ */
-+data class ReportFilterUiState(
-+    val isLoading: Boolean = true,
-+    val categories: List<SelectableItem> = emptyList(),
-+    val accounts: List<SelectableItem> = emptyList()
-+)
-+```
-+</file>
-+<file path="app/src/main/java/com/example/myapp/feature/reports/filter/viewmodel/ReportFilterViewModel.kt">
-+```kotlin
-+package com.example.myapp.feature.reports.filter.viewmodel
-+
-+import androidx.lifecycle.ViewModel
-+import androidx.lifecycle.viewModelScope
-+import com.example.myapp.core.data.AccountRepository
-+import com.example.myapp.core.data.CategoryRepository
-+import com.example.myapp.core.model.Account
-+import com.example.myapp.core.model.Category
-+import com.example.myapp.feature.reports.filter.ui.ReportFilterUiState
-+import com.example.myapp.feature.reports.filter.ui.SelectableItem
-+import dagger.hilt.android.lifecycle.HiltViewModel
-+import kotlinx.coroutines.flow.MutableStateFlow
-+import kotlinx.coroutines.flow.StateFlow
-+import kotlinx.coroutines.flow.asStateFlow
-+import kotlinx.coroutines.launch
-+import javax.inject.Inject
-+
-+@HiltViewModel
-+class ReportFilterViewModel @Inject constructor(
-+    private val categoryRepository: CategoryRepository,
-+    private val accountRepository: AccountRepository
-+) : ViewModel() {
-+
-+    private val _uiState = MutableStateFlow(ReportFilterUiState())
-+    val uiState: StateFlow<ReportFilterUiState> = _uiState.asStateFlow()
-+
-+    private var allCategories: List<Category> = emptyList()
-+    private var allAccounts: List<Account> = emptyList()
-+
-+    private val selectedCategoryIds = mutableSetOf<String>()
-+    private val selectedAccountIds = mutableSetOf<String>()
-+
-+    init {
-+        loadInitialData()
-+    }
-+
-+    private fun loadInitialData() {
-+        viewModelScope.launch {
-+            _uiState.value = ReportFilterUiState(isLoading = true)
-+            // In a real app, these could be fetched concurrently
-+            allCategories = categoryRepository.getCategories()
-+            allAccounts = accountRepository.getAccounts()
-+            updateUiState()
-+        }
-+    }
-+
-+    private fun updateUiState() {
-+        _uiState.value = ReportFilterUiState(
-+            isLoading = false,
-+            categories = allCategories.map {
-+                SelectableItem(it.id, it.name, it.id in selectedCategoryIds)
-+            },
-+            accounts = allAccounts.map {
-+                SelectableItem(it.id, it.name, it.id in selectedAccountIds)
-+            }
-+        )
-+    }
-+
-+    fun toggleCategorySelection(categoryId: String) {
-+        if (!selectedCategoryIds.remove(categoryId)) {
-+            selectedCategoryIds.add(categoryId)
-+        }
-+        updateUiState()
-+    }
-+
-+    fun toggleAccountSelection(accountId: String) {
-+        if (!selectedAccountIds.remove(accountId)) {
-+            selectedAccountIds.add(accountId)
-+        }
-+        updateUiState()
-+    }
-+
-+    fun clearSelections() {
-+        selectedCategoryIds.clear()
-+        selectedAccountIds.clear()
-+        updateUiState()
-+    }
-+
-+    fun getSelectedFilterIds(): Pair<Set<String>, Set<String>> {
-+        return Pair(selectedCategoryIds.toSet(), selectedAccountIds.toSet())
-+    }
-+}
-+```
-+</file>
-+<file path="app/src/main/java/com/example/myapp/feature/reports/filter/ui/ReportFilterScreen.kt">
-+```kotlin
-+package com.example.myapp.feature.reports.filter.ui
-+
-+import androidx.compose.foundation.clickable
-+import androidx.compose.foundation.layout.Arrangement
-+import androidx.compose.foundation.layout.Box
-+import androidx.compose.foundation.layout.Row
-+import androidx.compose.foundation.layout.Spacer
-+import androidx.compose.foundation.layout.fillMaxSize
-+import androidx.compose.foundation.layout.fillMaxWidth
-+import androidx.compose.foundation.layout.height
-+import androidx.compose.foundation.layout.padding
-+import androidx.compose.foundation.layout.width
-+import androidx.compose.foundation.lazy.LazyColumn
-+import androidx.compose.foundation.lazy.items
-+import androidx.compose.material.icons.Icons
-+import androidx.compose.material.icons.filled.ArrowBack
-+import androidx.compose.material3.Button
-+import androidx.compose.material3.Checkbox
-+import androidx.compose.material3.CircularProgressIndicator
-+import androidx.compose.material3.Divider
-+import androidx.compose.material3.ExperimentalMaterial3Api
-+import androidx.compose.material3.Icon
-+import androidx.compose.material3.IconButton
-+import androidx.compose.material3.MaterialTheme
-+import androidx.compose.material3.Scaffold
-+import androidx.compose.material3.Surface
-+import androidx.compose.material3.Text
-+import androidx.compose.material3.TextButton
-+import androidx.compose.material3.TopAppBar
-+import androidx.compose.runtime.Composable
-+import androidx.compose.runtime.collectAsState
-+import androidx.compose.runtime.getValue
-+import androidx.compose.ui.Alignment
-+import androidx.compose.ui.Modifier
-+import androidx.compose.ui.tooling.preview.Preview
-+import androidx.compose.ui.unit.dp
-+import androidx.lifecycle.viewmodel.compose.viewModel
-+import com.example.myapp.feature.reports.filter.viewmodel.ReportFilterViewModel
-+
-+@OptIn(ExperimentalMaterial3Api::class)
-+@Composable
-+fun ReportFilterScreen(
-+    viewModel: ReportFilterViewModel = viewModel(),
-+    onApplyFilters: (selectedCategories: Set<String>, selectedAccounts: Set<String>) -> Unit,
-+    onNavigateUp: () -> Unit
-+) {
-+    val uiState by viewModel.uiState.collectAsState()
-+
-+    Scaffold(
-+        topBar = {
-+            TopAppBar(
-+                title = { Text("Filter Report") }, // TODO: Use string resource
-+                navigationIcon = {
-+                    IconButton(onClick = onNavigateUp) {
-+                        Icon(
-+                            imageVector = Icons.Filled.ArrowBack,
-+                            contentDescription = "Back" // TODO: Use string resource
-+                        )
-+                    }
-+                }
-+            )
-+        },
-+        bottomBar = {
-+            FilterBottomBar(
-+                onClearClick = { viewModel.clearSelections() },
-+                onApplyClick = {
-+                    val (categories, accounts) = viewModel.getSelectedFilterIds()
-+                    onApplyFilters(categories, accounts)
-+                }
-+            )
-+        }
-+    ) { paddingValues ->
-+        Box(
-+            modifier = Modifier
-+                .fillMaxSize()
-+                .padding(paddingValues),
-+            contentAlignment = Alignment.Center
-+        ) {
-+            if (uiState.isLoading) {
-+                CircularProgressIndicator()
-+            } else {
-+                FilterContent(
-+                    uiState = uiState,
-+                    onCategorySelected = { viewModel.toggleCategorySelection(it) },
-+                    onAccountSelected = { viewModel.toggleAccountSelection(it) }
-+                )
-+            }
-+        }
-+    }
-+}
-+
-+@Composable
-+private fun FilterContent(
-+    uiState: ReportFilterUiState,
-+    onCategorySelected: (String) -> Unit,
-+    onAccountSelected: (String) -> Unit,
-+    modifier: Modifier = Modifier
-+) {
-+    LazyColumn(
-+        modifier = modifier
-+            .fillMaxSize()
-+            .padding(horizontal = 16.dp)
-+    ) {
-+        item {
-+            Text(
-+                text = "Categories", // TODO: Use string resource
-+                style = MaterialTheme.typography.titleMedium,
-+                modifier = Modifier.padding(top = 16.dp, bottom = 8.dp)
-+            )
-+        }
-+        items(uiState.categories, key = { "cat_${it.id}" }) { item ->
-+            SelectableRow(
-+                item = item,
-+                onClick = { onCategorySelected(item.id) }
-+            )
-+        }
-+
-+        item {
-+            Spacer(Modifier.height(8.dp))
-+            Divider()
-+        }
-+
-+        item {
-+            Text(
-+                text = "Accounts", // TODO: Use string resource
-+                style = MaterialTheme.typography.titleMedium,
-+                modifier = Modifier.padding(top = 16.dp, bottom = 8.dp)
-+            )
-+        }
-+        items(uiState.accounts, key = { "acc_${it.id}" }) { item ->
-+            SelectableRow(
-+                item = item,
-+                onClick = { onAccountSelected(item.id) }
-+            )
-+        }
-+    }
-+}
-+
-+@Composable
-+private fun SelectableRow(
-+    item: SelectableItem,
-+    onClick: () -> Unit,
-+    modifier: Modifier = Modifier
-+) {
-+    Row(
-+        modifier = modifier
-+            .fillMaxWidth()
-+            .clickable(onClick = onClick)
-+            .padding(vertical = 8.dp),
-+        verticalAlignment = Alignment.CenterVertically
-+    ) {
-+        Checkbox(
-+            checked = item.isSelected,
-+            onCheckedChange = null // Handled by Row click
-+        )
-+        Spacer(modifier = Modifier.width(16.dp))
-+        Text(text = item.name, style = MaterialTheme.typography.bodyLarge)
-+    }
-+}
-+
-+@Composable
-+private fun FilterBottomBar(
-+    onClearClick: () -> Unit,
-+    onApplyClick: () -> Unit,
-+    modifier: Modifier = Modifier
-+) {
-+    Surface(
-+        modifier = modifier.fillMaxWidth(),
-+        shadowElevation = 8.dp
-+    ) {
-+        Row(
-+            modifier = Modifier
-+                .fillMaxWidth()
-+                .padding(horizontal = 16.dp, vertical = 8.dp),
-+            horizontalArrangement = Arrangement.SpaceBetween,
-+            verticalAlignment = Alignment.CenterVertically
-+        ) {
-+            TextButton(onClick = onClearClick) {
-+                Text("Clear") // TODO: Use string resource
-+            }
-+            Button(onClick = onApplyClick) {
-+                Text("Apply") // TODO: Use string resource
-+            }
-+        }
-+    }
-+}
-+
-+
-+@Preview(showBackground = true)
-+@Composable
-+private fun ReportFilterScreenPreview() {
-+    MaterialTheme {
-+        val previewState = ReportFilterUiState(
-+            isLoading = false,
-+            categories = listOf(
-+                SelectableItem("1", "Groceries", true),
-+                SelectableItem("2", "Transport", false)
-+            ),
-+            accounts = listOf(
-+                SelectableItem("a1", "Checking", false),
-+                SelectableItem("a2", "Savings", true)
-+            )
-+        )
-+        Scaffold(
-+            topBar = {
-+                TopAppBar(
-+                    title = { Text("Filter Report") },
-+                    navigationIcon = {
-+                        IconButton(onClick = {}) {
-+                            Icon(Icons.Filled.ArrowBack, contentDescription = "Back")
-+                        }
-+                    }
-+                )
-+            },
-+            bottomBar = {
-+                FilterBottomBar(onClearClick = {}, onApplyClick = {})
-+            }
-+        ) { paddingValues ->
-+            FilterContent(
-+                uiState = previewState,
-+                onCategorySelected = {},
-+                onAccountSelected = {},
-+                modifier = Modifier.padding(paddingValues)
-+            )
-+        }
-+    }
-+}
-+```
-+</file>
-+
-+### Testing
-+
-+This section includes unit tests for the `ReportFilterViewModel` and the necessary testing utilities.
-+
-+<file path="app/src/test/java/com/example/myapp/util/MainDispatcherRule.kt">
-+```kotlin
-+package com.example.myapp.util
-+
-+import kotlinx.coroutines.Dispatchers
-+import kotlinx.coroutines.ExperimentalCoroutinesApi
-+import kotlinx.coroutines.test.TestDispatcher
-+import kotlinx.coroutines.test.UnconfinedTestDispatcher
-+import kotlinx.coroutines.test.resetMain
-+import kotlinx.coroutines.test.setMain
-+import org.junit.rules.TestWatcher
-+import org.junit.runner.Description
-+
-+/**
-+ * A JUnit rule to set the Main dispatcher to a test dispatcher for unit tests.
-+ */
-+@ExperimentalCoroutinesApi
-+class MainDispatcherRule(
-+    private val testDispatcher: TestDispatcher = UnconfinedTestDispatcher()
-+) : TestWatcher() {
-+    override fun starting(description: Description) {
-+        Dispatchers.setMain(testDispatcher)
-+    }
-+
-+    override fun finished(description: Description) {
-+        Dispatchers.resetMain()
-+    }
-+}
-+```
-+</file>
-+<file path="app/src/test/java/com/example/myapp/feature/reports/filter/viewmodel/FakeCategoryRepository.kt">
-+```kotlin
-+package com.example.myapp.feature.reports.filter.viewmodel
-+
-+import com.example.myapp.core.data.CategoryRepository
-+import com.example.myapp.core.model.Category
-+
-+class FakeCategoryRepository : CategoryRepository {
-+    private val categories = listOf(
-+        Category("cat1", "Groceries"),
-+        Category("cat2", "Utilities"),
-+        Category("cat3", "Entertainment")
-+    )
-+
-+    override suspend fun getCategories(): List<Category> {
-+        return categories
-+    }
-+}
-+```
-+</file>
-+<file path="app/src/test/java/com/example/myapp/feature/reports/filter/viewmodel/FakeAccountRepository.kt">
-+```kotlin
-+package com.example.myapp.feature.reports.filter.viewmodel
-+
-+import com.example.myapp.core.data.AccountRepository
-+import com.example.myapp.core.model.Account
-+
-+class FakeAccountRepository : AccountRepository {
-+    private val accounts = listOf(
-+        Account("acc1", "Checking"),
-+        Account("acc2", "Savings"),
-+        Account("acc3", "Credit Card")
-+    )
-+
-+    override suspend fun getAccounts(): List<Account> {
-+        return accounts
-+    }
-+}
-+```
-+</file>
-+<file path="app/src/test/java/com/example/myapp/feature/reports/filter/viewmodel/ReportFilterViewModelTest.kt">
-+```kotlin
-+package com.example.myapp.feature.reports.filter.viewmodel
-+
-+import com.example.myapp.util.MainDispatcherRule
-+import kotlinx.coroutines.ExperimentalCoroutinesApi
-+import kotlinx.coroutines.flow.first
-+import kotlinx.coroutines.test.runTest
-+import org.junit.Assert.assertEquals
-+import org.junit.Assert.assertFalse
-+import org.junit.Assert.assertTrue
-+import org.junit.Before
-+import org.junit.Rule
-+import org.junit.Test
-+
-+@ExperimentalCoroutinesApi
-+class ReportFilterViewModelTest {
-+
-+    @get:Rule
-+    val mainDispatcherRule = MainDispatcherRule()
-+
-+    private lateinit var viewModel: ReportFilterViewModel
-+    private lateinit var fakeCategoryRepository: FakeCategoryRepository
-+    private lateinit var fakeAccountRepository: FakeAccountRepository
-+
-+    @Before
-+    fun setUp() {
-+        fakeCategoryRepository = FakeCategoryRepository()
-+        fakeAccountRepository = FakeAccountRepository()
-+        viewModel = ReportFilterViewModel(fakeCategoryRepository, fakeAccountRepository)
-+    }
-+
-+    @Test
-+    fun `init loads data and updates uiState`() = runTest {
-+        val uiState = viewModel.uiState.first { !it.isLoading }
-+
-+        assertFalse(uiState.isLoading)
-+        assertEquals(3, uiState.categories.size)
-+        assertEquals("Groceries", uiState.categories[0].name)
-+        assertEquals(3, uiState.accounts.size)
-+        assertEquals("Checking", uiState.accounts[0].name)
-+        assertTrue(uiState.categories.all { !it.isSelected })
-+        assertTrue(uiState.accounts.all { !it.isSelected })
-+    }
-+
-+    @Test
-+    fun `toggleCategorySelection adds category to selection`() = runTest {
-+        viewModel.uiState.first { !it.isLoading }
-+
-+        viewModel.toggleCategorySelection("cat1")
-+
-+        val uiState = viewModel.uiState.value
-+        assertTrue(uiState.categories.first { it.id == "cat1" }.isSelected)
-+        assertFalse(uiState.categories.first { it.id == "cat2" }.isSelected)
-+
-+        val selectedIds = viewModel.getSelectedFilterIds()
-+        assertTrue(selectedIds.first.contains("cat1"))
-+    }
-+
-+    @Test
-+    fun `toggleCategorySelection removes category from selection`() = runTest {
-+        viewModel.uiState.first { !it.isLoading }
-+
-+        // Add
-+        viewModel.toggleCategorySelection("cat1")
-+        assertTrue(viewModel.uiState.value.categories.first { it.id == "cat1" }.isSelected)
-+
-+        // Remove
-+        viewModel.toggleCategorySelection("cat1")
-+        assertFalse(viewModel.uiState.value.categories.first { it.id == "cat1" }.isSelected)
-+
-+        val selectedIds = viewModel.getSelectedFilterIds()
-+        assertFalse(selectedIds.first.contains("cat1"))
-+    }
-+
-+    @Test
-+    fun `toggleAccountSelection adds account to selection`() = runTest {
-+        viewModel.uiState.first { !it.isLoading }
-+
-+        viewModel.toggleAccountSelection("acc2")
-+
-+        val uiState = viewModel.uiState.value
-+        assertTrue(uiState.accounts.first { it.id == "acc2" }.isSelected)
-+        assertFalse(uiState.accounts.first { it.id == "acc1" }.isSelected)
-+
-+        val selectedIds = viewModel.getSelectedFilterIds()
-+        assertTrue(selectedIds.second.contains("acc2"))
-+    }
-+
-+    @Test
-+    fun `clearSelections resets all selections`() = runTest {
-+        viewModel.uiState.first { !it.isLoading }
-+
-+        viewModel.toggleCategorySelection("cat1")
-+        viewModel.toggleCategorySelection("cat3")
-+        viewModel.toggleAccountSelection("acc2")
-+
-+        var uiState = viewModel.uiState.value
-+        assertTrue(uiState.categories.first { it.id == "cat1" }.isSelected)
-+        assertTrue(uiState.accounts.first { it.id == "cat3" }.isSelected)
-+        assertTrue(uiState.accounts.first { it.id == "acc2" }.isSelected)
-+
-+        viewModel.clearSelections()
-+
-+        uiState = viewModel.uiState.value
-+        assertTrue(uiState.categories.all { !it.isSelected })
-+        assertTrue(uiState.accounts.all { !it.isSelected })
-+
-+        val selectedIds = viewModel.getSelectedFilterIds
++++ b/.luma_metrics.json
+@@ -0,0 +1,1496 @@
++{
++  "version": "1.0",
++  "issues": {
++    "oatrice/JarWise-Root#17": {
++      "issue_key": "oatrice/JarWise-Root#17",
++      "issue_number": 17,
++      "issue_title": "[Web | Android] Manage Jars (Edit %, Name, Icon)",
++      "issue_url": "https://github.com/oatrice/JarWise-Root/issues/17",
++      "repository": "oatrice/JarWise-Root",
++      "project_name": "JarWise-Root",
++      "issue_status": "✅ Done",
++      "estimate_points": 2,
++      "estimated_mandays": 2.0,
++      "start_datetime": "2026-01-16T08:14:33",
++      "actual_mandays": 15.0,
++      "due_date": "2026-03-17T23:59:59",
++      "actual_completion_date": "2026-01-31T06:43:58",
++      "effort_level": "Low",
++      "notes": null,
++      "gh_closed_at": "2026-01-31T06:43:58Z",
++      "gh_mandays": 15.0,
++      "created_at": "2026-01-16T08:12:00Z",
++      "updated_at": "2026-03-28T23:55:32.184842"
++    },
++    "oatrice/JarWise-Root#26": {
++      "issue_key": "oatrice/JarWise-Root#26",
++      "issue_number": 26,
++      "issue_title": "[Phase 5] Currency Support & Balance Refinement",
++      "issue_url": "https://github.com/oatrice/JarWise-Root/issues/26",
++      "repository": "oatrice/JarWise-Root",
++      "project_name": "JarWise-Root",
++      "issue_status": "✅ Done",
++      "estimate_points": 2,
++      "estimated_mandays": 2.0,
++      "start_datetime": "2026-01-16T14:14:57",
++      "actual_mandays": 1.5,
++      "due_date": "2026-03-17T23:59:59",
++      "actual_completion_date": "2026-01-18T04:49:55",
++      "effort_level": "Low",
++      "notes": null,
++      "gh_closed_at": "2026-01-18T04:49:55Z",
++      "gh_mandays": 1.5,
++      "created_at": "2026-01-16T14:14:56Z",
++      "updated_at": "2026-03-28T23:55:33.117857"
++    },
++    "oatrice/JarWise-Root#31": {
++      "issue_key": "oatrice/JarWise-Root#31",
++      "issue_number": 31,
++      "issue_title": "[Android] Auto Transcribe Slips (Smart Scan & Filter)",
++      "issue_url": "https://github.com/oatrice/JarWise-Root/issues/31",
++      "repository": "oatrice/JarWise-Root",
++      "project_name": "JarWise-Root",
++      "issue_status": "✅ Done",
++      "estimate_points": 1,
++      "estimated_mandays": 1.0,
++      "start_datetime": "2026-01-16T16:13:41",
++      "actual_mandays": 1.5,
++      "due_date": "2026-03-17T23:59:59",
++      "actual_completion_date": "2026-01-17T23:03:13",
++      "effort_level": "Low",
++      "notes": null,
++      "gh_closed_at": "2026-01-17T23:03:13Z",
++      "gh_mandays": 1.5,
++      "created_at": "2026-01-16T16:13:40Z",
++      "updated_at": "2026-03-28T23:55:34.127650"
++    },
++    "oatrice/JarWise-Root#32": {
++      "issue_key": "oatrice/JarWise-Root#32",
++      "issue_number": 32,
++      "issue_title": "Google Login & Cloud Backup",
++      "issue_url": "https://github.com/oatrice/JarWise-Root/issues/32",
++      "repository": "oatrice/JarWise-Root",
++      "project_name": "JarWise-Root",
++      "issue_status": "✅ Done (v0.7.0) - Implemented Google Login & Drive Backup.",
++      "estimate_points": 1,
++      "estimated_mandays": 1.0,
++      "start_datetime": "2026-01-16T16:16:24",
++      "actual_mandays": 17.5,
++      "due_date": "2026-02-03T23:59:59",
++      "actual_completion_date": "2026-02-03T05:00:27",
++      "effort_level": "Low",
++      "notes": null,
++      "gh_closed_at": "2026-02-03T05:00:27Z",
++      "gh_mandays": 17.5,
++      "created_at": "2026-01-16T16:16:24Z",
++      "updated_at": "2026-03-28T23:55:35.258658"
++    },
++    "oatrice/JarWise-Root#34": {
++      "issue_key": "oatrice/JarWise-Root#34",
++      "issue_number": 34,
++      "issue_title": "Implement Koin (Dependency Injection)",
++      "issue_url": "https://github.com/oatrice/JarWise-Root/issues/34",
++      "repository": "oatrice/JarWise-Root",
++      "project_name": "JarWise-Root",
++      "issue_status": "✅ Done (v0.5.0) - Android Implementation Complete.",
++      "estimate_points": 1,
++      "estimated_mandays": 1.0,
++      "start_datetime": "2026-01-17T05:07:47",
++      "actual_mandays": 16.0,
++      "due_date": "2026-02-02T23:59:59",
++      "actual_completion_date": "2026-02-02T05:54:37",
++      "effort_level": "Low",
++      "notes": null,
++      "gh_closed_at": "2026-02-02T05:54:37Z",
++      "gh_mandays": 16.0,
++      "created_at": "2026-01-17T05:07:46Z",
++      "updated_at": "2026-03-28T23:55:36.223274"
++    },
++    "oatrice/JarWise-Root#46": {
++      "issue_key": "oatrice/JarWise-Root#46",
++      "issue_number": 46,
++      "issue_title": "Draft Transaction Review (Android)",
++      "issue_url": "https://github.com/oatrice/JarWise-Root/issues/46",
++      "repository": "oatrice/JarWise-Root",
++      "project_name": "JarWise-Root",
++      "issue_status": "✅ Complete",
++      "estimate_points": 2,
++      "estimated_mandays": 2.0,
++      "start_datetime": "2026-01-18T16:01:14",
++      "actual_mandays": 11.5,
++      "due_date": "2026-03-17T23:59:59",
++      "actual_completion_date": "2026-01-30T08:35:06",
++      "effort_level": "Low",
++      "notes": null,
++      "gh_closed_at": "2026-01-30T08:35:06Z",
++      "gh_mandays": 11.5,
++      "created_at": "2026-01-18T16:01:14Z",
++      "updated_at": "2026-03-28T23:55:37.162296"
++    },
++    "oatrice/JarWise-Root#47": {
++      "issue_key": "oatrice/JarWise-Root#47",
++      "issue_number": 47,
++      "issue_title": "Draft Transaction Review (Web Mock)",
++      "issue_url": "https://github.com/oatrice/JarWise-Root/issues/47",
++      "repository": "oatrice/JarWise-Root",
++      "project_name": "JarWise-Root",
++      "issue_status": "✅ Complete",
++      "estimate_points": 2,
++      "estimated_mandays": 2.0,
++      "start_datetime": "2026-01-18T16:01:56",
++      "actual_mandays": 11.0,
++      "due_date": "2026-03-17T23:59:59",
++      "actual_completion_date": "2026-01-29T15:12:15",
++      "effort_level": "Low",
++      "notes": null,
++      "gh_closed_at": "2026-01-29T15:12:15Z",
++      "gh_mandays": 11.0,
++      "created_at": "2026-01-18T16:01:41Z",
++      "updated_at": "2026-03-28T23:55:37.930576"
++    },
++    "oatrice/JarWise-Root#48": {
++      "issue_key": "oatrice/JarWise-Root#48",
++      "issue_number": 48,
++      "issue_title": "[Android | Web]:  แสดงกราฟใน jar cat, jar sub cat ที่เลือกได้ว่าแต่ละเดือน/สัปดา/ปี ใช้ไปเท่าไหร่",
++      "issue_url": "https://github.com/oatrice/JarWise-Root/issues/48",
++      "repository": "oatrice/JarWise-Root",
++      "project_name": "JarWise-Root",
++      "issue_status": "✅ Done",
++      "estimate_points": 2,
++      "estimated_mandays": 2.0,
++      "start_datetime": "2026-01-19T06:29:55",
++      "actual_mandays": 50.0,
++      "due_date": "2026-03-10T23:59:59",
++      "actual_completion_date": "2026-03-10T06:17:36",
++      "effort_level": "Low",
++      "notes": null,
++      "gh_closed_at": "2026-03-10T06:17:36Z",
++      "gh_mandays": 50.0,
++      "created_at": "2026-01-19T06:29:54Z",
++      "updated_at": "2026-03-28T23:55:39.162313"
++    },
++    "oatrice/JarWise-Root#56": {
++      "issue_key": "oatrice/JarWise-Root#56",
++      "issue_number": 56,
++      "issue_title": "[Web | Android] Enhance Add Transaction (Date & Wallet)",
++      "issue_url": "https://github.com/oatrice/JarWise-Root/issues/56",
++      "repository": "oatrice/JarWise-Root",
++      "project_name": "JarWise-Root",
++      "issue_status": "✅ Done",
++      "estimate_points": 2,
++      "estimated_mandays": 2.0,
++      "start_datetime": "2026-01-30T09:19:50",
++      "actual_mandays": 0.5,
++      "due_date": "2026-03-17T23:59:59",
++      "actual_completion_date": "2026-01-30T15:06:12",
++      "effort_level": "Low",
++      "notes": null,
++      "gh_closed_at": "2026-01-30T15:06:12Z",
++      "gh_mandays": 0.5,
++      "created_at": "2026-01-30T09:17:41Z",
++      "updated_at": "2026-03-28T23:55:39.976521"
++    },
++    "oatrice/JarWise-Root#57": {
++      "issue_key": "oatrice/JarWise-Root#57",
++      "issue_number": 57,
++      "issue_title": "Custom Wallets & Jars",
++      "issue_url": "https://github.com/oatrice/JarWise-Root/issues/57",
++      "repository": "oatrice/JarWise-Root",
++      "project_name": "JarWise-Root",
++      "issue_status": "✅ Done (v0.5.0) - Foundation for Hierarchy.",
++      "estimate_points": 1,
++      "estimated_mandays": 1.0,
++      "start_datetime": "2026-01-31T08:48:57",
++      "actual_mandays": 1.0,
++      "due_date": "2026-02-11T23:59:59",
++      "actual_completion_date": "2026-02-01T13:06:02",
++      "effort_level": "Low",
++      "notes": null,
++      "gh_closed_at": "2026-02-01T13:06:02Z",
++      "gh_mandays": 1.0,
++      "created_at": "2026-01-30T10:13:50Z",
++      "updated_at": "2026-03-28T23:55:40.744314"
++    },
++    "oatrice/JarWise-Root#59": {
++      "issue_key": "oatrice/JarWise-Root#59",
++      "issue_number": 59,
++      "issue_title": "Financial Reports & Data Export",
++      "issue_url": "https://github.com/oatrice/JarWise-Root/issues/59",
++      "repository": "oatrice/JarWise-Root",
++      "project_name": "JarWise-Root",
++      "issue_status": "In Progress",
++      "estimate_points": 1,
++      "estimated_mandays": 1.0,
++      "start_datetime": "2026-01-31T08:49:36",
++      "actual_mandays": 0.0,
++      "due_date": "2026-03-10T23:59:59",
++      "actual_completion_date": "2026-03-28T15:14:14",
++      "effort_level": "Low",
++      "notes": null,
++      "gh_closed_at": null,
++      "gh_mandays": null,
++      "created_at": "2026-01-30T15:01:05Z",
++      "updated_at": "2026-03-28T23:55:42.466844"
++    },
++    "oatrice/JarWise-Root#65": {
++      "issue_key": "oatrice/JarWise-Root#65",
++      "issue_number": 65,
++      "issue_title": "Legacy Data Migration",
++      "issue_url": "https://github.com/oatrice/JarWise-Root/issues/65",
++      "repository": "oatrice/JarWise-Root",
++      "project_name": "JarWise-Root",
++      "issue_status": "✅ Done (v0.6.0) - Android Implementation Complete.",
++      "estimate_points": 2,
++      "estimated_mandays": 2.0,
++      "start_datetime": "2026-01-31T08:49:09",
++      "actual_mandays": 4.0,
++      "due_date": "2026-02-04T23:59:59",
++      "actual_completion_date": "2026-02-04T05:07:01",
++      "effort_level": "Low",
++      "notes": null,
++      "gh_closed_at": "2026-02-04T05:07:01Z",
++      "gh_mandays": 4.0,
++      "created_at": "2026-01-31T07:41:24Z",
++      "updated_at": "2026-03-28T23:55:44.197044"
++    },
++    "oatrice/JarWise-Root#67": {
++      "issue_key": "oatrice/JarWise-Root#67",
++      "issue_number": 67,
++      "issue_title": "Hierarchy (Full Implementation)",
++      "issue_url": "https://github.com/oatrice/JarWise-Root/issues/67",
++      "repository": "oatrice/JarWise-Root",
++      "project_name": "JarWise-Root",
++      "issue_status": "✅ Done (v0.5.0) - Hierarchical Jars implemented.",
++      "estimate_points": 1,
++      "estimated_mandays": 1.0,
++      "start_datetime": "2026-01-31T08:48:38",
++      "actual_mandays": 0.5,
++      "due_date": "2026-03-10T23:59:59",
++      "actual_completion_date": "2026-02-01T02:18:23",
++      "effort_level": "Low",
++      "notes": null,
++      "gh_closed_at": "2026-02-01T02:18:23Z",
++      "gh_mandays": 0.5,
++      "created_at": "2026-01-31T08:12:49Z",
++      "updated_at": "2026-03-28T23:55:45.819616"
++    },
++    "oatrice/JarWise-Root#68": {
++      "issue_key": "oatrice/JarWise-Root#68",
++      "issue_number": 68,
++      "issue_title": "Report Filters",
++      "issue_url": "https://github.com/oatrice/JarWise-Root/issues/68",
++      "repository": "oatrice/JarWise-Root",
++      "project_name": "JarWise-Root",
++      "issue_status": "✅ Done (v1.8.0)",
++      "estimate_points": 1,
++      "estimated_mandays": 1.0,
++      "start_datetime": "2026-01-31T08:49:16",
++      "actual_mandays": 12.0,
++      "due_date": "2026-02-18T23:59:59",
++      "actual_completion_date": "2026-02-12T02:52:58",
++      "effort_level": "Low",
++      "notes": null,
++      "gh_closed_at": "2026-02-12T02:52:58Z",
++      "gh_mandays": 12.0,
++      "created_at": "2026-01-31T08:13:05Z",
++      "updated_at": "2026-03-28T23:55:46.985038"
++    },
++    "oatrice/JarWise-Root#69": {
++      "issue_key": "oatrice/JarWise-Root#69",
++      "issue_number": 69,
++      "issue_title": "Hierarchical Wallets (Android & Web Mock)",
++      "issue_url": "https://github.com/oatrice/JarWise-Root/issues/69",
++      "repository": "oatrice/JarWise-Root",
++      "project_name": "JarWise-Root",
++      "issue_status": "✅ Done (v0.5.0) - Android Implementation Complete.",
++      "estimate_points": 2,
++      "estimated_mandays": 2.0,
++      "start_datetime": "2026-01-31T16:07:49",
++      "actual_mandays": 1.0,
++      "due_date": "2026-02-01T23:59:59",
++      "actual_completion_date": "2026-02-01T13:01:57",
++      "effort_level": "Low",
++      "notes": null,
++      "gh_closed_at": "2026-02-01T13:01:57Z",
++      "gh_mandays": 1.0,
++      "created_at": "2026-01-31T16:07:32Z",
++      "updated_at": "2026-03-28T23:55:48.133106"
++    },
++    "oatrice/JarWise-Root#71": {
++      "issue_key": "oatrice/JarWise-Root#71",
++      "issue_number": 71,
++      "issue_title": "Transaction Linking (Transfers)",
++      "issue_url": "https://github.com/oatrice/JarWise-Root/issues/71",
++      "repository": "oatrice/JarWise-Root",
++      "project_name": "JarWise-Root",
++      "issue_status": "✅ Done (v0.7.0)",
++      "estimate_points": 1,
++      "estimated_mandays": 1.0,
++      "start_datetime": "2026-02-01T13:57:01",
++      "actual_mandays": 3.0,
++      "due_date": "2026-02-11T23:59:59",
++      "actual_completion_date": "2026-02-04T14:10:19",
++      "effort_level": "Low",
++      "notes": null,
++      "gh_closed_at": "2026-02-04T14:10:19Z",
++      "gh_mandays": 3.0,
++      "created_at": "2026-02-01T13:51:10Z",
++      "updated_at": "2026-03-28T23:55:48.921550"
++    },
++    "oatrice/JarWise-Root#38": {
++      "issue_key": "oatrice/JarWise-Root#38",
++      "issue_number": 38,
++      "issue_title": "Note",
++      "issue_url": "https://github.com/oatrice/JarWise-Root/issues/38",
++      "repository": "oatrice/JarWise-Root",
++      "project_name": "JarWise-Root",
++      "issue_status": "Backlog",
++      "estimate_points": 1,
++      "estimated_mandays": 0.5,
++      "start_datetime": "2026-01-17T10:18:56",
++      "actual_mandays": 0.0,
++      "due_date": "2026-04-04T23:59:59",
++      "actual_completion_date": null,
++      "effort_level": "Low",
++      "notes": null,
++      "gh_closed_at": null,
++      "gh_mandays": null,
++      "created_at": "2026-01-17T10:18:55Z",
++      "updated_at": "2026-03-28T23:55:49.589663"
++    },
++    "oatrice/JarWise-Root#20": {
++      "issue_key": "oatrice/JarWise-Root#20",
++      "issue_number": 20,
++      "issue_title": "[Web | Android] Migrate data from google sheet to this app",
++      "issue_url": "https://github.com/oatrice/JarWise-Root/issues/20",
++      "repository": "oatrice/JarWise-Root",
++      "project_name": "JarWise-Root",
++      "issue_status": "Backlog",
++      "estimate_points": 2,
++      "estimated_mandays": 1.0,
++      "start_datetime": "2026-01-16T13:31:32",
++      "actual_mandays": 0.0,
++      "due_date": "2026-04-04T23:59:59",
++      "actual_completion_date": null,
++      "effort_level": "Low",
++      "notes": null,
++      "gh_closed_at": null,
++      "gh_mandays": null,
++      "created_at": "2026-01-16T13:31:31Z",
++      "updated_at": "2026-03-28T23:55:50.312606"
++    },
++    "oatrice/JarWise-Root#23": {
++      "issue_key": "oatrice/JarWise-Root#23",
++      "issue_number": 23,
++      "issue_title": "[Platform] Sematic version display",
++      "issue_url": "https://github.com/oatrice/JarWise-Root/issues/23",
++      "repository": "oatrice/JarWise-Root",
++      "project_name": "JarWise-Root",
++      "issue_status": "Backlog",
++      "estimate_points": 2,
++      "estimated_mandays": 1.0,
++      "start_datetime": "2026-01-16T13:49:02",
++      "actual_mandays": 0.0,
++      "due_date": "2026-04-04T23:59:59",
++      "actual_completion_date": null,
++      "effort_level": "Low",
++      "notes": null,
++      "gh_closed_at": null,
++      "gh_mandays": null,
++      "created_at": "2026-01-16T13:49:01Z",
++      "updated_at": "2026-03-28T23:55:50.948838"
++    },
++    "oatrice/JarWise-Root#9": {
++      "issue_key": "oatrice/JarWise-Root#9",
++      "issue_number": 9,
++      "issue_title": "[DevOps] Setup Auto-Tag for iOS & Mobile",
++      "issue_url": "https://github.com/oatrice/JarWise-Root/issues/9",
++      "repository": "oatrice/JarWise-Root",
++      "project_name": "JarWise-Root",
++      "issue_status": "Backlog",
++      "estimate_points": 1,
++      "estimated_mandays": 0.5,
++      "start_datetime": "2026-01-16T03:38:33",
++      "actual_mandays": 0.0,
++      "due_date": "2026-04-04T23:59:59",
++      "actual_completion_date": null,
++      "effort_level": "Low",
++      "notes": null,
++      "gh_closed_at": null,
++      "gh_mandays": null,
++      "created_at": "2026-01-16T03:35:26Z",
++      "updated_at": "2026-03-28T23:55:51.615618"
++    },
++    "oatrice/JarWise-Root#24": {
++      "issue_key": "oatrice/JarWise-Root#24",
++      "issue_number": 24,
++      "issue_title": "[Platform] Task Name Desktop UI version",
++      "issue_url": "https://github.com/oatrice/JarWise-Root/issues/24",
++      "repository": "oatrice/JarWise-Root",
++      "project_name": "JarWise-Root",
++      "issue_status": "Backlog",
++      "estimate_points": 3,
++      "estimated_mandays": 1.5,
++      "start_datetime": "2026-01-16T13:50:03",
++      "actual_mandays": 0.0,
++      "due_date": "2026-04-04T23:59:59",
++      "actual_completion_date": null,
++      "effort_level": "Medium",
++      "notes": null,
++      "gh_closed_at": null,
++      "gh_mandays": null,
++      "created_at": "2026-01-16T13:50:03Z",
++      "updated_at": "2026-03-28T23:55:52.259131"
++    },
++    "oatrice/JarWise-Root#2": {
++      "issue_key": "oatrice/JarWise-Root#2",
++      "issue_number": 2,
++      "issue_title": "Implement Mobile/Flutter UI",
++      "issue_url": "https://github.com/oatrice/JarWise-Root/issues/2",
++      "repository": "oatrice/JarWise-Root",
++      "project_name": "JarWise-Root",
++      "issue_status": "Backlog",
++      "estimate_points": 2,
++      "estimated_mandays": 1.0,
++      "start_datetime": "2026-01-19T06:54:01",
++      "actual_mandays": 0.0,
++      "due_date": "2026-04-04T23:59:59",
++      "actual_completion_date": null,
++      "effort_level": "Low",
++      "notes": null,
++      "gh_closed_at": null,
++      "gh_mandays": null,
++      "created_at": "2026-01-16T00:36:08Z",
++      "updated_at": "2026-03-28T23:55:52.922262"
++    },
++    "oatrice/JarWise-Root#25": {
++      "issue_key": "oatrice/JarWise-Root#25",
++      "issue_number": 25,
++      "issue_title": "[Web | Android] Implement UI test (integration, instrumented, E2E)",
++      "issue_url": "https://github.com/oatrice/JarWise-Root/issues/25",
++      "repository": "oatrice/JarWise-Root",
++      "project_name": "JarWise-Root",
++      "issue_status": "Backlog",
++      "estimate_points": 2,
++      "estimated_mandays": 1.0,
++      "start_datetime": "2026-01-16T13:59:09",
++      "actual_mandays": 0.0,
++      "due_date": "2026-04-04T23:59:59",
++      "actual_completion_date": null,
++      "effort_level": "Low",
++      "notes": null,
++      "gh_closed_at": null,
++      "gh_mandays": null,
++      "created_at": "2026-01-16T13:59:08Z",
++      "updated_at": "2026-03-28T23:55:53.581137"
++    },
++    "oatrice/JarWise-Root#30": {
++      "issue_key": "oatrice/JarWise-Root#30",
++      "issue_number": 30,
++      "issue_title": "[Platform] Task Name ย้ายวันที่เป็น sticky group by date สำหรับ tx history จะได้มีพื้นที่แสดง note เยอะขึ้นด้วย",
++      "issue_url": "https://github.com/oatrice/JarWise-Root/issues/30",
++      "repository": "oatrice/JarWise-Root",
++      "project_name": "JarWise-Root",
++      "issue_status": "Backlog",
++      "estimate_points":
 ... (Diff truncated for size) ...
+
 
 PR TEMPLATE:
 # 📋 Monorepo Update Summary
@@ -709,4 +640,4 @@ INSTRUCTIONS:
 3. If no template, use a standard structure: Summary, Changes, Impact.
 4. Focus on 'Why' and 'What'.
 5. Do not include 'Here is the PR description' preamble. Just the body.
-6. IMPORTANT: Always use FULL URLs for links to issues and other PRs (e.g., https://github.com/owner/repo/issues/123), do NOT use short syntax (e.g., #123) to ensuring proper linking across platforms.
+6. IMPORTANT: Always use the exact FULL URL for closing issues. You must write `Closes https://github.com/oatrice/JarWise-Root/issues/59`. Do NOT use short syntax (e.g., #123) and do not invent an owner/repo.

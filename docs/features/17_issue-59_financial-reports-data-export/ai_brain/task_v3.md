@@ -1,0 +1,11 @@
+- `[x]` Phase 1: TDD for `_format_duration`
+    - `[x]` Create `tests/test_metrics_summarizer.py` with failing cases (RED)
+    - `[x]` Update `luma_core/metrics_summarizer.py` to pass tests (GREEN)
+    - `[x]` Refactor and ensure all tests pass (REFACTOR)
+- `[x]` Phase 2: Fix Message Truncation
+    - `[x]` Analyze `format_summary_message` for potential truncation causes
+    - `[x]` Compact breakdown sections and limit items if necessary
+    - `[x]` Verify message length and content
+- `[x]` Phase 3: Final Verification
+    - `[x]` Run manual generation test
+    - `[x]` Create Walkthrough
