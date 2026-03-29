@@ -6,12 +6,13 @@ TASK: [Web | Android] Financial Reports & Data Export
 ISSUE: {
   "title": "[Web | Android] Financial Reports & Data Export",
   "number": 59,
-  "body": "# \ud83c\udfaf Objective\nImplement comprehensive financial reporting with charts, graphs, and data export capabilities.\n\n## \ud83e\udde0 AI Brain Context\n- [task_v2.md](https://raw.githubusercontent.com/oatrice/JarWise-Root/feat/59-financial-reports-export/docs/features/17_issue-59_financial-reports-data-export/ai_brain/task_v2.md)\n- [walkthrough_v2.md](https://raw.githubusercontent.com/oatrice/JarWise-Root/feat/59-financial-reports-export/docs/features/17_issue-59_financial-reports-data-export/ai_brain/walkthrough_v2.md)\n- [implementation_plan_v2.md](https://raw.githubusercontent.com/oatrice/JarWise-Root/feat/59-financial-reports-export/docs/features/17_issue-59_financial-reports-data-export/ai_brain/implementation_plan_v2.md)\n\n\nCloses #59",
+  "body": "# \ud83c\udfaf Objective\nImplement comprehensive financial reporting with charts, graphs, and data export capabilities.\n\n## \ud83e\udde0 AI Brain Context\n- [task_v3.md](https://raw.githubusercontent.com/oatrice/JarWise-Root/feat/59-financial-reports-export/docs/features/17_issue-59_financial-reports-data-export/ai_brain/task_v3.md)\n- [walkthrough_v3.md](https://raw.githubusercontent.com/oatrice/JarWise-Root/feat/59-financial-reports-export/docs/features/17_issue-59_financial-reports-data-export/ai_brain/walkthrough_v3.md)\n- [implementation_plan_v3.md](https://raw.githubusercontent.com/oatrice/JarWise-Root/feat/59-financial-reports-export/docs/features/17_issue-59_financial-reports-data-export/ai_brain/implementation_plan_v3.md)\n\n\nCloses #59",
   "url": "https://github.com/oatrice/JarWise-Root/issues/59"
 }
 
 GIT CONTEXT:
 COMMITS:
+740a843 docs: sync AI brain artifacts
 1ff2d09 docs: sync AI brain artifacts
 e9d7530 feat: exclude .luma_metrics.json from git tracking
 3db0b24 feat(reports): Release v0.10.0 with enhanced financial reporting
@@ -33,9 +34,11 @@ STATS:
  .../ai_brain/implementation_plan_refactor_viz.md   |   36 +
  .../ai_brain/implementation_plan_styling_sync.md   |   41 +
  .../ai_brain/implementation_plan_v2.md             |   44 +
+ .../ai_brain/implementation_plan_v3.md             |   39 +
  .../ai_brain/task.md                               |    8 +
  .../ai_brain/task2.md                              |   13 +
  .../ai_brain/task_v2.md                            |   10 +
+ .../ai_brain/task_v3.md                            |   11 +
  .../ai_brain/walkthrough.md                        |   37 +
  .../ai_brain/walkthrough2.md                       |   42 +
  .../ai_brain/walkthrough_android_sync.md           |   36 +
@@ -45,11 +48,13 @@ STATS:
  .../ai_brain/walkthrough_reports_final.md          |   28 +
  .../ai_brain/walkthrough_seeding.md                |   32 +
  .../ai_brain/walkthrough_v2.md                     |   37 +
+ .../ai_brain/walkthrough_v3.md                     |   63 +
  .../implementation_plan.md                         |   73 +
  .../manual_verification_plan.md                    |   66 +
  .../task.md                                        |   10 +
  .../walkthrough.md                                 |   52 +
- 30 files changed, 2614 insertions(+), 3 deletions(-)
+ draft_pr_prompt.md                                 | 1173 ++++++++-------
+ 34 files changed, 3279 insertions(+), 624 deletions(-)
 
 KEY FILE DIFFS:
 diff --git a/.gitignore b/.gitignore
