@@ -1,5 +1,6 @@
+```markdown
 # 📋 Monorepo Update Summary
-This pull request introduces a major new feature: multi-select filtering for reports across multiple platforms. Users can now refine report and chart data by selecting specific categories (Jars) and accounts (Wallets). This change involves coordinated updates to the backend API, web frontend, and Android application to provide a consistent user experience.
+This Pull Request introduces comprehensive financial reporting and data export capabilities across Web and Android platforms. It includes a robust backend data aggregation engine and redesigned UI components for interactive charting and analysis.
 
 ## ✅ Checklist
 - [x] 🏗️ I have moved the related issue to "In Progress" on the Kanban board
@@ -9,8 +10,9 @@ This pull request introduces a major new feature: multi-select filtering for rep
 - [ ] 📦 Monorepo Structure
 - [x] 📄 Documentation (Root)
 - [ ] 🔄 Workflow/CI Update
-- [x] 🚀 Release Management
+- [ ] 🚀 Release Management
 - [ ] 💥 Breaking change
+- [x] ✨ Feature (Implicit, as a new functional capability)
 
 ## 🔗 Affected Platforms
 
@@ -21,41 +23,60 @@ This pull request introduces a major new feature: multi-select filtering for rep
 
 ## 📝 Detailed Changes
 
-This PR implements the functionality outlined in issue #68, enabling powerful and granular filtering on all reporting screens.
+This PR implements Issue #59: "[Web | Android] Financial Reports & Data Export," aiming to provide users with deep insights into their spending habits through interactive charts, category breakdowns, and period comparisons. While the objective includes "data export capabilities," the current focus is on "Display & Charting," with full export functionality (CSV/Excel/PDF) slated for future issues (#89 and #90).
 
-**Key Features & Implementation Details:**
+### 1. Backend: Data Aggregation Engine (Go)
+The core logic for processing transactions and generating report data has been implemented.
+-   **Dynamic Bucketing**: Data points are automatically grouped into daily or monthly trends.
+-   **Dual Breakdown**: Tracks both Income and Expense for categories and jars separately.
+-   **Comparison Logic**: Automatically fetches and compares data with the previous period (e.g., this month vs. last month).
+-   **Consolidated Models**: Refactored `Report` and `ChartData` into a unified structure for cross-platform consistency.
 
-*   **Filter Panel UI**: A new filter panel has been added, allowing users to view and select from a list of their categories and accounts.
-*   **Multi-Select Checkboxes**: Users can check/uncheck multiple items to include in the report. The UI includes "Apply" and "Clear All" actions for ease of use.
-*   **Real-time Updates**: Once filters are applied, the report data and associated charts dynamically update to reflect the new selection.
-*   **Backend Support**: The transaction query endpoints on the backend have been enhanced to accept arrays of `category_ids` and `account_ids` to perform the filtering.
-*   **Android Implementation**: The Android filter screen was built using Jetpack Compose, with a dedicated `ReportFilterViewModel` to manage state, handle user interactions, and fetch data from repositories. Unit tests for the ViewModel have been included to ensure logic correctness.
-*   **Documentation**: The project roadmap, changelog, and feature lists have been updated to reflect the completion of this feature. Manual verification steps have also been documented.
+### 2. Web: Interactive Dashboard (React)
+The React dashboard has been updated with real-time data fetching and interactive Recharts.
+-   **Date Range Filters**: Supports Month, Quarter, and Year views.
+-   **Summary Cards**: Provides a quick view of Total Income, Expense, and Net balance.
+-   **Rich Charts**:
+    -   **Trend Line Chart**: Comparison of income vs. expense over time.
+    -   **Dual Bar Chart**: Category-wise revenue/expense breakdown.
+    -   **Jar Distribution**: Pie chart showing allocation per jar.
+-   **Comparison Section**: Visual indicator of spending changes from the previous period.
+
+### 3. Android: Analytics Screen (Jetpack Compose)
+A premium analytics experience has been developed using Jetpack Compose and the Vico chart library.
+-   **Unified Data Layer**: Implemented full DTO, API (Retrofit), and Repository layers for reporting.
+-   **DI & State Management**: Integrated `ReportsViewModel` with Koin-based dependency injection.
+-   **Premium UI**: Features smooth loading states, transitions, and multi-series line/bar charts for trends and categories.
 
 ## 📸 Screenshots (if applicable)
+<!-- 
+Please add screenshots of the new financial reports on both Web and Android,
+using width="400" for each. Example:
 
-Here is a preview of the new filter screen on Android:
-
-<img src="https://i.imgur.com/example-screenshot.png" width="400" alt="A screenshot of the new filter screen showing a list of categories and accounts with checkboxes next to them. An 'Apply' button is visible at the bottom." />
-
-*(Note: Please replace with actual screenshot before merging)*
+<img src="https://raw.githubusercontent.com/oatrice/JarWise-Root/branch-name/path/to/web_screenshot.png" width="400" />
+<img src="https://raw.githubusercontent.com/oatrice/JarWise-Root/branch-name/path/to/android_screenshot.png" width="400" />
+-->
+No screenshots provided in the `docs` folder for this feature yet. Please add them manually if available.
 
 ## 🧪 Testing
-- [x] Changes verified locally
-- [x] Documentation reviewed for accuracy
-
-Unit tests for the Android ViewModel have been added to cover selection, clearing, and state update logic. Manual end-to-end testing was performed on both web and Android platforms to ensure the filter correctly applies to transaction queries and the UI updates as expected.
+-   **Automated Tests (Backend)**: Unit tests in `report_service_test.go` cover aggregation, trend grouping, and period comparison calculations. All tests passed.
+-   **Manual Verification (Web)**: Verified data fetching from `/api/v1/reports` and UI rendering.
+-   **Manual Verification (Android)**: Verified UI components and chart rendering using mock data (full integration testing pending backend deployment).
 
 ## 🚀 Migration/Deployment
 
 - [ ] Environment variables updated
 - [ ] Global Dependencies installed
 
-No migration or special deployment steps are required for this feature.
+```bash
+# No specific migration commands required for this feature,
+# but ensure the backend server is running for full functionality.
+```
 
 ## 🔗 Related Issues
 
-- Resolves https://github.com/oatrice/JarWise-Root/issues/68
+- Resolves https://github.com/oatrice/JarWise-Root/issues/59
 
 **Breaking Changes**: No
 **Migration Required**: No
+```
