@@ -13,7 +13,7 @@
 | **Date** | 2026-03-30 |
 | **Analyst** | Codex |
 | **Priority** | 🔴 High |
-| **Status** | 📝 Draft |
+| **Status** | ✅ Implemented |
 
 ---
 
@@ -21,16 +21,14 @@
 
 ### 1.1 Problem Statement
 
-The original Google Login feature card [#32](https://github.com/oatrice/JarWise-Root/issues/32) is closed, but the current codebase still uses mock-only login state on Web and has no real backend authentication, session handling, or user ownership model.
+The original Google Login feature card [#32](https://github.com/oatrice/JarWise-Root/issues/32) was closed before the repo had real auth in place. This follow-up is now implemented and establishes the auth foundation required by [#96](https://github.com/oatrice/JarWise-Root/issues/96).
 
-Current reality in the repo:
+Current implemented reality in the repo:
 
-- `Web/src/pages/LoginScreen.tsx` renders a Google button but has no real Google auth flow
-- `Web/src/hooks/useAuthMock.ts` provides fake user/session state
-- `Web/src/pages/Dashboard.tsx` and `Web/src/pages/SettingsOverlay.tsx` consume that mock state
-- backend has no authentication middleware, no user table, no verified Google identity flow, and no request user context
-
-This is now a prerequisite for issue [#96](https://github.com/oatrice/JarWise-Root/issues/96), which requires authenticated migration jobs and per-user data isolation.
+- `Web/src/context/AuthContext.tsx` bootstraps session state from `GET /api/v1/auth/me`
+- `Web/src/pages/LoginScreen.tsx` loads Google Identity Services and exchanges the returned credential with `POST /api/v1/auth/google`
+- `Web/src/pages/Dashboard.tsx` and `Web/src/pages/SettingsOverlay.tsx` now consume real authenticated user state
+- backend has `users`, `user_sessions`, auth middleware, verified Google token flow, and request-scoped authenticated user context
 
 ### 1.2 User Stories
 
@@ -43,11 +41,11 @@ This is now a prerequisite for issue [#96](https://github.com/oatrice/JarWise-Ro
 
 ### 1.3 Acceptance Criteria
 
-- [ ] **AC1:** Web performs a real Google Sign-In flow and obtains Google identity credentials
-- [ ] **AC2:** backend verifies the Google identity token and resolves or creates the corresponding JarWise user
-- [ ] **AC3:** Web persists and restores authenticated session state without `useAuthMock`
-- [ ] **AC4:** backend exposes authenticated user context to protected endpoints
-- [ ] **AC5:** user-scoped features such as migration can rely on the authenticated user identity safely
+- [x] **AC1:** Web performs a real Google Sign-In flow and obtains Google identity credentials
+- [x] **AC2:** backend verifies the Google identity token and resolves or creates the corresponding JarWise user
+- [x] **AC3:** Web persists and restores authenticated session state without `useAuthMock`
+- [x] **AC4:** backend exposes authenticated user context to protected endpoints
+- [x] **AC5:** user-scoped features such as migration can rely on the authenticated user identity safely
 
 ---
 
@@ -84,16 +82,16 @@ flowchart TD
 
 | Field | Type | Required | Validation |
 |-------|------|----------|------------|
-| `google_id_token` | string | ✅ | must be a valid Google-issued ID token for configured client |
-| session credentials | cookie or token | ✅ after sign-in | must map to active authenticated JarWise session |
+| `idToken` | string | ✅ | must be a valid Google-issued ID token for configured client |
+| `jarwise_session` | HttpOnly cookie | ✅ after sign-in | must map to an active authenticated JarWise session |
 
 #### Outputs
 
 | Field | Type | Description |
 |-------|------|-------------|
 | `user` | object | authenticated JarWise user profile |
-| `session` | object | app session metadata or credentials |
-| `error` | object | auth error details when sign-in fails |
+| `jarwise_session` | cookie | opaque session token stored as a hash in backend `user_sessions` |
+| `error` | response body | auth error details when sign-in fails |
 
 ---
 
@@ -132,9 +130,9 @@ The current auth flow is not real, so replacing mock auth does not break a real 
 
 | Question | Answer | Notes |
 |----------|--------|-------|
-| Can Web support Google Sign-In? | ✅ | but the repo currently has no Google auth client dependency yet |
-| Can backend verify Google identity? | ✅ | Go backend can verify Google tokens, but no auth stack exists yet |
-| Is this enough for per-user migration? | ✅ | if user ownership and request auth context are added properly |
+| Can Web support Google Sign-In? | ✅ | implemented using Google Identity Services script without extra npm dependency |
+| Can backend verify Google identity? | ✅ | implemented with server-side Google certificate verification |
+| Is this enough for per-user migration? | ✅ | yes, this issue now provides the required user/session foundation |
 
 ### 4.2 Time Feasibility
 
@@ -223,9 +221,15 @@ The backend must become the source of truth for authenticated identity. Google p
 
 ### 9.3 Next Steps
 
-- [ ] define the Web-to-backend auth exchange contract
-- [ ] add user/session support to backend
-- [ ] migrate Web screens from mock auth to real auth state
+- [x] define the Web-to-backend auth exchange contract
+- [x] add user/session support to backend
+- [x] migrate Web screens from mock auth to real auth state
+
+### Runtime Configuration
+
+- Web expects `VITE_GOOGLE_CLIENT_ID`
+- Backend expects `JARWISE_GOOGLE_CLIENT_ID`
+- Backend secure-cookie mode is controlled by `JARWISE_SECURE_COOKIES=true`
 
 ---
 

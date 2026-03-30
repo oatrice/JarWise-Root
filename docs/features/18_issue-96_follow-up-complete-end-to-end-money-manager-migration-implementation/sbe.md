@@ -63,4 +63,4 @@ Replace the Web mock migration flow with an authenticated, job-based migration s
 |---------|------------|-------------|--------|
 | `POST /api/v1/migrations/money-manager/jobs` | `missing` | `401` | `Authentication required.` |
 | `GET /api/v1/migrations/money-manager/jobs/job-123` | `expired` | `401` | `Session expired. Please sign in again.` |
-| `POST /api/v1/migrations/money-manager/jobs/job-123/confirm` | `job belongs to another user` | `403` | `You do not have access to this migration job.` |
+| `POST /api/v1/migrations/money-manager/jobs/job-123/confirm` | `job belongs to another user` | `404` | `Migration job not found for the current authenticated user.` |

@@ -13,7 +13,7 @@
 | **Date** | 2026-03-30 |
 | **Analyst** | Codex |
 | **Priority** | 🔴 High |
-| **Status** | 📝 Draft |
+| **Status** | ✅ Implemented |
 
 ---
 
@@ -43,12 +43,12 @@ This also creates a hard dependency on real authentication work from [#97](https
 
 ### 1.3 Acceptance Criteria
 
-- [ ] **AC1:** Web creates a real migration validation job by uploading both `mmbak_file` and `xls_file`
-- [ ] **AC2:** `MigrationStatusScreen` polls a real status endpoint and renders backend job phases instead of timer-based mock states
-- [ ] **AC3:** successful validation returns a preview state and requires explicit user confirmation before import begins
-- [ ] **AC4:** duplicate source entities for the authenticated user block confirmation and show which wallets, categories, or transactions are duplicates
-- [ ] **AC5:** import results and persisted records are scoped to the authenticated user only
-- [ ] **AC6:** backend responses expose the counts, validation errors, duplicate details, and final import outcome needed by Web
+- [x] **AC1:** Web creates a real migration validation job by uploading both `mmbak_file` and `xls_file`
+- [x] **AC2:** `MigrationStatusScreen` polls a real status endpoint and renders backend job phases instead of timer-based mock states
+- [x] **AC3:** successful validation returns a preview state and requires explicit user confirmation before import begins
+- [x] **AC4:** duplicate source entities for the authenticated user block confirmation and show which wallets, jars, or transactions are duplicates
+- [x] **AC5:** import results and persisted records are scoped to the authenticated user only
+- [x] **AC6:** backend responses expose the counts, validation errors, duplicate details, and final import outcome needed by Web
 
 ---
 
@@ -88,18 +88,18 @@ flowchart TD
 |-------|------|----------|------------|
 | `mmbak_file` | file | ✅ | extension and content must match Money Manager SQLite backup |
 | `xls_file` | file | ✅ | extension and content must match Money Manager HTML/XLS export |
-| `Authorization` / session credentials | auth context | ✅ | must resolve to an authenticated JarWise user |
+| `jarwise_session` | HttpOnly cookie | ✅ | must resolve to an authenticated JarWise user |
 
 #### Outputs (Backend -> Web)
 
 | Field | Type | Description |
 |-------|------|-------------|
 | `job_id` | string | migration job identifier |
-| `phase` | string | `uploaded`, `validating`, `preview_ready`, `duplicate_blocked`, `importing`, `completed`, `failed` |
+| `phase` | string | `validating`, `preview_ready`, `duplicate_blocked`, `importing`, `completed`, `failed`, `expired` |
 | `message` | string | user-facing summary |
 | `counts` | object | validated or imported counts for wallets, jars, transactions |
 | `validation_errors` | array | structured validation failures |
-| `duplicate_summary` | object | duplicate wallets, categories, transactions for the current user |
+| `duplicateSummary` | object | duplicate wallets, jars, and transactions for the current user |
 | `can_confirm_import` | boolean | whether import is allowed |
 
 ---
@@ -126,9 +126,9 @@ flowchart TD
 
 The current Web migration flow is mock-only, so replacing it does not break a shipped real migration experience. The main compatibility concern is backend contract expansion and database ownership changes. The safest path is:
 
-- add new job endpoints and response fields without removing the existing route shape immediately
-- migrate persisted records to user-scoped storage before turning on Web import for real users
-- gate the Web feature behind real auth readiness from #97
+- land auth and user ownership in the same branch before enabling the Web flow
+- switch Web directly to the new job endpoints because the old browser flow was mock-only
+- keep all migration job reads and writes scoped by authenticated `user_id`
 
 ---
 
@@ -183,10 +183,10 @@ Migration must be protected by real backend authentication and per-user authoriz
 
 | Metric | Target | Current |
 |--------|--------|---------|
-| validation job creation | < 2s to accept upload and create job | N/A |
-| validation completion | < 30s for typical personal dataset | N/A |
-| polling interval | 1-2 seconds | N/A |
-| duplicate detection | same validation pass | N/A |
+| validation job creation | < 2s to accept upload and create job | implemented |
+| validation completion | < 30s for typical personal dataset | implemented |
+| polling interval | 1-2 seconds | implemented at 1.5s on Web |
+| duplicate detection | same validation pass | implemented |
 
 ---
 
@@ -233,9 +233,15 @@ Migration must be protected by real backend authentication and per-user authoriz
 
 ### 9.3 Next Steps
 
-- [ ] define the migration job API contract and response schema
-- [ ] land real authentication and user ownership support from #97
-- [ ] implement Web polling and confirm-import flow against the new job API
+- [x] define the migration job API contract and response schema
+- [x] land real authentication and user ownership support from #97
+- [x] implement Web polling and confirm-import flow against the new job API
+
+### Implementation Notes
+
+- `POST /api/v1/migrations/money-manager/jobs` returns `202 Accepted`
+- `duplicateSummary` uses `wallets`, `jars`, and `transactions`
+- expired preview cleanup is triggered opportunistically on migration service access and immediately after terminal completion paths
 
 ---
 

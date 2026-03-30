@@ -1,7 +1,7 @@
 # Implementation Plan: Real Google Sign-In and Backend Authentication
 
 > **Issue**: [#97](https://github.com/oatrice/JarWise-Root/issues/97)
-> **Status**: Draft
+> **Status**: Implemented
 > **Dependency Direction**: This issue lands before [#96](https://github.com/oatrice/JarWise-Root/issues/96)
 
 ## 1. Summary
@@ -152,6 +152,13 @@ Replace Web mock auth with real Google Sign-In, verify identity in the Go backen
 
 - Ensure the authenticated user context is stable enough for `#96`.
 - Document all auth assumptions and required env configuration for local and production use.
+
+## 7. Implementation Notes
+
+- Web runtime env: `VITE_GOOGLE_CLIENT_ID`
+- Backend runtime env: `JARWISE_GOOGLE_CLIENT_ID`
+- Optional secure-cookie toggle: `JARWISE_SECURE_COOKIES=true`
+- Protected requests use the `jarwise_session` HttpOnly cookie and `credentials: 'include'`
 
 ## 5. Test Plan
 

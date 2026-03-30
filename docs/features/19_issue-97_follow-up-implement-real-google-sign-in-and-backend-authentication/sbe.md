@@ -63,4 +63,4 @@ Replace the Web mock login flow with a real Google Sign-In flow backed by server
 |----------|------------|-------------|--------|
 | `GET /api/v1/auth/me` | `missing` | `401` | `Authentication required.` |
 | `POST /api/v1/migrations/money-manager/jobs` | `expired` | `401` | `Session expired. Please sign in again.` |
-| `GET /api/v1/migrations/money-manager/jobs/job-123` | `belongs to another user` | `403` | `You do not have access to this resource.` |
+| `GET /api/v1/migrations/money-manager/jobs/job-123` | `belongs to another user` | `404` | `Migration job not found for the current authenticated user.` |

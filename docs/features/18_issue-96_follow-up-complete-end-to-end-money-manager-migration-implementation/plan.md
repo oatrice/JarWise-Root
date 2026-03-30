@@ -1,7 +1,7 @@
 # Implementation Plan: Job-Based, Validate-First Money Manager Migration
 
 > **Issue**: [#96](https://github.com/oatrice/JarWise-Root/issues/96)
-> **Status**: Draft
+> **Status**: Implemented
 > **Depends On**: [#97](https://github.com/oatrice/JarWise-Root/issues/97)
 
 ## 1. Summary
@@ -37,7 +37,7 @@ Replace the Web mock migration flow with a job-based backend workflow. Users mus
 - Store both source ID references and a normalized content fingerprint for each imported wallet, jar, and transaction.
 - Use source reference lookups as the primary duplicate detector.
 - Use content fingerprint as a secondary detector and warning path for malformed or reused source IDs.
-- Validation blocks the whole import when any duplicates exist and returns grouped duplicate details for wallets, categories, and transactions.
+- Validation blocks the whole import when any duplicates exist and returns grouped duplicate details for wallets, jars, and transactions.
 
 ### 2.3 Validate-First Flow
 
@@ -62,7 +62,7 @@ Replace the Web mock migration flow with a job-based backend workflow. Users mus
 - Save uploaded files in temp storage on job creation.
 - Keep temp files only until the job is completed, failed, or expired.
 - Default preview expiry: 24 hours.
-- Add a background cleanup path that removes expired temp files and marks old preview jobs as `expired`.
+- Add expiry handling that removes expired temp files and marks old preview jobs as `expired` during migration service access.
 
 ### 2.6 Web Flow
 
@@ -90,6 +90,8 @@ Replace the Web mock migration flow with a job-based backend workflow. Users mus
 }
 ```
 
+- HTTP status: `202 Accepted`
+
 ### `GET /api/v1/migrations/money-manager/jobs/:jobId`
 
 - Auth required
@@ -110,7 +112,7 @@ Replace the Web mock migration flow with a job-based backend workflow. Users mus
   "validationErrors": [],
   "duplicateSummary": {
     "wallets": [],
-    "categories": [],
+    "jars": [],
     "transactions": []
   },
   "canConfirmImport": false,
@@ -135,7 +137,7 @@ Replace the Web mock migration flow with a job-based backend workflow. Users mus
 
 - `counts`: `{ wallets, jars, transactions, totalIncome, totalExpense }`
 - `validationErrors`: structured list with code and message
-- `duplicateSummary`: grouped arrays for wallets, categories, and transactions with source IDs and display names where available
+- `duplicateSummary`: grouped arrays for wallets, jars, and transactions with source IDs and display names where available
 - `canConfirmImport`: `true` only in `preview_ready`
 
 ## 4. Step-by-Step Implementation
