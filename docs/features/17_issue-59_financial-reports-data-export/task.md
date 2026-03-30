@@ -1,0 +1,10 @@
+- [/] Phase 1: Backend Refactor (Go)
+    - [ ] Update `models/report.go` with new aggregation structures
+    - [ ] Create `service/report_service_test.go` (TDD RED)
+    - [ ] Implement aggregation logic in `service/report_service.go` (TDD GREEN)
+    - [ ] Refactor & Cleanup
+- [ ] Phase 2: Web Dashboard (React)
+    - [ ] Create `Reports.tsx` with Recharts
+    - [ ] Add summary cards and filter bar
+- [ ] Phase 3: Android Analytics (Kotlin/Vico)
+    - [ ] Implement `ReportsScreen`

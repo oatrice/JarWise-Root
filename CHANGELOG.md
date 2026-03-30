@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.10.0] - 2026-03-28
+
+### Added
+- **[Feature] Financial Reporting & Charts (#59)**:
+    - **Backend**: Implemented comprehensive data aggregation for Monthly, Quarterly, and Yearly reports. New ChartData models and API endpoints.
+    - **Web**: Added interactive "Reports" page with Income vs Expense trends and Category breakdowns using Recharts.
+    - **Android**: Integrated native chart rendering for financial summaries using the Vico library.
+- **[Luma CLI]**: Hardened state management and UI header rendering to prevent crashes on corrupted state data. Strict validation for active issues.
+
+### Fixed
+- **[Backend] Transaction Repository**: Fixed a critical SQL syntax bug where `strftime` tokens were misinterpreted by `fmt.Sprintf`.
+
 ## [0.9.0] - 2026-03-10
 
 ### Added

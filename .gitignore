@@ -21,3 +21,5 @@ Backend/
 project_items.json
 .luma_state.json
 .luma_dev.json
+# .luma_metrics.json
+luma_failed_prompt_*.md
