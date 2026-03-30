@@ -91,6 +91,18 @@ graph TD
 ```
 
 ## Synced From GitHub
+### Issue #93 - [Feature] Dashboard & Reports Enhancements
+- **GitHub:** [#93](https://github.com/oatrice/JarWise-Root/issues/93)
+- **Status:** 🔵 **Backlog**
+
+### Issue #94 - Upgrade Vico library to 3.x for horizontal bar chart support
+- **GitHub:** [#94](https://github.com/oatrice/JarWise-Root/issues/94)
+- **Status:** 🟢 **Ready**
+
+### Issue #96 - [Follow-up] Complete end-to-end Money Manager migration implementation
+- **GitHub:** [#96](https://github.com/oatrice/JarWise-Root/issues/96)
+- **Status:** 🔵 **Backlog**
+
 ### Issue #38 - Note
 - **GitHub:** [#38](https://github.com/oatrice/JarWise-Root/issues/38)
 - **Status:** 🔵 **Backlog**
