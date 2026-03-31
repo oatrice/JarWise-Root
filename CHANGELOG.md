@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.11.0] - 2026-03-31
+
+### Added
+- **[Docs] New Feature Planning & Analysis:** Added comprehensive documentation for upcoming features, including:
+    - **Web:** Detailed analysis and planning for 'Implement Change Period on Transaction History' (#98).
+    - **Money Manager Migration:** Analysis and planning for completing 'End-to-End Money Manager Migration Implementation' (#96).
+    - **Authentication:** Analysis and planning for 'Implement Real Google Sign-In and Backend Authentication' (#97).
+
+### Changed
+- **[Docs] Project Updates:**
+    - Updated project metrics and general planning documentation.
+    - Analysis for 'Jar Category Graph' feature (#18) updated to 'implemented' status.
+
 ## [0.10.0] - 2026-03-28
 
 ### Added
