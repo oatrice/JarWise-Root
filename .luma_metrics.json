@@ -1512,6 +1512,48 @@
       "gh_mandays": null,
       "created_at": "2026-03-30T20:05:04.348260",
       "updated_at": "2026-03-30T20:05:04.349026"
+    },
+    "oatrice/JarWise-Root#97": {
+      "issue_key": "oatrice/JarWise-Root#97",
+      "issue_number": 97,
+      "issue_title": "[Follow-up] Implement real Google Sign-In and backend authentication",
+      "issue_url": "",
+      "repository": "oatrice/JarWise-Root",
+      "project_name": "JarWise-Root",
+      "issue_status": null,
+      "estimate_points": 1,
+      "estimated_mandays": 0.5,
+      "start_datetime": null,
+      "actual_mandays": 0.0,
+      "due_date": null,
+      "actual_completion_date": null,
+      "effort_level": "Low",
+      "notes": null,
+      "gh_closed_at": null,
+      "gh_mandays": null,
+      "created_at": "2026-03-31T13:05:38.883736",
+      "updated_at": "2026-03-31T13:05:38.894764"
+    },
+    "oatrice/JarWise-Root#98": {
+      "issue_key": "oatrice/JarWise-Root#98",
+      "issue_number": 98,
+      "issue_title": "[Web] Implement Change Period on Transaction History",
+      "issue_url": "",
+      "repository": "oatrice/JarWise-Root",
+      "project_name": "JarWise-Root",
+      "issue_status": null,
+      "estimate_points": 2,
+      "estimated_mandays": 1.0,
+      "start_datetime": null,
+      "actual_mandays": 0.0,
+      "due_date": null,
+      "actual_completion_date": null,
+      "effort_level": "Low",
+      "notes": null,
+      "gh_closed_at": null,
+      "gh_mandays": null,
+      "created_at": "2026-03-31T13:05:38.905439",
+      "updated_at": "2026-03-31T13:05:38.905859"
     }
   }
 }
