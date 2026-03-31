@@ -91,6 +91,18 @@ graph TD
 ```
 
 ## Synced From GitHub
+### Issue #93 - [Feature] Dashboard & Reports Enhancements
+- **GitHub:** [#93](https://github.com/oatrice/JarWise-Root/issues/93)
+- **Status:** 🔵 **Backlog**
+
+### Issue #94 - Upgrade Vico library to 3.x for horizontal bar chart support
+- **GitHub:** [#94](https://github.com/oatrice/JarWise-Root/issues/94)
+- **Status:** 🟢 **Ready**
+
+### Issue #96 - [Follow-up] Complete end-to-end Money Manager migration implementation
+- **GitHub:** [#96](https://github.com/oatrice/JarWise-Root/issues/96)
+    - ✅ **Done**
+
 ### Issue #38 - Note
 - **GitHub:** [#38](https://github.com/oatrice/JarWise-Root/issues/38)
 - **Status:** 🔵 **Backlog**
@@ -345,5 +357,15 @@ graph TD
 ### Issue #17 - [Web | Android] Manage Jars (Edit %, Name, Icon)
 - **GitHub:** [#17](https://github.com/oatrice/JarWise-Root/issues/17)
 - **State:** CLOSED
+- ✅ **Done**
+
+### Issue #97 - [Follow-up] Implement real Google Sign-In and backend authentication
+- **GitHub:** [#97](https://github.com/oatrice/JarWise-Root/issues/97)
+- **State:** OPEN
+- ✅ **Done**
+
+### Issue #98 - [Web] Implement Change Period on Transaction History
+- **GitHub:** [#98](https://github.com/oatrice/JarWise-Root/issues/98)
+- **State:** OPEN
 - ✅ **Done**
 
