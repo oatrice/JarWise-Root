@@ -91,6 +91,22 @@ graph TD
 ```
 
 ## Synced From GitHub
+### Issue #99 - [Android | iOS] Follow-up: Complete end-to-end Money Manager migration implementation
+- **GitHub:** [#99](https://github.com/oatrice/JarWise-Root/issues/99)
+- **Status:** 🔵 **Backlog**
+
+### Issue #100 - [Android | iOS] Follow-up: Implement real Google Sign-In and backend authentication
+- **GitHub:** [#100](https://github.com/oatrice/JarWise-Root/issues/100)
+- **Status:** 🔵 **Backlog**
+
+### Issue #101 - [Android | iOS] Follow-up: Implement Change Period on Transaction History
+- **GitHub:** [#101](https://github.com/oatrice/JarWise-Root/issues/101)
+- **Status:** 🔵 **Backlog**
+
+### Issue #103 - [Web] Transaction History: Add quick link to latest available month in no-match empty state
+- **GitHub:** [#103](https://github.com/oatrice/JarWise-Root/issues/103)
+- **Status:** 🔵 **Backlog**
+
 ### Issue #93 - [Feature] Dashboard & Reports Enhancements
 - **GitHub:** [#93](https://github.com/oatrice/JarWise-Root/issues/93)
 - **Status:** 🔵 **Backlog**
