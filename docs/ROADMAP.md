@@ -91,6 +91,10 @@ graph TD
 ```
 
 ## Synced From GitHub
+### Issue #104 - [Quality] Web-first rollout for coverage, E2E, and code-quality baseline
+- **GitHub:** [#104](https://github.com/oatrice/JarWise-Root/issues/104)
+- **Status:** 🔵 **Backlog**
+
 ### Issue #99 - [Android | iOS] Follow-up: Complete end-to-end Money Manager migration implementation
 - **GitHub:** [#99](https://github.com/oatrice/JarWise-Root/issues/99)
 - **Status:** 🔵 **Backlog**
